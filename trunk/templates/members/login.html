@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>Login to PullaClub</title>
+    <link rel="stylesheet" href="css/pulla.css" type="text/css" />
+    <link rel="SHORTCUT ICON" href="favicon.gif"/>
+  </head>
+  <body>
+    <div id="topnav">
+      <ul>
+	<li><a href="index.html">Home</a></li>
+	<li><a href="/members">Members</a></li>
+	<li><a href="about.html">About us</a></li>
+      </ul>
+    </div>
+    {% if form.errors %}
+    <div id="text" style="color:red; font-weight:bold; padding: 5px;">
+      <p>Your username and password didn't match. Please try again.</p>
+    </div>
+    {% else %}
+    <div id="text" style="padding: 5px;">
+      This is member only area. Please login to access.
+    </div>
+    {% endif %}
+    <div id="text" style="padding:10px;">
+      <form action="{% url django.contrib.auth.views.login %}" method="post" style="margin-left:auto;">
+	<fieldset>
+	  <legend>PullaClub Login</legend>
+	  <p>{{ from.username.label_tag }} {{ form.username }}</p>
+	  <p>{{ from.password.label_tag }} {{ form.password }}</p>
+	  <p class="submit"><input type="submit" value="login" /></p>
+	  <input type="hidden" name="next" value="{{ next }}" />
+	</fieldset>
+      </form>
+    </div>
+  </body>
+</html>

@@ -10,22 +10,22 @@
     <div id="topnav">
       <ul>
 	<li><a href="index.html">Home</a></li>
-	<li><a href="members.html">Members</a></li>
+	<li><a href="/members">Members</a></li>
 	<li><a href="about.html">About us</a></li>
+	<li style="float:right;"><a href="logout">Logout</a></li>
       </ul>
     </div>
     <div id="text" style="padding: 5px">
-      This is member only area. Please login to access.
+      Our current members
     </div>
-    <div id="text" style="padding:10px;">
-      <form action="./" method="post" style="margin-left:auto;">
-	<fieldset>
-	  <legend>PullaClub Login</legend>
-	  <p><label for="name">Username</label> <input type="text" id="name" /></p>
-	  <p><label for="password">Password</label> <input type="password" id="password" /><br /></p>
-	  <p class="submit"><input type="submit" value="Submit" /></p>
-	</fieldset>
-      </form>
+    <div id="text" style="padding: 5px">
+      {% if view_list %}
+      <ul>
+	{% for user in view_list %}
+	<li>{{ user }} : {{ user.get_full_name }}</li>
+	{% endfor %}
+      </ul>
+      {% endif %}
     </div>
   </body>
 </html>

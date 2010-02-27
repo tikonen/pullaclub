@@ -2,6 +2,7 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+PULLACLUB_DEV = True
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -16,12 +17,16 @@ DATABASE_PASSWORD = 'pullaclub'
 DATABASE_HOST = 'mysql.pullaclub.com'
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
+if PULLACLUB_DEV:
+    DATABASE_ENGINE = 'sqlite3'
+    DATABASE_NAME = '/home/teemu/pulla/pullaclub/pullaclub.db'            
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Europe/Helsinki'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -37,10 +42,13 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = '/home/tikonen/pullaclub.com/public/media'
 
+if PULLACLUB_DEV:
+    MEDIA_ROOT = '/home/teemu/pulla/pullaclub/public'
+
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
+MEDIA_URL = '/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -65,10 +73,15 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'pullaclub.urls'
 
+LOGIN_URL='/login'
+
+PULLACLUB_TEMPLATE_DIR = '/home/tikonen/pullaclub.com/templates'
+
+if PULLACLUB_DEV:
+    PULLACLUB_TEMPLATE_DIR='/home/teemu/pulla/pullaclub/templates'
+
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    PULLACLUB_TEMPLATE_DIR,
 )
 
 INSTALLED_APPS = (
@@ -77,4 +90,5 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'pullaclub.members',
 )
