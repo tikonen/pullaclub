@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-    <title>Login to PullaClub</title>
+    <title>Login to PullaClub.com</title>
     <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
     <link rel="SHORTCUT ICON" href="favicon.gif"/>
   </head>
@@ -20,13 +20,13 @@
     </div>
     {% else %}
     <div id="text" style="padding: 5px;">
-      This is member only area. Please login to access.
+      This is a members-only area. Please login to gain access.
     </div>
     {% endif %}
     <div id="text" style="padding:10px;">
-      <form action="{% url django.contrib.auth.views.login %}" method="post" style="margin-left:auto;">
+      <form action="/login/" method="post" style="margin-left:auto;">
 	<fieldset>
-	  <legend>PullaClub Login</legend>
+	  <legend>PullaClub.com Login</legend>
 	  <p>{{ from.username.label_tag }} {{ form.username }}</p>
 	  <p>{{ from.password.label_tag }} {{ form.password }}</p>
 	  <p class="submit"><input type="submit" value="login" /></p>

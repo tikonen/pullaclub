@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-    <title>Apply PullaClub membership</title>
+    <title>Apply for PullaClub.com membership</title>
     <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
     <link rel="SHORTCUT ICON" href="favicon.gif"/>
     <style type="text/css">
@@ -18,16 +18,16 @@
       </ul>
     </div>
     <div id="text" style="padding: 5px">
-      Please fill application form carefully.
+      Please fill in the application form carefully.
     </div>
     <div id="text" style="padding:5px;">
       <form action="./" method="post">
 	<fieldset>
-	  <legend>PullaClub applicant form</legend>
+	  <legend>PullaClub.com applicant form</legend>
 	  <p>{{ form.name.label_tag }}{{ form.name }} {{ form.name.errors }}</p>
 	  <p>{{ form.email.label_tag }}{{ form.email }} {{ form.email.errors }}</p>
 	  <p>{{ form.referral.label_tag }}{{ form.referral }} {{ form.referral.errors }}</p>
-	Please explain your reasons for applying to this selective club.<br>
+	Please explain your reason(s) for applying to this exclusive club.<br>
 	<textarea name="message" rows=4 cols=60>{{ form.message.data }}</textarea>{{ form.message.errors }}
 	  <p class="submit"><input type="submit" value="Submit" /><input type="reset"></p>
 	</fieldset>
