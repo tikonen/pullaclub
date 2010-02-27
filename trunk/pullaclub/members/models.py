@@ -22,7 +22,7 @@ class UserApplication(models.Model):
     status = models.CharField(max_length=1,choices=APPLICATION_STATES)
 
     def __unicode__(self):
-        return "Application from %s",name
+        return "Application from "+self.name
 
 
 class ApplyForm(forms.Form):

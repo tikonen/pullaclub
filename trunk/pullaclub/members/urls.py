@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns(
-    'members.views',
+    'pullaclub.members.views',
     (r'^$', 'index'),
     (r'^apply/$', 'apply'),
 #    (r'^comment/$', 'newcomment'),
