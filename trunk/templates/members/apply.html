@@ -6,7 +6,14 @@
     <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
     <link rel="SHORTCUT ICON" href="favicon.gif"/>
     <style type="text/css">
-      .errorlist { color:red; }
+      .errorlist { color:red;
+      list-style: none;
+      border: 2px solid black;
+      padding:5px;
+      background-color: yellow;
+      width:180px;
+      margin-left:5em;
+      }
     </style>
   </head>
   <body>
@@ -24,11 +31,11 @@
       <form action="./" method="post">
 	<fieldset>
 	  <legend>PullaClub.com applicant form</legend>
-	  <p>{{ form.name.label_tag }}{{ form.name }} {{ form.name.errors }}</p>
+	  <p> {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}</p>
 	  <p>{{ form.email.label_tag }}{{ form.email }} {{ form.email.errors }}</p>
 	  <p>{{ form.referral.label_tag }}{{ form.referral }} {{ form.referral.errors }}</p>
-	Please explain your reason(s) for applying to this exclusive club.<br>
-	<textarea name="message" rows=4 cols=60>{{ form.message.data }}</textarea>{{ form.message.errors }}
+	Please explain your reason(s) for applying to this exclusive club.
+	  <p>{{ form.message}} {{ form.message.errors }}</p>
 	  <p class="submit"><input type="submit" value="Submit" /><input type="reset"></p>
 	</fieldset>
       </form>

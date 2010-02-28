@@ -5,7 +5,12 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
 
     user = models.ForeignKey(User, unique=True)
-    pass
+
+    # should use ImageField here but it requires Python Imaging Library
+    user_image = models.FileField(upload_to='photos',blank=True)
+
+    def __unicode__(self):
+        return "Profile of '"+str(self.user)+"'"
 
 class UserApplication(models.Model):
 
@@ -29,5 +34,21 @@ class ApplyForm(forms.Form):
     name = forms.CharField()
     email = forms.EmailField()
     referral = forms.CharField()
-    message = forms.CharField()
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'rows':4, 'cols':60}))
 
+
+from django.db.models.signals import post_save
+
+def user_created_signal(sender, **kwargs):
+    if kwargs['created']:
+        user = kwargs['instance']
+        # currently nothing here but this is one possible place to
+        # create new UserProfile instance
+        #
+        # Note that django sometimes likes to call twice signals, so
+        # remember to avoid creating double profiles.
+        pass
+
+
+post_save.connect(user_created_signal, sender=User)

@@ -2,7 +2,7 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-PULLACLUB_DEV = False
+PULLACLUB_DEV = True
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -19,7 +19,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 
 if PULLACLUB_DEV:
     DATABASE_ENGINE = 'sqlite3'
-    DATABASE_NAME = '/home/teemu/pulla/pullaclub/pullaclub.db'            
+    DATABASE_NAME = '/home/teemu/pulla/site/sqlite.db'            
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -42,13 +42,14 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = '/home/tikonen/pullaclub.com/public/media'
 
-if PULLACLUB_DEV:
-    MEDIA_ROOT = '/home/teemu/pulla/pullaclub/public'
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/'
+
+if PULLACLUB_DEV:
+    MEDIA_ROOT = '/home/teemu/pulla/site/public'
+    MEDIA_URL = '/pullamedia/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -74,11 +75,12 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'pullaclub.urls'
 
 LOGIN_URL='/login'
+AUTH_PROFILE_MODULE = 'members.UserProfile'
 
 PULLACLUB_TEMPLATE_DIR = '/home/tikonen/pullaclub.com/templates'
 
 if PULLACLUB_DEV:
-    PULLACLUB_TEMPLATE_DIR='/home/teemu/pulla/pullaclub/templates'
+    PULLACLUB_TEMPLATE_DIR='/home/teemu/pulla/site/templates'
 
 TEMPLATE_DIRS = (
     PULLACLUB_TEMPLATE_DIR,

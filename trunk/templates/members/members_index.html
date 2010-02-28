@@ -5,6 +5,33 @@
     <title>Members of PullaClub.com</title>
     <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
     <link rel="SHORTCUT ICON" href="favicon.gif"/>
+    <style type="text/css">
+    .profile {
+      float:left;
+      width:80px;
+      height:80px
+      padding:5px;
+      /* border:1px solid black; */
+      text-align:center;
+      margin-bottom:10px;
+      margin-top: 5px;
+    }
+    .update {
+      margin: 5px 5px 5px 5px;
+      padding-top: 5px;
+      clear:both;
+      width:90%;
+      /* border:1px solid black; */
+      border-top: 1px solid lightgray;
+      text-align:left;
+    }
+    .comment {
+      margin:10px 0px 5px 110px;
+      width:50%;
+      /* border:1px solid black; */
+      text-align:left;
+    }
+    </style>
   </head>
   <body>
     <div id="topnav">
@@ -16,15 +43,37 @@
       </ul>
     </div>
     <div id="text" style="padding: 5px">
-      Our current members
+      Welcome {{ user_name }}
     </div>
-    <div id="text" style="padding: 5px">
+    <div class="clear">
       {% if view_list %}
-      <ul>
-	{% for user in view_list %}
-	<li>{{ user }} : {{ user.get_full_name }}</li>
-	{% endfor %}
-      </ul>
+      {% for user in view_list %}
+      <p>
+      <div class="update">
+	<div class="profile">
+	  <img src="{{ user.profile_url }}" width=70 height=70>
+	</div>
+	<div id="text">
+	<span style="color:orange;">{{ user.user.get_full_name }}</span>
+	Has eaten lots of Pulla today and feels very full.
+	</div>
+	<br>
+	<span style="font-weight:xx-small;color:lightgray;">2 days ago</span>
+	<a href="/members/comment" style="font-weight:xx-small;color:darkgrey;">Comment</a>
+	<a href="/members/pullaa" style="font-weight:xx-small;color:darkgrey;">Pullaa</a>
+	<div class="comment">
+	  <span style="color:orange;">{{ user.user.get_full_name }}</span><span style="color:darkolivegreen;"> says
+	  FOoobar Foobar foobar foobar foobar foobar foobar</span>
+	</div>
+	<div class="comment">
+	  <span style="color:orange;">{{ user.user.get_full_name }}</span> says
+	  iasdisid aidasidias iasdiasdisa idasidiasadi iasdiasid 
+	</div>
+      </div>
+      <!--
+      <hr style="margin-left:100px;clear:both;color:lightgray;width:30%;text-align:center;">
+      -->
+      {% endfor %}
       {% endif %}
     </div>
   </body>
