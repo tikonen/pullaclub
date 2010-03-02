@@ -1,0 +1,26 @@
+
+{% if rootcomment %}
+<p>
+  <div class="update">
+    <div class="profile">
+      <img src="{{ rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
+      <span id="text">{{ rootcomment.user.get_profile.description }}</span>
+    </div>
+    <div id="text">	  
+      <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span style="color:orange;">{{ rootcomment.user.get_full_name }}</span></a>
+      {{ rootcomment.message }} 
+    </div>
+    <p>
+      <span style="font-weight:xx-small;color:lightgray;">{{ rootcomment.datetime|timesince }} ago</span>
+      <a href="#" class="comment_button" id="{{ update.rootcomment.id }}" style="font-weight:xx-small;color:darkgrey;">Comment</a>
+  </div>
+{% endif %}
+{% if comment %}
+  <div class="comment">
+    <a href="/members/profile/view/{{ comment.user.username }}">
+      <span style="color:orange;">{{ comment.user.get_full_name }}</span></a>
+    <span style="color:grey;"> says {{ comment.message }}</span>
+    <p><span style="font-weight:xx-small;color:lightgray;">{{ comment.datetime|timesince }} ago</span></p>
+  </div>
+{% endif %}
+

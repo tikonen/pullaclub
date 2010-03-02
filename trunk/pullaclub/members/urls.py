@@ -4,7 +4,8 @@ urlpatterns = patterns(
     'pullaclub.members.views',
     (r'^$', 'index'),
     (r'^apply/$', 'apply'),
-#    (r'^comment/$', 'newcomment'),
+    (r'^profile/(?P<action>\w+)/(?P<username>\w+)/$', 'profile'),
+    (r'^comment/(?P<action>\w+)/(?P<comment_id>\w+)/$', 'comment'),
     #(r'^xxx/(?P<arg>\w+)/$', 'xxx'),
     (r'^logout/$', 'logoutuser'),
 )

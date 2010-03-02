@@ -1,10 +1,41 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Members of PullaClub.com</title>
+    <link rel="SHORTCUT ICON" href="/favicon.gif"/>
     <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
-    <link rel="SHORTCUT ICON" href="favicon.gif"/>
+    <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript">
+ $(document).ready(function() {
+   $(".comment_button").click(function(){
+ 
+     var element = $(this);
+     var id = element.attr("id");
+
+     $("#slidepanel"+id).slideToggle(300);
+     //$(this).toggleClass("active");
+
+     return false;
+   });
+
+   $(".comment_submit").click(function(event){
+    event.preventDefault();
+    var panelid = $(this).parent().parent().attr("id");
+
+    var url = $(this).siblings("[type='hidden']").attr("value");
+    $.post(url, $(this).parent().serialize(), function(data) {
+        var result = jQuery.parseJSON(data);
+        if(result.id == "0") {
+          $(".insertion[id='"+result.id+"']").prepend(result.render);
+        } else 
+           $(".insertion[id='"+result.id+"']").append(result.render);
+    });    
+     $("#"+panelid).slideToggle(300);
+    return false;
+   });
+ });
+    </script>
     <style type="text/css">
     .profile {
       float:left;
@@ -13,23 +44,30 @@
       padding:5px;
       /* border:1px solid black; */
       text-align:center;
-      margin-bottom:10px;
+      margin-bottom:30px;
       margin-top: 5px;
+      margin-left: 10px;
     }
     .update {
-      margin: 5px 5px 5px 5px;
+      margin: 5px 5px 15px 5px;
       padding-top: 5px;
       clear:both;
       width:90%;
-      /* border:1px solid black; */
-      border-top: 1px solid lightgray;
+      border-top: 1px dotted lightgray;
+      border-left: 1px dotted lightgray;
       text-align:left;
     }
     .comment {
       margin:10px 0px 5px 110px;
+      padding-left: 0.5em;
+      padding-top: 0.5em;
       width:50%;
-      /* border:1px solid black; */
       text-align:left;
+      border-top: 1px solid lightgray;
+      border-left: 1px dotted lightgray;
+    }
+    .commentpanel { 
+       display:none;
     }
     </style>
   </head>
@@ -40,39 +78,61 @@
 	<li><a href="/members">Members</a></li>
 	<li><a href="/about.html">About us</a></li>
 	<li style="float:right;"><a href="logout">Logout</a></li>
+	<li style="float:right;"><a href="/changepassword">Change password</a></li>
       </ul>
     </div>
     <div id="text" style="padding: 5px">
-      Welcome {{ user_name }}
+      Welcome {{ user.get_full_name }}
+      <a style="color:grey;" href="/members/profile/view/{{ user.username }}">(Profile)</a>	  
+      <a href="#" class="comment_button" id="0" style="color:darkgrey;"><br>
+	New Update</a>
+      <strong style="float:right;">Today is Pulla</strong>
+      <div class="commentpanel" id="slidepanel0">
+	<form>
+	  <textarea style="width:400px;height:56px" name="message"></textarea><br/>
+	  <input type="hidden" value="/members/comment/new/0/">
+	  <input type="submit" value=" Comment " class="comment_submit"/>
+	</form>
+      </div>
+      <p>
+      <hr width="100%" color="lightgrey">
+      </p>
     </div>
     <div class="clear">
+      <div class="insertion" id="0"></div>
       {% if view_list %}
-      {% for user in view_list %}
+      {% for update in view_list %}
       <p>
       <div class="update">
 	<div class="profile">
-	  <img src="{{ user.profile_url }}" width=70 height=70>
+	  <img src="{{ update.rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
+	  <span id="text">{{ update.rootcomment.user.get_profile.description }}</span>
 	</div>
-	<div id="text">
-	<span style="color:orange;">{{ user.user.get_full_name }}</span>
-	Has eaten lots of Pulla today and feels very full.
+	<div id="text">	  
+	  <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span style="color:orange;">{{ update.rootcomment.user.get_full_name }}</span></a>
+	  {{ update.rootcomment.message }} 
 	</div>
-	<br>
-	<span style="font-weight:xx-small;color:lightgray;">2 days ago</span>
-	<a href="/members/comment" style="font-weight:xx-small;color:darkgrey;">Comment</a>
-	<a href="/members/pullaa" style="font-weight:xx-small;color:darkgrey;">Pullaa</a>
+	<p>
+	  <span style="font-weight:xx-small;color:lightgray;">{{ update.rootcomment.datetime|timesince }} ago</span>
+	  <a href="#" class="comment_button" id="{{ update.rootcomment.id }}" style="font-weight:xx-small;color:darkgrey;">Comment</a>
+
+	{% for comment in update.subcomments %}
 	<div class="comment">
-	  <span style="color:orange;">{{ user.user.get_full_name }}</span><span style="color:darkolivegreen;"> says
-	  FOoobar Foobar foobar foobar foobar foobar foobar</span>
+	  <a href="/members/profile/view/{{ comment.user.username }}">
+	    <span style="color:orange;">{{ comment.user.get_full_name }}</span></a>
+	  <span style="color:grey;"> says {{ comment.message }}</span>
+	  <p><span style="font-weight:xx-small;color:lightgray;">{{ comment.datetime|timesince }} ago</span></p>
 	</div>
-	<div class="comment">
-	  <span style="color:orange;">{{ user.user.get_full_name }}</span> says
-	  iasdisid aidasidias iasdiasdisa idasidiasadi iasdiasid 
-	</div>
-      </div>
-      <!--
-      <hr style="margin-left:100px;clear:both;color:lightgray;width:30%;text-align:center;">
-      -->
+	{% endfor %}
+ 	<div class="insertion" id="{{ update.rootcomment.id }}"></div>
+	  <div class="commentpanel" style="margin:10px 0px 5px 110px;" id="slidepanel{{ update.rootcomment.id }}">
+	    <form>
+	      <textarea style="width:250px;height:56px" name="message"></textarea><br/>
+	      <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/">
+	      <input type="submit" value=" Comment " class="comment_submit"/>
+	    </form>
+	  </div>
+      </div> <!-- update -->
       {% endfor %}
       {% endif %}
     </div>
