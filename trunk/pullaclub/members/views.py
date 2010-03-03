@@ -128,8 +128,6 @@ def comment(request, action, comment_id):
                     'rootcomment': rootcomment,
                     'comment': subcomment,
                     })
-            print(t.render(c))
-
             response_dict = {
                 'url' : request.user.get_profile().user_image.url,
                 'description' : request.user.get_profile().description,
@@ -205,7 +203,6 @@ def topic(request, action):
                     'topic_user' : topic.user.get_full_name(),
                     'topic_time' : 'just now',
                     }
-                
                 return HttpResponse(simplejson.dumps(response_dict), 
                                     mimetype='application/javascript')
         except Exception as e:
