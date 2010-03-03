@@ -1,6 +1,10 @@
+import os
 from django.db import models
 from django import forms
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.core.files import File
+
 
 class UserProfile(models.Model):
     
@@ -66,6 +70,17 @@ class ApplyForm(forms.Form):
     message = forms.CharField(max_length=160,
                               widget=forms.Textarea(attrs={'rows':4, 'cols':60}))
 
+def create_default_profile(user):
+    # create default profile
+    profile = UserProfile()
+    profile.user = user
+    defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
+    profile.user_image.save(settings.DEFAULT_IMAGE,File(defaultpic))
+    defaultpic.close()
+    profile.save()
+    profile.description = 'Pikkupulla'
+    profile.save()
+    return profile
 
 from django.db.models.signals import post_save
 
@@ -78,11 +93,6 @@ def user_created_signal(sender, **kwargs):
             user.get_profile()
             #user.get_user_profile()
         except UserProfile.DoesNotExist:
-            # create default profile
-            profile = UserProfile()
-            profile.user = user
-            profile.user_image = UserProfile.DEFAULT_IMAGE
-            profile.description = 'Pikkupulla'
-            profile.save()
+            create_default_profile(user)
 
 post_save.connect(user_created_signal, sender=User)

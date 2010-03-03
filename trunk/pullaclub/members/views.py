@@ -1,3 +1,4 @@
+import os
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -8,11 +9,12 @@ from django.conf import settings
 from django.utils import simplejson
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
-from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic
+from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
 
 def index(request):
     
@@ -51,7 +53,7 @@ def profile(request, action, username):
         try:
             profile = user.get_profile()
         except UserProfile.DoesNotExist:
-            raise Http404
+            profile = create_default_profile(user)
 
         return render_to_response('members/profile.html', {
                 'user': user,
@@ -205,7 +207,7 @@ def topic(request, action):
                     }
                 return HttpResponse(simplejson.dumps(response_dict), 
                                     mimetype='application/javascript')
-        except Exception as e:
+        except Exception,e:
             print str(e)
 
     raise Http404
