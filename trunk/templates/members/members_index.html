@@ -8,28 +8,51 @@
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
     <script type="text/javascript">
  $(document).ready(function() {
-   $(".comment_button").click(function(){
- 
+   $(".comment_button").click(function() {
+
      var element = $(this);
      var id = element.attr("id");
 
-     $("#slidepanel"+id).slideToggle(300);
-     //$(this).toggleClass("active");
+     $("#slidepanel"+id).slideToggle(100);
+     $("#slidepanel"+id+" > textarea").focus();  
+     return false;
+   });
 
+   $("#topic_button").click(function() {
+     var element = $(this);
+     var id = element.attr("id");
+
+     $("#topicpanel").slideToggle(100);
+     $("#topicpanel > textarea").focus();  
      return false;
    });
 
    $(".comment_submit").click(function(event){
     event.preventDefault();
     var panelid = $(this).parent().parent().attr("id");
-
     var url = $(this).siblings("[type='hidden']").attr("value");
+
     $.post(url, $(this).parent().serialize(), function(data) {
         var result = jQuery.parseJSON(data);
         if(result.id == "0") {
           $(".insertion[id='"+result.id+"']").prepend(result.render);
         } else 
            $(".insertion[id='"+result.id+"']").append(result.render);
+    });    
+     $("#"+panelid).slideToggle(300);
+    return false;
+   });
+
+   $("#topic_submit").click(function(event){
+    event.preventDefault();
+    var panelid = $(this).parent().parent().attr("id");
+
+    var url = $(this).siblings("[type='hidden']").attr("value");
+    $.post(url, $(this).parent().serialize(), function(data) {
+        var result = jQuery.parseJSON(data);
+        $("#topic").text(result.topic);
+        $("#topic_time").text(result.topic_time);
+        $("#topic_user").text(result.topic_user);
     });    
      $("#"+panelid).slideToggle(300);
     return false;
@@ -69,6 +92,11 @@
     .commentpanel { 
        display:none;
     }
+    #topicpanel { 
+       display:none;
+       width:400;
+       text-align:center;
+    }
     </style>
   </head>
   <body>
@@ -81,12 +109,30 @@
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
       </ul>
     </div>
+    <div>
+    <center>
+    <span id="topic" style="font-size:xx-large;border-bottom: 1px dotted lightgrey;" align="center">{{ topic.message }}</span>
+    {% if user.is_staff %}
+    <a href="#" id="topic_button" style="color:darkgrey;font-size:xx-small">Edit</a>
+    {% endif %}
+    <br>
+    <span id="topic_time" style="font-weight:xx-small;color:lightgray;">{{ topic.datetime|timesince }} ago by <span id="topic_user">{{ topic.user.get_full_name }}</span></span>
+    </center>
+    </div>
+    <div id="topicpanel">
+      <form>
+	<textarea style="width:400px;height:23px" name="message"></textarea><br/>
+	<input type="hidden" value="/members/topic/new/">
+	<input type="submit" value=" Update " id="topic_submit"/>
+      </form>
+    </div>
+    <div style="height:10px;background-color:wheat;margin-bottom:20px;"></div>
     <div id="text" style="padding: 5px">
       Welcome {{ user.get_full_name }}
       <a style="color:grey;" href="/members/profile/view/{{ user.username }}">(Profile)</a>	  
       <a href="#" class="comment_button" id="0" style="color:darkgrey;"><br>
 	New Update</a>
-      <strong style="float:right;">Today is Pulla</strong>
+      <!-- <strong style="float:right;">Today is Pulla</strong> -->
       <div class="commentpanel" id="slidepanel0">
 	<form>
 	  <textarea style="width:400px;height:56px" name="message"></textarea><br/>
@@ -95,7 +141,7 @@
 	</form>
       </div>
       <p>
-      <hr width="100%" color="lightgrey">
+
       </p>
     </div>
     <div class="clear">

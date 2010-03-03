@@ -6,17 +6,23 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.conf import settings
 from django.utils import simplejson
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
-from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment
+from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic
 
 def index(request):
     
     view_list = []
     error_message = None
+
+    try:
+        topic = Topic.objects.order_by('-datetime')[0]
+    except Topic.DoesNotExist:
+        topic = None
 
     # 10 latest root level comments
     for update in Comment.objects.filter(parent=None).order_by('-datetime')[:10]:
@@ -26,6 +32,7 @@ def index(request):
     t = loader.get_template('members/members_index.html')
     c = Context({
             'user': request.user,
+            'topic': topic,
             'view_list': view_list,
             'error_message': error_message,
             })
@@ -33,11 +40,11 @@ def index(request):
 
 def profile(request, action, username):
     
-    profile = None
+    own = False
 
     if action == 'view':
         if request.user.username == username:
-            # looking own profile
+            own = True
             pass
 
         user = get_object_or_404(User,username=username)
@@ -49,6 +56,39 @@ def profile(request, action, username):
         return render_to_response('members/profile.html', {
                 'user': user,
                 'profile': profile,
+                'own' : own,
+                })
+
+    elif action == 'edit':
+
+        user = get_object_or_404(User,username=username)
+
+        # user can only edit this own profile
+        if not request.user.is_staff and not request.user == user:
+            raise Http404
+
+        if request.method == 'POST':
+            form = ProfileForm(request.POST, request.FILES) # form bound to the POST data
+            if form.is_valid(): # All validation rules pass
+                profile = user.get_profile()
+                profile.description = form.cleaned_data['description']
+                uploaded_file = form.cleaned_data['user_image']
+                if uploaded_file:
+                    # should validate that it really is an image
+                    profile.user_image.save(uploaded_file.name, uploaded_file)
+
+                profile.save()
+
+                return HttpResponseRedirect(reverse('pullaclub.members.views.index')) # Redirect after POST
+        else:
+            profile = request.user.get_profile()
+            data = { 'description' : profile.description }
+            file_data = {}
+            form = ProfileForm(data, file_data)
+            
+        return render_to_response('members/profile_edit.html', {
+                'user': request.user,
+                'form': form,
                 })
 
     raise Http404
@@ -145,6 +185,34 @@ def apply(request):
             'form': form,
             })
     
+def topic(request, action):
+    
+    # TODO: validate message and escape code it!
+    if request.user.is_staff and action == 'new':
+        try:
+            if request.method == 'POST':
+                message = request.POST['message']
+                if not message:
+                    message = 'Pullaa!'
+
+                topic = Topic()
+                topic.message = message
+                topic.user = request.user
+                topic.save()
+
+                response_dict = {
+                    'topic' : topic.message,
+                    'topic_user' : topic.user.get_full_name(),
+                    'topic_time' : 'just now',
+                    }
+                
+                return HttpResponse(simplejson.dumps(response_dict), 
+                                    mimetype='application/javascript')
+        except Exception as e:
+            print str(e)
+
+    raise Http404
+
 
 def logoutuser(request):
     logout(request)
@@ -153,4 +221,5 @@ def logoutuser(request):
 index = login_required(index)
 profile = login_required(profile)
 comment = login_required(comment)
+topic = login_required(topic)
 

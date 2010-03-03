@@ -17,6 +17,16 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return "Profile of '"+str(self.user)+"'"
 
+class Topic(models.Model):
+
+    user = models.ForeignKey(User)
+    message = models.CharField(max_length=160)
+    datetime = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.user.username + ": "+self.message
+
+
 class Comment(models.Model):
 
     user = models.ForeignKey(User)
@@ -46,7 +56,7 @@ class UserApplication(models.Model):
 
 class ProfileForm(forms.Form):
     user_image = forms.FileField(required=False)
-    description = forms.CharField(max_length=15)   
+    description = forms.CharField(max_length=15)
 
 
 class ApplyForm(forms.Form):
