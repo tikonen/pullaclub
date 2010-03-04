@@ -106,6 +106,9 @@
       <ul>
 	<li><a href="/index.html">Home</a></li>
 	<li><a href="/members">Members</a></li>
+        {% if user.is_staff %}
+	<li><a href="/admin">Admin</a></li>
+        {% endif %}
 	<li><a href="/about.html">About us</a></li>
 	<li style="float:right;"><a href="logout">Logout</a></li>
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
@@ -153,7 +156,7 @@
       <p>
       <div class="update">
 	<div class="profile">
-	  <img src="{{ update.rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
+	  <img style="margin-right:10px;" src="{{ update.rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
 	  <span id="text">{{ update.rootcomment.user.get_profile.description }}</span>
 	</div>
 	<div id="text">	  

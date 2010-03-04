@@ -26,12 +26,12 @@
 	<li><a href="/index.html">Home</a></li>
 	<li><a href="/members">Members</a></li>
 	<li><a href="/about.html">About us</a></li>
-	<li style="float:right;"><a href="logout">Logout</a></li>
+	<li style="float:right;"><a href="/members/logout">Logout</a></li>
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
       </ul>
     </div>
+    <h1>{{ user.get_full_name }}<br> member no: {{ user.id }}</h1>
     <div id="text" style="padding: 5px">
-      <span style="color:orange;">{{ user.get_full_name }}</span><br>
       {% if own %}
       <a href="/members/profile/edit/{{ user.username }}">Edit Profile</a>
       {% endif %}
