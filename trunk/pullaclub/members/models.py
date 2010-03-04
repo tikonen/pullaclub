@@ -8,9 +8,6 @@ from django.core.files import File
 
 class UserProfile(models.Model):
     
-    DEFAULT_LEVEL = 'NE'
-    DEFAULT_IMAGE='default.jpg'
-
     user = models.ForeignKey(User, unique=True)
 
     # should use ImageField here but it requires Python Imaging Library
@@ -74,9 +71,12 @@ def create_default_profile(user):
     # create default profile
     profile = UserProfile()
     profile.user = user
-    defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
-    (name, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
-    profile.user_image.save(user.username+suffix,File(defaultpic))
+    try:
+        defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
+        (name, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
+        profile.user_image.save(user.username+suffix,File(defaultpic))
+    except IOError:
+        pass
     defaultpic.close()
     profile.save()
     profile.description = 'Pikkupulla'
@@ -92,7 +92,6 @@ def user_created_signal(sender, **kwargs):
         user = kwargs['instance']
         try:
             user.get_profile()
-            #user.get_user_profile()
         except UserProfile.DoesNotExist:
             create_default_profile(user)
 

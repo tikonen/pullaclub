@@ -8,7 +8,8 @@
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
     <script type="text/javascript">
  $(document).ready(function() {
-   $(".comment_button").click(function() {
+     $(".comment_button").live('click',function() {
+//   $(".comment_button").click(function() {
 
      var element = $(this);
      var id = element.attr("id");
@@ -27,7 +28,7 @@
      return false;
    });
 
-   $(".comment_submit").click(function(event){
+   $(".comment_submit").live('click',function(event){
     event.preventDefault();
     var panelid = $(this).parent().parent().attr("id");
     var url = $(this).siblings("[type='hidden']").attr("value");
@@ -139,8 +140,7 @@
       <a style="color:grey;" href="/members/profile/view/{{ user.username }}">(Profile)</a>      
       <p>
     <div style="margin-bottom:5px;" class="generic_button">
-      <a href="#" class="comment_button" id="0">
-	Make a comment</a>
+      <a href="#" class="comment_button" id="0">Make a comment</a>
     <a href="/members">Load new messages</a>
     </div>
     </p>
@@ -170,19 +170,19 @@
 	  <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span style="color:orange;">{{ update.rootcomment.user.get_full_name }}</span></a>
 	  {{ update.rootcomment.message }} 
 	</div>
-	<p>
+	<p></p>
 	  <span style="font-weight:xx-small;color:lightgray;">{{ update.rootcomment.datetime|timesince }} ago</span>
-	  <a href="#" class="comment_button" id="{{ update.rootcomment.id }}" style="font-weight:xx-small;color:darkgrey;">Comment</a>
-
-	{% for comment in update.subcomments %}
-	<div class="comment">
-	  <a href="/members/profile/view/{{ comment.user.username }}">
-	    <span style="color:orange;">{{ comment.user.get_full_name }}</span></a>
-	  <span style="color:grey;"> says {{ comment.message }}</span>
-	  <p><span style="font-weight:xx-small;color:lightgray;">{{ comment.datetime|timesince }} ago</span></p>
-	</div>
-	{% endfor %}
- 	<div class="insertion" id="{{ update.rootcomment.id }}"></div>
+    	  <a href="#" class="comment_button" id="{{ update.rootcomment.id }}" style="font-weight:xx-small;color:darkgrey;">Comment</a>
+	  
+	  {% for comment in update.subcomments %}
+	  <div class="comment">
+	    <a href="/members/profile/view/{{ comment.user.username }}">
+	      <span style="color:orange;">{{ comment.user.get_full_name }}</span></a>
+	    <span style="color:grey;"> says {{ comment.message }}</span>
+	    <p><span style="font-weight:xx-small;color:lightgray;">{{ comment.datetime|timesince }} ago</span></p>
+	  </div>
+	  {% endfor %}
+ 	  <div class="insertion" id="{{ update.rootcomment.id }}"></div>
 	  <div class="commentpanel" style="margin:10px 0px 5px 120px;" id="slidepanel{{ update.rootcomment.id }}">
 	    <form>
 	      <textarea id="commenttext{{ update.rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
@@ -194,5 +194,6 @@
       {% endfor %}
       {% endif %}
     </div>
+    <!-- <span id="text"><a href="/members/?offset=10">Older</a></span> -->
   </body>
 </html>
