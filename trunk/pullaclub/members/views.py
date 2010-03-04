@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
+from pullaclub.members.util import anchor_web_links
 
 def index(request):
     
@@ -219,6 +220,10 @@ def topic(request, action):
 
     raise Http404
 
+def finance(request):
+    return render_to_response('members/finance.html', {
+            'user': request.user,
+            })    
 
 def logoutuser(request):
     logout(request)
@@ -228,4 +233,5 @@ index = login_required(index)
 profile = login_required(profile)
 comment = login_required(comment)
 topic = login_required(topic)
+finance = login_required(finance)
 

@@ -1,3 +1,5 @@
+import re
+import datetime
 
 def humanize_timesince(start_time):
     delta = datetime.datetime.now() - start_time
@@ -24,3 +26,8 @@ def humanize_timesince(start_time):
         return "%d minute%s" % (num_minutes, plural(num_minutes))
 
     return "a few seconds"
+
+__anchor_p = re.compile (r'.*(http://([^ $])+).*')
+def anchor_web_links(message):
+    return __anchor_p.sub(r'<a href="\1">\1</a>',message)
+    
