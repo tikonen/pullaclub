@@ -15,7 +15,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
-from pullaclub.members.util import anchor_web_links
 
 def index(request):
     
