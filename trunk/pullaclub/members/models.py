@@ -75,7 +75,8 @@ def create_default_profile(user):
     profile = UserProfile()
     profile.user = user
     defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
-    profile.user_image.save(settings.DEFAULT_IMAGE,File(defaultpic))
+    (name, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
+    profile.user_image.save(user.username+suffix,File(defaultpic))
     defaultpic.close()
     profile.save()
     profile.description = 'Pikkupulla'

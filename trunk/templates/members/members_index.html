@@ -14,7 +14,7 @@
      var id = element.attr("id");
 
      $("#slidepanel"+id).slideToggle(100);
-     $("#slidepanel"+id+" > textarea").focus();  
+     $("#commenttext"+id).focus();  
      return false;
    });
 
@@ -23,7 +23,7 @@
      var id = element.attr("id");
 
      $("#topicpanel").slideToggle(100);
-     $("#topicpanel > textarea").focus();  
+     $("#topictext").focus();  
      return false;
    });
 
@@ -41,7 +41,7 @@
     });    
      $("#"+panelid).slideToggle(300);
      $("textarea").val("");
-    return false;
+     return false;
    });
 
    $("#topic_submit").click(function(event){
@@ -134,13 +134,18 @@
     <div style="height:10px;background-color:wheat;margin-bottom:20px;"></div>
     <div id="text" style="padding: 5px">
       Welcome {{ user.get_full_name }}
-      <a style="color:grey;" href="/members/profile/view/{{ user.username }}">(Profile)</a>	  
-      <a href="#" class="comment_button" id="0"><br>
+      <a style="color:grey;" href="/members/profile/view/{{ user.username }}">(Profile)</a>      
+      <p>
+    <div style="margin-bottom:5px;" class="generic_button">
+      <a href="#" class="comment_button" id="0">
 	Make a comment</a>
+    <a href="/members">Load new messages</a>
+    </div>
+    </p>
       <!-- <strong style="float:right;">Today is Pulla</strong> -->
       <div class="commentpanel" id="slidepanel0">
 	<form>
-	  <textarea style="width:400px;height:56px" name="message"></textarea><br/>
+	  <textarea id="commenttext0" style="width:400px;height:56px" name="message"></textarea><br/>
 	  <input type="hidden" value="/members/comment/new/0/">
 	  <input type="submit" value=" Comment " class="comment_submit"/>
 	</form>
@@ -178,7 +183,7 @@
  	<div class="insertion" id="{{ update.rootcomment.id }}"></div>
 	  <div class="commentpanel" style="margin:10px 0px 5px 110px;" id="slidepanel{{ update.rootcomment.id }}">
 	    <form>
-	      <textarea style="width:250px;height:56px" name="message"></textarea><br/>
+	      <textarea id="commenttext{{ update.rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
 	      <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/">
 	      <input type="submit" value=" Comment " class="comment_submit"/>
 	    </form>

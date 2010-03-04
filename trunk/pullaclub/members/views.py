@@ -98,23 +98,31 @@ def profile(request, action, username):
 def comment(request, action, comment_id):
     
     # TODO: validate message and escape code it!
-    if action == 'new' or action == 'pullaa':
+    if action == 'new' or action == 'edit':
         # new comment
         if request.method == 'POST':
             message = request.POST['message']
             if not message:
                 message = 'Pullaa!'
             #message.length
-            comment = Comment()
-            comment.user = request.user
-            comment.message = message
-            if comment_id == '0': # root comment
-                comment.parent = None
-            else: # normal comment
-                targetcomment = get_object_or_404(Comment,pk=comment_id)
-                comment.parent = targetcomment
+            if action == 'edit':
+                if request.user.is_staff:
+                    comment = get_object_or_404(Comment,pk=comment_id)
+                else:
+                    comment = get_object_or_404(Comment,pk=comment_id,user=request.user)
+                comment.message = message
+                comment.save()
+            else: # new comment
+                comment = Comment()
+                comment.user = request.user
+                comment.message = message
+                if comment_id == '0': # root comment
+                    comment.parent = None
+                else: # normal comment
+                    targetcomment = get_object_or_404(Comment,pk=comment_id)
+                    comment.parent = targetcomment
 
-            comment.save()
+                comment.save()
 
             parentid = 0
             rootcomment = None
@@ -147,8 +155,7 @@ def comment(request, action, comment_id):
 
 
     elif action == 'delete':
-        # TODO check that user owns comment
-        comment = get_object_or_404(Comment,pk=comment_id)
+        comment = get_object_or_404(Comment,pk=comment_id,user=request.user)
         comment.delete()
         return HttpResponse(str(comment.id))
 

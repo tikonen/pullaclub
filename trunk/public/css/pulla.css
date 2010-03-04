@@ -114,4 +114,27 @@ color: #fff;
 background: #ffa20c;
 border: 1px solid #781351;
 padding: 2px 6px
+}
+
+.generic_button a {
+    color: #000;
+    background: #ffa20f;
+    border: 2px outset #d7b9c9;
+    padding-left:3px;
+    padding-right:3px;
+    text-decoration:none;
+}
+.generic_button a:active {
+    border-style:solid;
+    outline:none;
 }  
+
+.errorList { 
+    color:red;
+    list-style: none;
+    border: 2px solid black;
+    padding:5px;
+    background-color: yellow;
+    width:180px;
+    margin-left:5em;
+}

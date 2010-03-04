@@ -33,8 +33,10 @@
     <h1>{{ user.get_full_name }}<br> member no: {{ user.id }}</h1>
     <div id="text" style="padding: 5px">
       {% if own %}
+      <div class="generic_button">
       <a href="/members/profile/edit/{{ user.username }}">Edit Profile</a>
       {% endif %}
+      </div>
       <p>
       <hr width="100%" color="lightgrey">
       </p>
