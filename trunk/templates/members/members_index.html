@@ -14,7 +14,7 @@
      var id = element.attr("id");
 
      $("#slidepanel"+id).slideToggle(100);
-     $("#commenttext"+id).focus();  
+     setTimeout(function() {$("#commenttext"+id).focus(); },300);
      return false;
    });
 
@@ -23,7 +23,7 @@
      var id = element.attr("id");
 
      $("#topicpanel").slideToggle(100);
-     $("#topictext").focus();  
+     setTimeout(function() {$("#topictext").focus(); },300);
      return false;
    });
 
