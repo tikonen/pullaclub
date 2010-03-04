@@ -129,7 +129,7 @@ padding: 2px 6px
     outline:none;
 }  
 
-.errorList { 
+.errorlist { 
     color:red;
     list-style: none;
     border: 2px solid black;

@@ -72,6 +72,7 @@
       margin-bottom:30px;
       margin-top: 5px;
       margin-left: 10px;
+      margin-right: 10px;
     }
     .update {
       margin: 5px 5px 15px 5px;
@@ -83,7 +84,7 @@
       text-align:left;
     }
     .comment {
-      margin:10px 0px 5px 110px;
+      margin:10px 0px 5px 120px;
       padding-left: 0.5em;
       padding-top: 0.5em;
       width:50%;
@@ -161,7 +162,7 @@
       <p>
       <div class="update">
 	<div class="profile">
-	  <img style="margin-right:10px;" src="{{ update.rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
+	  <img src="{{ update.rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
 	  <span id="text">{{ update.rootcomment.user.get_profile.description }}</span>
 	</div>
 	<div id="text">	  
@@ -181,7 +182,7 @@
 	</div>
 	{% endfor %}
  	<div class="insertion" id="{{ update.rootcomment.id }}"></div>
-	  <div class="commentpanel" style="margin:10px 0px 5px 110px;" id="slidepanel{{ update.rootcomment.id }}">
+	  <div class="commentpanel" style="margin:10px 0px 5px 120px;" id="slidepanel{{ update.rootcomment.id }}">
 	    <form>
 	      <textarea id="commenttext{{ update.rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
 	      <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/">
