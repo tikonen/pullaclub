@@ -7,9 +7,10 @@ body { background-color: white;
        border-style: groove;
        border-color: #D2691E;
        width: 800px;
+       font: normal 13px verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;       
      }
 
-#text { font-weight: bold; color:grey; font-family: serif}
+#text { font-weight: bold; color:grey; }
 #text a { text-decoration: none; color:#404040;}
 #text a:visited { text-decoration: none; color:#404040;}
 #text a:hover { text-decoration: underline}
