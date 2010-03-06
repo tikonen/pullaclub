@@ -27,6 +27,11 @@ class Topic(models.Model):
     def __unicode__(self):
         return self.user.username + ": "+self.message
 
+    def short_view(self):
+        if len(self.message) > 33:
+            return self.message[:30]+'...'
+        return self.message
+
 
 class Comment(models.Model):
 

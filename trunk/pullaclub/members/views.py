@@ -41,6 +41,8 @@ def index(request):
             'user': request.user,
             'topic': topic,
             'view_list': view_list,
+            'member_list': User.objects.all(),            
+            'topic_list': Topic.objects.order_by('-datetime')[1:10],
             'error_message': error_message,
             })
     return HttpResponse(t.render(c))

@@ -17,8 +17,10 @@ urlpatterns = patterns(
 
 
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'members/login.html'}),
-    (r'^changepassword/$', 'django.contrib.auth.views.password_change'),
-    (r'^changeok/$', 'django.contrib.auth.views.password_change_done'),
+    (r'^changepassword/$', 'django.contrib.auth.views.password_change', 
+     { 'template_name': 'members/password_change_form.html'}),
+    (r'^changeok/$', 'django.contrib.auth.views.password_change_done',
+     { 'template_name': 'members/password_change_done.html'}),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:

@@ -10,6 +10,27 @@ body { background-color: white;
        /* overflow: hidden; */
      }
 
+#main {
+    padding:5px;
+    float:left;
+    width:70%;
+    background:white;
+}
+#sidebar {
+    padding:5px;
+    border-left: 1px dotted grey;
+    float:right;
+    width:12em;
+    background:white;
+}
+.listtitle {
+    background:grey;
+    color:white;
+    text-align:center;
+    width:12em;
+    font-weight:bold;
+}
+
 .main { padding:5px; }
 
 .title_text { color:grey; }
@@ -40,7 +61,7 @@ h1 { font-weight: bold; font-family: Helvetica; font-size:60px;}
 }
 
 #topnav ul { margin: 0 auto; padding: 0; list-style: none; }
-#topnav li { font: normal 1.1em arial, sans-serif; float: left; margin: 0; padding: 0; }
+#topnav li { font: normal 1em arial, sans-serif; float: left; margin: 0; padding: 0; }
 #topnav li.active { color: #fb0; font-weight: bold; }
 #topnav a { border-bottom: none; border-right: 1px solid #ddd; color: #555;
 	    float: left; letter-spacing: -1px; margin: 0;
@@ -95,12 +116,6 @@ background: #fee3ad;
 border: 1px solid #781351
 }
 
-fieldset textarea {
-color: #781351;
-background: #fee3ad;
-border: 1px solid #781351
-}
-
 .submit input {
 color: #000;
 background: #ffa20f;
@@ -111,20 +126,25 @@ fieldset {
 border: 1px solid #781351;
 }
 
-legend {
-background: #ffa20c;
-border: 1px solid #781351;
-padding: 2px 6px
-}
-
-label {
-width: 6em;
+fieldset label {
+width: 8em;
 float: left;
 text-align: right;
 margin-right: 0.5em;
 display: block
 }
 
+fieldset textarea {
+color: #781351;
+background: #fee3ad;
+border: 1px solid #781351
+}
+
+legend {
+background: #ffa20c;
+border: 1px solid #781351;
+padding: 2px 6px
+}
 
 .box_button a {
     color: #000;
