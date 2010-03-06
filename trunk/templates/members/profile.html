@@ -4,20 +4,9 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Profile of {{ user.get_full_name }}</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
-    <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
+    <link rel="stylesheet" href="/pullamedia/css/pulla.css" type="text/css" />
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
     <style type="text/css">
-    .profile {
-      float:left;
-      width:80px;
-      height:80px
-      padding:5px;
-      /* border:1px solid black; */
-      text-align:center;
-      margin-bottom:30px;
-      margin-top: 5px;
-      margin-left: 10px;
-    }
     </style>
   </head>
   <body>
@@ -30,22 +19,22 @@
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
       </ul>
     </div>
-    <h1>{{ user.get_full_name }}<br> member no: {{ user.id }}</h1>
-    <div id="text" style="padding: 5px">
-      {% if own %}
-      <div class="generic_button">
-      <a href="/members/profile/edit/{{ user.username }}">Edit Profile</a>
+    <div style="padding:5px;">
+    <h3>{{ user.get_full_name }}<br> member no: {{ user.id }}</h3>
+    <div id="text">
+      {% if can_edit %}
+      <a class="round_button" href="/members/profile/edit/{{ user.username }}"><span>Edit Profile</span></a><br> 
       {% endif %}
       </div>
       <p>
       <hr width="100%" color="lightgrey">
       </p>
-    </div>
-    <div id="text" style="padding: 5px">
-      <p>User Image</p>
-      <p><img src="{{ profile.user_image.url }}" width=70 height=70><p>
-      Description:
-      <span id="text">{{ profile.description }}</span>
+      <div id="text">
+	<p><strong>User Image</strong></p>
+	<p><img src="{{ profile.user_image.url }}" width=70 height=70><p>
+	  <strong>Description:</strong>
+	  <span id="text">{{ profile.description }}</span>
+      </div>
     </div>
   </body>
 </html>

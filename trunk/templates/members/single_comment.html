@@ -1,35 +1,42 @@
 
 {% if rootcomment %}
-<p></p>
-  <div class="update">
-    <div class="profile">
-      <img src="{{ rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
-      <span id="text">{{ rootcomment.user.get_profile.description }}</span>
-    </div>
-    <div id="text">	  
-      <a href="/members/profile/view/{{ rootcomment.user.username }}"><span style="color:orange;">{{ rootcomment.user.get_full_name }}</span></a>
-      {{ rootcomment.message }} 
-    </div>
-    <p>
-      <span style="font-weight:xx-small;color:lightgray;">{{ rootcomment.datetime|timesince }} ago</span>
-      <a href="#" class="comment_button" id="{{ rootcomment.id }}" style="font-weight:xx-small;color:darkgrey;">Comment</a>
-  </div>
-  <div class="insertion" id="{{ rootcomment.id }}"></div>
-  <div class="commentpanel" style="margin:10px 0px 5px 120px;" id="slidepanel{{ rootcomment.id }}">
-    <form>
-      <textarea id="commenttext{{ rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
-      <input type="hidden" value="/members/comment/new/{{ rootcomment.id }}/">
-      <input type="submit" value=" Comment " class="comment_submit"/>
-    </form>
-  </div>
-</div> <!-- update -->
-  {% endif %}
-  {% if comment %}
-  <div class="comment">
-    <a href="/members/profile/view/{{ comment.user.username }}">
-      <span style="color:orange;">{{ comment.user.get_full_name }}</span></a>
-    <span style="color:grey;"> says {{ comment.message }}</span>
-    <p><span style="font-weight:xx-small;color:lightgray;">{{ comment.datetime|timesince }} ago</span></p>
-  </div>
+      <p>
+      <div class="update">
+	<div class="profile">
+	  <img src="{{ rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
+	  <span class="text">{{ rootcomment.user.get_profile.description }}</span>
+	</div>
+	<div class="text">	  
+	  <a href="/members/profile/view/{{ rootcomment.user.username }}"><span class="user_name">{{ rootcomment.user.get_full_name }}</span></a>
+	  <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago</span>
+	  <br>
+	  {{ rootcomment.message }} 
+	  <p>
+    	    <a href="#" class="comment_button" id="{{ rootcomment.id }}">Comment</a>
+<!--
+    	    <a href="#" class="update_button" id="{{ rootcomment.id }}">Edit</a>
+    	    <a href="#" class="delete_button" id="{{ rootcomment.id }}">Delete</a>
+-->
+	  </p>
+	</div>
+ 	  <div class="insertion" id="{{ rootcomment.id }}"></div>
+	  <div class="comment_panel" id="slidepanel{{ rootcomment.id }}">
+	    <form>
+	      <textarea id="commenttext{{ rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
+	      <input type="hidden" value="/members/comment/new/{{ rootcomment.id }}/">
+	      <input type="submit" value=" Comment " class="comment_submit"/>
+	    </form>
+	  </div>
+      </div> <!-- update -->
+{% endif %}
+{% if comment %}
+	<div class="text">
+	  <div class="comment">
+	      <a href="/members/profile/view/{{ comment.user.username }}">
+		<span class="user_name">{{ comment.user.get_full_name }}</span></a>
+	      <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
+	      <br>{{ comment.message }}
+	  </div>
+	</div>
 {% endif %}
 

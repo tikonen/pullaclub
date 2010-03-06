@@ -4,12 +4,11 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Members of PullaClub.com</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
-    <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
+    <link rel="stylesheet" href="/pullamedia/css/pulla.css" type="text/css" />
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
     <script type="text/javascript">
  $(document).ready(function() {
      $(".comment_button").live('click',function() {
-//   $(".comment_button").click(function() {
 
      var element = $(this);
      var id = element.attr("id");
@@ -63,44 +62,6 @@
  });
     </script>
     <style type="text/css">
-    .profile {
-      float:left;
-      width:80px;
-      height:80px
-      padding:5px;
-      /* border:1px solid black; */
-      text-align:center;
-      margin-bottom:30px;
-      margin-top: 5px;
-      margin-left: 10px;
-      margin-right: 10px;
-    }
-    .update {
-      margin: 5px 5px 15px 5px;
-      padding-top: 5px;
-      clear:both;
-      width:90%;
-      border-top: 1px dotted lightgray;
-      border-left: 1px dotted lightgray;
-      text-align:left;
-    }
-    .comment {
-      margin:10px 0px 5px 120px;
-      padding-left: 0.5em;
-      padding-top: 0.5em;
-      width:50%;
-      text-align:left;
-      border-top: 1px solid lightgray;
-      border-left: 1px dotted lightgray;
-    }
-    .commentpanel { 
-       display:none;
-    }
-    #topicpanel { 
-       display:none;
-       width:400;
-       text-align:center;
-    }
     </style>
   </head>
   <body>
@@ -117,44 +78,39 @@
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
       </ul>
     </div>
-    <div>
     <center>
-    <span id="topic" style="font-size:xx-large;border-bottom: 1px dotted lightgrey;" align="center">{{ topic.message }}</span>
-    {% if user.is_staff %}
-    <a href="#" id="topic_button" style="color:darkgrey;font-size:xx-small">Edit</a>
-    {% endif %}
-    <br>
-    <span id="topic_time" style="font-weight:xx-small;color:lightgray;">{{ topic.datetime|timesince }} ago by <span id="topic_user">{{ topic.user.get_full_name }}</span></span>
+      <span id="topic" align="center">{{ topic.message }}</span>
+      {% if user.is_staff %}
+      <a href="#" id="topic_button">Edit</a>
+      {% endif %}
+      <br>
+      <span id="topic_time" class="time_stamp">{{ topic.datetime|timesince }} ago by <span id="topic_user">{{ topic.user.get_full_name }}</span></span>
     </center>
-    </div>
     <div id="topicpanel">
       <form>
-	<textarea id="topictext" style="width:400px;height:23px" name="message"></textarea><br/>
+	<textarea id="topictext" name="message"></textarea><br/>
 	<input type="hidden" value="/members/topic/new/">
 	<input type="submit" value=" Update " id="topic_submit"/>
       </form>
     </div>
     <div style="height:10px;background-color:wheat;margin-bottom:20px;"></div>
-    <div id="text" style="padding: 5px">
-      Welcome {{ user.get_full_name }}
-      <a style="color:grey;" href="/members/profile/view/{{ user.username }}">(Profile)</a>      
-      <p>
-    <div style="margin-bottom:5px;" class="generic_button">
-      <a href="#" class="comment_button" id="0">Make a comment</a>
-    <a href="/members">Load new messages</a>
-    </div>
+    <div style="padding:5px;">
+    <h2>Welcome {{ user.get_full_name }}</h2>
+    <span class="text"><a href="/members/profile/view/{{ user.username }}">View Profile</a></span>
+    <p>
+      <a class="round_button" href="#"><span class="comment_button" id="0">Make new comment</span></a>  
+      <a class="round_button" href="/members/"><span>Load new messages</span></a>  
+      <br>
     </p>
-      <!-- <strong style="float:right;">Today is Pulla</strong> -->
-      <div class="commentpanel" id="slidepanel0">
-	<form>
-	  <textarea id="commenttext0" style="width:400px;height:56px" name="message"></textarea><br/>
-	  <input type="hidden" value="/members/comment/new/0/">
-	  <input type="submit" value=" Comment " class="comment_submit"/>
-	</form>
-      </div>
-      <p>
-
-      </p>
+    <div class="comment_panel" style="margin:0" id="slidepanel0">
+      <form>
+	<textarea id="commenttext0" name="message"></textarea><br/>
+	<input type="hidden" value="/members/comment/new/0/">
+	<input type="submit" value=" Comment " class="comment_submit"/>
+      </form>
+    </div>
+    <p>
+    </p>
     </div>
     <div class="clear">
       <div class="insertion" id="0"></div>
@@ -164,26 +120,33 @@
       <div class="update">
 	<div class="profile">
 	  <img src="{{ update.rootcomment.user.get_profile.user_image.url }}" width=70 height=70>
-	  <span id="text">{{ update.rootcomment.user.get_profile.description }}</span>
+	  <span class="text">{{ update.rootcomment.user.get_profile.description }}</span>
 	</div>
-	<div id="text">	  
-	  <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span style="color:orange;">{{ update.rootcomment.user.get_full_name }}</span></a>
+	<div class="text">	  
+	  <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span class="user_name">{{ update.rootcomment.user.get_full_name }}</span></a>
+	  <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago</span>
+	  <br>
 	  {{ update.rootcomment.message }} 
+	  <p>
+    	    <a href="#" class="comment_button" id="{{ update.rootcomment.id }}">Comment</a>
+<!--
+    	    <a href="#" class="update_button" id="{{ update.rootcomment.id }}">Edit</a>
+    	    <a href="#" class="delete_button" id="{{ update.rootcomment.id }}">Delete</a>
+-->
+	  </p>
 	</div>
-	<p></p>
-	  <span style="font-weight:xx-small;color:lightgray;">{{ update.rootcomment.datetime|timesince }} ago</span>
-    	  <a href="#" class="comment_button" id="{{ update.rootcomment.id }}" style="font-weight:xx-small;color:darkgrey;">Comment</a>
-	  
 	  {% for comment in update.subcomments %}
+	<div class="text">
 	  <div class="comment">
-	    <a href="/members/profile/view/{{ comment.user.username }}">
-	      <span style="color:orange;">{{ comment.user.get_full_name }}</span></a>
-	    <span style="color:grey;"> says {{ comment.message }}</span>
-	    <p><span style="font-weight:xx-small;color:lightgray;">{{ comment.datetime|timesince }} ago</span></p>
+	      <a href="/members/profile/view/{{ comment.user.username }}">
+		<span class="user_name">{{ comment.user.get_full_name }}</span></a>
+	      <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
+	      <br>{{ comment.message }}
 	  </div>
+	</div>
 	  {% endfor %}
  	  <div class="insertion" id="{{ update.rootcomment.id }}"></div>
-	  <div class="commentpanel" style="margin:10px 0px 5px 120px;" id="slidepanel{{ update.rootcomment.id }}">
+	  <div class="comment_panel" id="slidepanel{{ update.rootcomment.id }}">
 	    <form>
 	      <textarea id="commenttext{{ update.rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
 	      <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/">
@@ -194,6 +157,5 @@
       {% endfor %}
       {% endif %}
     </div>
-    <!-- <span id="text"><a href="/members/?offset=10">Older</a></span> -->
   </body>
 </html>

@@ -4,20 +4,9 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Edit profile of {{ user.get_full_name }}</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
-    <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
+    <link rel="stylesheet" href="/pullamedia/css/pulla.css" type="text/css" />
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
     <style type="text/css">
-    .profile {
-      float:left;
-      width:80px;
-      height:80px
-      padding:5px;
-      /* border:1px solid black; */
-      text-align:center;
-      margin-bottom:30px;
-      margin-top: 5px;
-      margin-left: 10px;
-    }
     </style>
   </head>
   <body>
@@ -30,21 +19,21 @@
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
       </ul>
     </div>
-    <div id="text" style="padding: 5px">
-      <span style="color:orange;">{{ user.get_full_name }}</span><br>
-      <p>
+    <div style="padding:5px;">
+      <center>
+      <h3>{{ user.get_full_name }}<br> member no: {{ user.id }}</h3>
+      </center>
       <hr width="100%" color="lightgrey">
-      </p>
-    </div>
-    <div id="text" style="padding: 5px">
-      <form enctype="multipart/form-data" method="post" action="/members/profile/edit/{{ user.username }}/">
-	<fieldset>
-	  <legend>Edit your profile</legend>
-	  <p> {{ form.user_image.label_tag }} {{ form.user_image }} {{ form.user_image.errors }}</p>
-	  <p>{{ form.description.label_tag }}{{ form.description }} {{ form.descritpion.errors }}</p>
-	  <p class="submit"><input type="submit" value="Submit" /><input type="reset"></p>
-	</fieldset>
-      </form>
+      <div style="width:15em; margin-left:auto; margin-right:auto;margin-bottom:100px;">
+	<form enctype="multipart/form-data" method="post" action="/members/profile/edit/{{ user.username }}/">
+	  <fieldset>
+	    <legend>Edit your profile</legend>
+	    <p> {{ form.user_image.label_tag }} {{ form.user_image }} {{ form.user_image.errors }}</p>
+	    <p>{{ form.description.label_tag }} {{ form.description }} {{ form.descritpion.errors }}</p>
+	    <p class="submit"><input type="submit" value="Submit" /><input type="reset"></p>
+	  </fieldset>
+	</form>
+      </div>
     </div>
   </body>
 </html>
