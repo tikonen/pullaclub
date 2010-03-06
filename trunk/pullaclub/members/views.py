@@ -16,6 +16,11 @@ from django.contrib.auth import logout
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
 
+def __truncate_length(text):
+    if len(text) > 160:
+        return text[:160]
+    return text
+
 def index(request):
     
     view_list = []
@@ -42,11 +47,11 @@ def index(request):
 
 def profile(request, action, username):
     
-    own = False
+    can_edit = False
 
     if action == 'view':
-        if request.user.username == username:
-            own = True
+        if request.user.username == username or request.user.is_staff:
+            can_edit = True
             pass
 
         user = get_object_or_404(User,username=username)
@@ -58,7 +63,7 @@ def profile(request, action, username):
         return render_to_response('members/profile.html', {
                 'user': user,
                 'profile': profile,
-                'own' : own,
+                'can_edit' : can_edit,
                 })
 
     elif action == 'edit':
@@ -83,13 +88,13 @@ def profile(request, action, username):
 
                 return HttpResponseRedirect(reverse('pullaclub.members.views.index')) # Redirect after POST
         else:
-            profile = request.user.get_profile()
+            profile = user.get_profile()
             data = { 'description' : profile.description }
             file_data = {}
             form = ProfileForm(data, file_data)
             
         return render_to_response('members/profile_edit.html', {
-                'user': request.user,
+                'user': user,
                 'form': form,
                 })
 
@@ -97,14 +102,14 @@ def profile(request, action, username):
 
 def comment(request, action, comment_id):
     
-    # TODO: validate message and escape code it!
     if action == 'new' or action == 'edit':
         # new comment
         if request.method == 'POST':
             message = request.POST['message']
             if not message:
                 message = 'Pullaa!'
-            #message.length
+            message = __truncate_length(message)
+
             if action == 'edit':
                 if request.user.is_staff:
                     comment = get_object_or_404(Comment,pk=comment_id)
@@ -203,7 +208,7 @@ def topic(request, action):
                     message = 'Pullaa!'
 
                 topic = Topic()
-                topic.message = message
+                topic.message = __truncate_length(message)
                 topic.user = request.user
                 topic.save()
 
