@@ -45,8 +45,8 @@ def index(request, offset):
         show_count = page_len
         page_count = int(math.ceil(comment_count / float(page_len)))
         offset *= show_count
-        if (offset+page_len) > comment_count:
-            offset = comment_count-page_len
+        if (offset+show_count) > comment_count:
+            show_count = comment_count-offset;
 
     # 10 root level comments starting from offset
     for update in Comment.objects.filter(parent=None).order_by('-datetime')[offset:offset+show_count]:
