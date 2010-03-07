@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
@@ -35,11 +36,11 @@
     $.post(url, $(this).parent().serialize(), function(data) {
         var result = jQuery.parseJSON(data);
         if(result.id == "0") {
-          $(".insertion[id='"+result.id+"']").prepend(result.render);
+          $(".insertion[id='"+result.id+"']").prepend(result.render).css("display","none").slideToggle(300);
         } else 
-           $(".insertion[id='"+result.id+"']").append(result.render);
+           $(".insertion[id='"+result.id+"']").append(result.render).css("display","none").slideToggle(300);
     });    
-     $("#"+panelid).slideToggle(300);
+     $("#"+panelid).slideToggle(100);
      $("textarea").val("");
      return false;
    });
@@ -80,7 +81,7 @@
       </ul>
     </div>
     <center>
-      <span id="topic" align="center">{{ topic.message }}</span>
+      <span id="topic" align="center">{{ topic.message|urlize }}</span>
       {% if user.is_staff %}
       <a href="#" id="topic_button">Edit</a>
       {% endif %}
@@ -107,6 +108,15 @@
     <p>
       <a class="round_button" href="#"><span class="comment_button" id="0">Make new comment</span></a>  
       <a class="round_button" href="/members/"><span>Load new messages</span></a>  
+      
+      <span class="text" style="float:right;font-size:small">
+	Page
+	{% for c in page_count|times %}
+	<a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>
+	{% if forloop.first %}top{% else %}{{ c }}{% endif %}
+	</a>|
+    {% endfor %}
+      </span>
       <br>
     </p>
     <div class="comment_panel" style="margin:0" id="slidepanel0">
@@ -130,7 +140,7 @@
 	  <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span class="user_name">{{ update.rootcomment.user.get_full_name }}</span></a>
 	  <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago</span>
 	  <br>
-	  {{ update.rootcomment.message }} 
+	  {{ update.rootcomment.message|urlize }} 
 	  <p>
     	    <a href="#" class="comment_button" id="{{ update.rootcomment.id }}">Comment</a>
 <!--
@@ -145,7 +155,7 @@
 	      <a href="/members/profile/view/{{ comment.user.username }}">
 		<span class="user_name">{{ comment.user.get_full_name }}</span></a>
 	      <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
-	      <br>{{ comment.message }}
+	      <br>{{ comment.message|urlize }}
 	  </div>
 	</div>
 	  {% endfor %}
@@ -160,6 +170,17 @@
       </div> <!-- update -->
       {% endfor %}
       {% endif %}
+      <br>
+      <p style="float:right">
+            <span class="text" style="font-size:small">
+	Page
+	{% for c in page_count|times %}
+	<a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>
+	{% if forloop.first %}top{% else %}{{ c }}{% endif %}
+	</a>|
+    {% endfor %}
+      </span>
+      </p>
     </div> <!-- main -->
     <div id="sidebar">
       <div class="listtitle">Our members</div>
@@ -177,7 +198,7 @@
       <div class="listtitle">Old topics</div>
       <p>
       {% for topic in topic_list %}
-      <div style="font-size:xx-small;border-bottom:1px dotted grey;">{{ topic.short_view }} <span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span></div>
+      <div title="{{ topic.message }}" style="font-size:xx-small;border-bottom:1px dotted grey;">{{ topic.as_trunc }} <span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span></div>
       {% endfor %}
       </p>
     </div> <!-- sidebar -->

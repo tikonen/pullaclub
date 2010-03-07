@@ -1,4 +1,4 @@
-import os
+import math
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -21,7 +21,7 @@ def __truncate_length(text):
         return text[:160]
     return text
 
-def index(request):
+def index(request, offset):
     
     view_list = []
     error_message = None
@@ -31,8 +31,25 @@ def index(request):
     except Topic.DoesNotExist:
         topic = None
 
-    # 10 latest root level comments
-    for update in Comment.objects.filter(parent=None).order_by('-datetime')[:10]:
+
+    page_len = 8
+    offset = int(offset)
+    comment_count = Comment.objects.filter(parent=None).count()
+    if comment_count < page_len:
+        show_count = comment_count
+        page_count = 0
+        offset = 0
+        active_page = 0
+    else:
+        active_page=offset
+        show_count = page_len
+        page_count = math.ceil(comment_count / page_len)
+        offset *= show_count
+        if (offset+page_len) > comment_count:
+            offset = comment_count-page_len
+
+    # 10 root level comments starting from offset
+    for update in Comment.objects.filter(parent=None).order_by('-datetime')[offset:offset+show_count]:
         view_list.append({'rootcomment': update,
                           'subcomments': Comment.objects.filter(parent=update.id).order_by('datetime')})
             
@@ -40,6 +57,8 @@ def index(request):
     c = Context({
             'user': request.user,
             'topic': topic,
+            'page_count': page_count,
+            'active_page': active_page,
             'view_list': view_list,
             'member_list': User.objects.all(),            
             'topic_list': Topic.objects.order_by('-datetime')[1:10],
@@ -155,7 +174,6 @@ def comment(request, action, comment_id):
                 'render' : t.render(c),
                 }
                 
-            #return HttpResponse("OK")
             return HttpResponse(simplejson.dumps(response_dict), 
                                 mimetype='application/javascript')
 
@@ -164,7 +182,11 @@ def comment(request, action, comment_id):
     elif action == 'delete':
         comment = get_object_or_404(Comment,pk=comment_id,user=request.user)
         comment.delete()
-        return HttpResponse(str(comment.id))
+        response_dict = {
+                'status' :  'OK',
+        }
+        return HttpResponse(simplejson.dumps(response_dict), 
+                                mimetype='application/javascript')
 
     elif action == 'view':
         comment = get_object_or_404(Comment,pk=comment_id)
@@ -240,4 +262,8 @@ profile = login_required(profile)
 comment = login_required(comment)
 topic = login_required(topic)
 finance = login_required(finance)
+
+
+
+
 

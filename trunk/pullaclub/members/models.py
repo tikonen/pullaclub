@@ -27,9 +27,10 @@ class Topic(models.Model):
     def __unicode__(self):
         return self.user.username + ": "+self.message
 
-    def short_view(self):
-        if len(self.message) > 33:
-            return self.message[:30]+'...'
+    def as_trunc(self):
+        trunc_len = 30
+        if len(self.message) > trunc_len:
+            return self.message[:(trunc_len-3)]+'...'
         return self.message
 
 

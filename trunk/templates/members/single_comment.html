@@ -10,7 +10,7 @@
 	  <a href="/members/profile/view/{{ rootcomment.user.username }}"><span class="user_name">{{ rootcomment.user.get_full_name }}</span></a>
 	  <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago</span>
 	  <br>
-	  {{ rootcomment.message }} 
+	  {{ rootcomment.message|urlize }} 
 	  <p>
     	    <a href="#" class="comment_button" id="{{ rootcomment.id }}">Comment</a>
 <!--
@@ -35,7 +35,7 @@
 	      <a href="/members/profile/view/{{ comment.user.username }}">
 		<span class="user_name">{{ comment.user.get_full_name }}</span></a>
 	      <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
-	      <br>{{ comment.message }}
+	      <br>{{ comment.message|urlize }}
 	  </div>
 	</div>
 {% endif %}

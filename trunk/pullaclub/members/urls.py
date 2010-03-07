@@ -2,7 +2,8 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns(
     'pullaclub.members.views',
-    (r'^$', 'index'),
+    (r'^$', 'index', { 'offset' : '0' }),
+    (r'^(?P<offset>\d+)/$', 'index' ),
     (r'^apply/$', 'apply'),
     (r'^finance/$', 'finance'),
     (r'^profile/(?P<action>\w+)/(?P<username>\w+)/$', 'profile'),

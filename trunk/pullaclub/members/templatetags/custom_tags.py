@@ -1,0 +1,7 @@
+from django import template
+
+# register custom template filter to support integer counter loops
+register = template.Library()
+@register.filter
+def times(count):
+    return range(int(count))
