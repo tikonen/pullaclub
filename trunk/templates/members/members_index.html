@@ -201,6 +201,13 @@
       <div title="{{ topic.message }}" style="font-size:xx-small;border-bottom:1px dotted grey;">{{ topic.as_truncated }} <span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span></div>
       {% endfor %}
       </p>
+      <p></p>
+      <div class="listtitle">Pending applications</div>
+      <p>
+      {% for application in application_list %}
+      <div title="{{ application.message }}">{{ application.name|title }} ({{ application.referral|default:"none" }}) </div>
+      {% endfor %}
+      </p>      
     </div> <!-- sidebar -->
     </div> <!-- clear -->
   </body>

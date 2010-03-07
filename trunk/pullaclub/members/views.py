@@ -21,6 +21,7 @@ def __truncate_length(text):
         return text[:160]
     return text
 
+@login_required
 def index(request, offset):
     
     view_list = []
@@ -48,7 +49,7 @@ def index(request, offset):
         if (offset+show_count) > comment_count:
             show_count = comment_count-offset;
 
-    # 10 root level comments starting from offset
+    # page_len root level comments starting from offset
     for update in Comment.objects.filter(parent=None).order_by('-datetime')[offset:offset+show_count]:
         view_list.append({'rootcomment': update,
                           'subcomments': Comment.objects.filter(parent=update.id).order_by('datetime')})
@@ -62,10 +63,12 @@ def index(request, offset):
             'view_list': view_list,
             'member_list': User.objects.all(),            
             'topic_list': Topic.objects.order_by('-datetime')[1:10],
+            'application_list': UserApplication.objects.filter(status='P'),
             'error_message': error_message,
             })
     return HttpResponse(t.render(c))
 
+@login_required
 def profile(request, action, username):
     
     can_edit = False
@@ -129,6 +132,7 @@ def profile(request, action, username):
 
     raise Http404
 
+@login_required
 def comment(request, action, comment_id):
     
     if action == 'new' or action == 'edit':
@@ -189,7 +193,8 @@ def comment(request, action, comment_id):
 
     elif action == 'delete':
         comment = get_object_or_404(Comment,pk=comment_id,user=request.user)
-        comment.delete()
+        comment.message = "This comment has been deleted"
+        comment.save()
         response_dict = {
                 'status' :  'OK',
         }
@@ -229,6 +234,7 @@ def apply(request):
             'form': form,
             })
     
+@login_required
 def topic(request, action):
     
     # TODO: validate message and escape code it!
@@ -256,6 +262,7 @@ def topic(request, action):
 
     raise Http404
 
+@login_required
 def finance(request):
     return render_to_response('members/finance.html', {
             'user': request.user,
@@ -264,12 +271,6 @@ def finance(request):
 def logoutuser(request):
     logout(request)
     return HttpResponseRedirect('/') 
-
-index = login_required(index)
-profile = login_required(profile)
-comment = login_required(comment)
-topic = login_required(topic)
-finance = login_required(finance)
 
 
 

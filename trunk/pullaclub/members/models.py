@@ -69,9 +69,9 @@ class ProfileForm(forms.Form):
 
 
 class ApplyForm(forms.Form):
-    name = forms.CharField()
-    email = forms.EmailField()
-    referral = forms.CharField()
+    name = forms.CharField(label="Full Name")
+    email = forms.EmailField(label="E-Mail")
+    referral = forms.CharField(label="Recommender")
     message = forms.CharField(max_length=160,
                               widget=forms.Textarea(attrs={'rows':4, 'cols':60}))
 

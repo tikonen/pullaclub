@@ -25,7 +25,7 @@ body {
 	padding: 5px;
 	border-left: 1px dotted grey;
 	float: right;
-	width: 13em;
+	width: 26%;
 	background: white;
 }
 
@@ -33,7 +33,7 @@ body {
 	background: grey;
 	color: white;
 	text-align: center;
-	width: 12em;
+	width: 100%;
 	font-weight: bold;
 }
 
