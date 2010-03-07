@@ -205,7 +205,7 @@
       <div class="listtitle">Pending applications</div>
       <p>
       {% for application in application_list %}
-      <div title="{{ application.message }}">{{ application.name|title }} ({{ application.referral|default:"none" }}) </div>
+      <div title="{{ application.message }}">{{ application.name|title }} <span style="color:grey;float:right;">{{ application.referral|default:"none" }}</span></div>
       {% endfor %}
       </p>      
     </div> <!-- sidebar -->
