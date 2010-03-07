@@ -24,13 +24,15 @@
       <h3>{{ user.get_full_name }}<br> member no: {{ user.id }}</h3>
       </center>
       <hr width="100%" color="lightgrey">
-      <div style="width:15em; margin-left:auto; margin-right:auto;margin-bottom:100px;">
+      <div style="width:30em; margin-left:auto; margin-right:auto;margin-bottom:100px;">
 	<form enctype="multipart/form-data" method="post" action="/members/profile/edit/{{ user.username }}/">
 	  <fieldset>
 	    <legend>Edit your profile</legend>
+	    <p>{{ form.first_name.label_tag }} {{ form.first_name }} {{ form.first_name.errors }}</p>
+	    <p>{{ form.last_name.label_tag }} {{ form.last_name }} {{ form.last_name.errors }}</p>
 	    <p> {{ form.user_image.label_tag }} {{ form.user_image }} {{ form.user_image.errors }}</p>
-	    <p>{{ form.description.label_tag }} {{ form.description }} {{ form.descritpion.errors }}</p>
-	    <p class="submit"><input type="submit" value="Submit" /><input type="reset"></p>
+	    <p>{{ form.description.label_tag }} {{ form.description }} {{ form.description.errors }}</p>
+	    <p class="submit"><input type="submit" value="Submit" /></p>
 	  </fieldset>
 	</form>
       </div>

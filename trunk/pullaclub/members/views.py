@@ -98,6 +98,11 @@ def profile(request, action, username):
         if request.method == 'POST':
             form = ProfileForm(request.POST, request.FILES) # form bound to the POST data
             if form.is_valid(): # All validation rules pass
+                
+                user.first_name = form.cleaned_data['first_name']
+                user.last_name = form.cleaned_data['last_name']
+                user.save()
+                
                 profile = user.get_profile()
                 profile.description = form.cleaned_data['description']
                 uploaded_file = form.cleaned_data['user_image']
@@ -110,7 +115,10 @@ def profile(request, action, username):
                 return HttpResponseRedirect(reverse('pullaclub.members.views.index')) # Redirect after POST
         else:
             profile = user.get_profile()
-            data = { 'description' : profile.description }
+            data = { 'description' : profile.description,
+                     'first_name' : user.first_name,
+                     'last_name' : user.last_name,
+                      }
             file_data = {}
             form = ProfileForm(data, file_data)
             

@@ -27,7 +27,7 @@ class Topic(models.Model):
     def __unicode__(self):
         return self.user.username + ": "+self.message
 
-    def as_trunc(self):
+    def as_truncated(self):
         trunc_len = 30
         if len(self.message) > trunc_len:
             return self.message[:(trunc_len-3)]+'...'
@@ -64,6 +64,8 @@ class UserApplication(models.Model):
 class ProfileForm(forms.Form):
     user_image = forms.FileField(required=False)
     description = forms.CharField(max_length=15)
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30,required=False)
 
 
 class ApplyForm(forms.Form):
@@ -78,10 +80,12 @@ def create_default_profile(user):
     profile = UserProfile()
     profile.user = user
     try:
+        # set default user picture
         defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
         (name, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
         profile.user_image.save(user.username+suffix,File(defaultpic))
     except IOError:
+        # something should be done here
         pass
     defaultpic.close()
     profile.save()

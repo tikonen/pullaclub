@@ -198,7 +198,7 @@
       <div class="listtitle">Old topics</div>
       <p>
       {% for topic in topic_list %}
-      <div title="{{ topic.message }}" style="font-size:xx-small;border-bottom:1px dotted grey;">{{ topic.as_trunc }} <span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span></div>
+      <div title="{{ topic.message }}" style="font-size:xx-small;border-bottom:1px dotted grey;">{{ topic.as_truncated }} <span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span></div>
       {% endfor %}
       </p>
     </div> <!-- sidebar -->
