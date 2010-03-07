@@ -32,7 +32,7 @@ def index(request, offset):
         topic = None
 
 
-    page_len = 8
+    page_len = 9
     offset = int(offset)
     comment_count = Comment.objects.filter(parent=None).count()
     if comment_count < page_len:
@@ -43,7 +43,7 @@ def index(request, offset):
     else:
         active_page=offset
         show_count = page_len
-        page_count = math.ceil(comment_count / page_len)
+        page_count = int(math.ceil(comment_count / float(page_len)))
         offset *= show_count
         if (offset+page_len) > comment_count:
             offset = comment_count-page_len
