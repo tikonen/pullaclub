@@ -16,9 +16,9 @@ from django.contrib.auth import logout
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
 
-def __truncate_length(text):
-    if len(text) > 160:
-        return text[:160]
+def __truncate_length(text,max_length):
+    if len(text) > max_length:
+        return text[:max_length]
     return text
 
 @login_required
@@ -33,7 +33,7 @@ def index(request, offset):
         topic = None
 
 
-    page_len = 9
+    page_len = 9  # number of root comments in single page
     offset = int(offset)
     comment_count = Comment.objects.filter(parent=None).count()
     if comment_count < page_len:
@@ -140,8 +140,8 @@ def comment(request, action, comment_id):
         if request.method == 'POST':
             message = request.POST['message']
             if not message:
-                message = 'Pullaa!'
-            message = __truncate_length(message)
+                raise Http404
+            message = __truncate_length(message,Comment.MAX_LENGTH)
 
             if action == 'edit':
                 if request.user.is_staff:
@@ -243,10 +243,10 @@ def topic(request, action):
             if request.method == 'POST':
                 message = request.POST['message']
                 if not message:
-                    message = 'Pullaa!'
+                    raise Http404
 
                 topic = Topic()
-                topic.message = __truncate_length(message)
+                topic.message = __truncate_length(message,Topic.MAX_LENGTH)
                 topic.user = request.user
                 topic.save()
 

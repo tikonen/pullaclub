@@ -1,7 +1,7 @@
-{% load custom_tags %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
+    <!-- {% load custom_tags %} -->
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Members of PullaClub.com</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
@@ -9,6 +9,19 @@
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
     <script type="text/javascript">
  $(document).ready(function() {
+ 
+   $("textarea").live('keyup',function(event) {
+      var ml=parseInt($(this).attr("maxlength"));
+      if( $(this).val().length > ml) {
+         $(this).val($(this).val().substring(0,ml));
+         event.preventDefault();
+         $(this).css("background","yellow");
+         setTimeout(function() {$("textarea").css("background","white"); },200);
+         return false;
+      } 
+      return true;
+    });
+ 
      $(".comment_button").live('click',function() {
 
      var element = $(this);
@@ -72,9 +85,9 @@
 	<li><a href="/index.html">Home</a></li>
 	<li><a href="/members">Members</a></li>
 	<li><a href="/members/finance">Finances</a></li>
-        {% if user.is_staff %}
+    <!-- {% if user.is_staff %} -->
 	<li><a href="/admin">Admin</a></li>
-        {% endif %}
+    <!-- {% endif %} -->
 	<li><a href="/about.html">About us</a></li>
 	<li style="float:right;"><a href="logout">Logout</a></li>
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
@@ -82,46 +95,43 @@
     </div>
     <center>
       <span id="topic" align="center">{{ topic.message|urlize }}</span>
-      {% if user.is_staff %}
+      <!-- {% if user.is_staff %} -->
       <a href="#" id="topic_button">Edit</a>
-      {% endif %}
+      <!-- {% endif %} -->
       <br>
       <span id="topic_time" class="time_stamp">{{ topic.datetime|timesince }} ago by <span id="topic_user">{{ topic.user.get_full_name }}</span></span>
     </center>
     <div id="topicpanel">
       <form>
-	<textarea id="topictext" name="message"></textarea><br/>
+	<textarea id="topictext" maxlength="105" name="message"></textarea><br/>
 	<input type="hidden" value="/members/topic/new/">
 	<input type="submit" value=" Update " id="topic_submit"/>
       </form>
     </div>
 
     <!-- head and body separator -->
-    <!--<div style="height:10px;background-color:wheat;margin-bottom:20px;"></div>-->
     <hr>
 
     <div id="main">
-      <div class="text" style="background:grey;color:white">
-	<strong>{{ user.get_full_name }}</strong>
-	<span style="float:right"><a href="/members/profile/view/{{ user.username }}">Profile</a></span>
-      </div>
+      <div class="text" style="background:grey">
+	     <strong><a href="/members/profile/view/{{ user.username }}"><span style="color:white">{{ user.get_full_name }}</span></a>
+	     </strong>
+ 	  </div>
     <p>
       <a class="round_button" href="#"><span class="comment_button" id="0">Make new comment</span></a>  
       <a class="round_button" href="."><span>Load new comments</span></a>  
       
-      <span class="text" style="float:right;font-size:small">
+      <span class="text" style="float:right">
 	Page
-	{% for c in page_count|times %}
-	<a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>
-	{% if forloop.first %}top{% else %}{{ c }}{% endif %}
-	</a>|
-    {% endfor %}
+	<!-- {% for c in page_count|times %} -->
+	<a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>{{ forloop.counter }}</a>|
+    <!-- {% endfor %} -->
       </span>
       <br>
     </p>
     <div class="comment_panel" style="margin:0" id="slidepanel0">
       <form>
-	<textarea id="commenttext0" name="message"></textarea><br/>
+	<textarea id="commenttext0" maxlength="500" name="message"></textarea><br/>
 	<input type="hidden" value="/members/comment/new/0/">
 	<input type="submit" value=" Comment " class="comment_submit"/>
       </form>
@@ -156,28 +166,27 @@
 		<span class="user_name">{{ comment.user.get_full_name }}</span></a>
 	      <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	      <br>{{ comment.message|urlize }}
-	  </div>
+	  </div> <!-- comment -->
 	</div>
 	  {% endfor %}
  	  <div class="insertion" id="{{ update.rootcomment.id }}"></div>
 	  <div class="comment_panel" id="slidepanel{{ update.rootcomment.id }}">
 	    <form>
-	      <textarea id="commenttext{{ update.rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
+	      <textarea maxlength="500" id="commenttext{{ update.rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
 	      <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/">
 	      <input type="submit" value=" Comment " class="comment_submit"/>
 	    </form>
-	  </div>
+	  </div> <!-- comment_panel -->
       </div> <!-- update -->
       {% endfor %}
       {% endif %}
       <br>
+      
       <p style="float:right">
-            <span class="text" style="font-size:small">
+       <span class="text" style="float:right">
 	Page
 	{% for c in page_count|times %}
-	<a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>
-	{% if forloop.first %}top{% else %}{{ c }}{% endif %}
-	</a>|
+	<a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>{{ forloop.counter }}</a>|
     {% endfor %}
       </span>
       </p>

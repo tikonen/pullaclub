@@ -20,8 +20,10 @@ class UserProfile(models.Model):
 
 class Topic(models.Model):
 
+    MAX_LENGTH=160
+
     user = models.ForeignKey(User)
-    message = models.CharField(max_length=160)
+    message = models.CharField(max_length=MAX_LENGTH)
     datetime = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -36,9 +38,11 @@ class Topic(models.Model):
 
 class Comment(models.Model):
 
+    MAX_LENGTH=500
+
     user = models.ForeignKey(User)
     parent = models.ForeignKey('self', null=True, blank=True)
-    message = models.CharField(max_length=160)
+    message = models.CharField(max_length=MAX_LENGTH)
     datetime = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -96,11 +100,11 @@ def create_default_profile(user):
 from django.db.models.signals import post_save
 
 def user_created_signal(sender, **kwargs):
-    # Note that django sometimes likes to call twice signals, so
-    # remember to avoid creating double profiles.
     if kwargs['created']:
         user = kwargs['instance']
         try:
+            # Note that django sometimes likes to call  signals twice, so
+            #  avoid creating double profiles.
             user.get_profile()
         except UserProfile.DoesNotExist:
             create_default_profile(user)
