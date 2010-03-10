@@ -8,15 +8,27 @@ from django.core.files import File
 
 class UserProfile(models.Model):
     
+    USER_TYPE = (
+        ('S','Active'),
+        ('A','Alumni'),
+    )
+
     user = models.ForeignKey(User, unique=True)
 
     # should use ImageField here but it requires Python Imaging Library
-    user_image = models.FileField(upload_to='photos')
-    #user_level = models.CharField(max_length=2,choices=USER_LEVELS)
+    user_image = models.FileField(upload_to=settings.PHOTO_UPLOAD_DIR)
+    user_type = models.CharField(max_length=2,choices=USER_TYPE,null=True)
     description = models.CharField(max_length=15, blank=True)
 
     def __unicode__(self):
         return "Profile of '"+str(self.user)+"'"
+
+    def user_type_desc(self):
+        if self.user.is_staff:
+            return "Staff"
+        elif self.user_type == 'A':
+            return 'Alumni'
+        return 'Active'
 
 class Topic(models.Model):
 
@@ -43,6 +55,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User)
     parent = models.ForeignKey('self', null=True, blank=True)
     message = models.CharField(max_length=MAX_LENGTH)
+    image0 = models.FileField(upload_to=settings.COMMENT_IMAGE_UPLOAD_DIR, null=True, blank=True)
     datetime = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

@@ -154,27 +154,12 @@ def comment(request, action, comment_id):
                 comment = Comment()
                 comment.user = request.user
                 comment.message = message
-                if comment_id == '0': # root comment
-                    comment.parent = None
-                else: # normal comment
-                    targetcomment = get_object_or_404(Comment,pk=comment_id)
-                    comment.parent = targetcomment
-
+                comment.parent = get_object_or_404(Comment,pk=comment_id)
                 comment.save()
-
-            parentid = 0
-            rootcomment = None
-            subcomment = None
-            if comment.parent == None:
-                rootcomment = comment
-            else:
-                subcomment = comment
-                parentid = comment.parent.id
 
             t = loader.get_template('members/single_comment.html')
             c = Context({
-                    'rootcomment': rootcomment,
-                    'comment': subcomment,
+                    'comment': comment,
                     })
             response_dict = {
                 'url' : request.user.get_profile().user_image.url,
@@ -182,14 +167,12 @@ def comment(request, action, comment_id):
                 'username' : request.user.username,
                 'fullname' : request.user.get_full_name(),
                 'message' : comment.message,
-                'id' :  parentid,
+                'id' :  comment.parent.id,
                 'render' : t.render(c),
                 }
                 
             return HttpResponse(simplejson.dumps(response_dict), 
                                 mimetype='application/javascript')
-
-
 
     elif action == 'delete':
         comment = get_object_or_404(Comment,pk=comment_id,user=request.user)
@@ -201,12 +184,28 @@ def comment(request, action, comment_id):
         return HttpResponse(simplejson.dumps(response_dict), 
                                 mimetype='application/javascript')
 
-    elif action == 'view':
-        comment = get_object_or_404(Comment,pk=comment_id)
-        return render_to_response('members/single_comment.html',
-                                  { 'rootcomment': comment,
-                                    'comment' : None,
-                                    })
+    elif action == 'iframe':
+        if request.method == 'GET':
+            return render_to_response('members/comment_iframe.html')
+
+        # new comment
+        message = request.POST['message']
+        if not message:
+            raise Http404
+        message = __truncate_length(message,Comment.MAX_LENGTH)
+
+        comment = Comment()
+        comment.user = request.user
+        comment.message = message                
+        if len(request.FILES) > 0:
+            # save uploaded file
+            uploaded_file = request.FILES['image0']
+            comment.image0.save(uploaded_file.name, uploaded_file)
+        comment.save()
+
+        return render_to_response('members/comment_iframe.html', {
+                'rootcomment': comment,
+                })
 
     raise Http404
 

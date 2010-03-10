@@ -52,12 +52,12 @@ body {
 
 .text a {
 	text-decoration: none;
-	color: #404040;
+	color: #262626;
 }
 
 .text a:visited {
 	text-decoration: none;
-	color: #404040;
+	color: #262626;
 }
 
 .text a:hover {
@@ -71,6 +71,17 @@ body {
 
 .comment_button {
 	font-weight: xx-small
+}
+
+#comment_image {
+	border:none;
+	outline: none;
+}
+#comment_image:hover {
+	border:1px groove grey;
+}
+#comment_image:active {
+	background-position: bottom right;
 }
 
 #topic_button {
@@ -224,12 +235,13 @@ a.round_button:active span {
 	margin-left: 0.5em;
 }
 
+/*
 input {
 	color: #781351;
 	background: #fee3ad;
 	border: 1px solid #781351
 }
-
+*/
 .submit input {
 	color: #000;
 	background: #ffa20f;
@@ -261,53 +273,54 @@ legend {
 }
 
 .box_button a {
-	color: #000;
-	background: #ffa20f;
-	border: 2px outset #d7b9c9;
-	padding: 2px 5px 2px 5px;
+	color: #781351;
+	background: #fee3ad;
+	border: 1px solid black;
 	text-decoration: none;
-	font: normal 12px arial, sans-serif;
+	padding: 1px 2px;
+	font: normal 10px arial, sans-serif;
 }
 
 .box_button a:active {
-	border-style: solid;
+	border-style: dotted;
 	outline: none;
 }
 
 .profile {
-	float: left;
-	width: 80px;
-	height: 80px padding : 5px;
-	text-align: center;
-	margin-bottom: 30px;
-	margin-top: 5px;
-	margin-left: 10px;
-	margin-right: 10px;
+    float: left; 
+}
+
+.profile_avatar {
+    width: 80px;
+    float: left; 
+    text-align: center;
+    margin-bottom:20px;
+    margin-top: 3px;
+}
+
+.update_text {
+    margin-left:80px;
 }
 
 .update {
-	margin: 5px 5px 15px 5px;
-	padding-top: 5px;
-	clear: both;
-	width: 90%;
-	border-top: 1px dotted lightgray;
-	border-left: 1px dotted lightgray;
-	text-align: left;
+    border-top: 1px solid lightgray;
+    border-left: 1px dotted lightgray;
+    float:left;
+    clear:both;
+    margin-top:10px;
+    width:100%;
 }
 
 .comment {
-	margin: 10px 0px 5px 120px;
-	padding-left: 0.5em;
-	padding-top: 0.5em;
-	width: 70%;
-	text-align: left;
-	border-top: 1px solid lightgray;
-	border-left: 1px dotted lightgray;
-	color: grey;
+    border-top: 1px solid lightgray;
+    border-left: 1px dotted lightgray;
+    color: #8B8878;
+    margin: 10px 0px 5px 100px;
+    width:80%;
 }
 
 .comment_panel {
-	margin-left: 125px;
+	margin-left: 105px;
 	display: none;
 }
 
@@ -349,3 +362,12 @@ legend {
 	margin-left: 6.5em;
 }
 
+[icon ^="comment"] {
+    padding-right: 20px;
+    background: transparent url('../gfx/famfamfam/comment.gif') no-repeat center right;
+}
+
+[icon ^="edit"] {
+    /* padding-right: 20px; */
+    background: transparent url('../gfx/famfamfam/page_edit.gif') no-repeat center right;
+}
