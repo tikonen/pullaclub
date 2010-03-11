@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
+    <!-- {% load custom_tags %} -->
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
     <title>Comment</title>
     <!--<link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css"/>-->
@@ -24,7 +25,7 @@
    $("input[name='image0']").hide();
 
    $("#comment_image").click(function() {
-     $("input[name='image0']").show();
+     $("input[name='image0']").toggle();
      return false;
    });
 
@@ -88,7 +89,7 @@ textarea {
 	</div> <!-- update_text -->
 
 	{% if rootcomment.image0 %}
-	<img src="{{ rootcomment.image0.url }}" height="400px"/>
+	<img src="{{ rootcomment.image0|scaleh:"300" }}"/>
 	{% endif %}
 
 	<div class="insertion" id="{{ rootcomment.id }}"></div>

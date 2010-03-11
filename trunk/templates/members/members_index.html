@@ -10,13 +10,12 @@
     <script type="text/javascript">
  $(document).ready(function() {
 
-   $("#slidepanel0").hide();
+   $("#slidepanel0").hide(); // hide the root comment box iframe
 
    $("iframe").load(function() {
      $("#slidepanel0").hide(100);
-     //alert($("form",$("iframe").contents()).html()); // OK
-     var newc = $("#newcomment",$("iframe").contents());
-     if(newc.html()) {
+     var newc = $("#newcomment",$("iframe").contents());  // check if frame has new comment
+     if(newc.html()) {  // if yes, insert it in main html
        $(".insertion[id='0']").prepend(newc.html()).css("display","none").slideToggle(300);
      }
    });
@@ -156,7 +155,7 @@
       <p></p>
       <div class="update">
 	<div class="profile_avatar">
-	  <img src="{{ update.rootcomment.user.get_profile.user_image.url }}" width=60 height=60/>
+	  <img src="{{ update.rootcomment.user.get_profile.user_image|scale2:"60" }}"/>
 	  <span class="text">{{ update.rootcomment.user.get_profile.description }}</span>
 	</div> <!-- avatar -->
 	<div class="update_text">
@@ -171,7 +170,7 @@
 	</div> <!-- update_text -->
 
 	{% if update.rootcomment.image0 %}
-	<img src="{{ update.rootcomment.image0.url }}" height="400px"/>
+	<img src="{{ update.rootcomment.image0|scaleh:"300" }}"/>
 	{% endif %}
 
 	{% for comment in update.subcomments %}

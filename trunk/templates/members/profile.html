@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
+    <!-- {% load custom_tags %} -->
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Profile of {{ user.get_full_name }}</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
@@ -31,7 +32,7 @@
       </p>
       <div id="text">
 	<p><strong>User Image</strong></p>
-	<p><img src="{{ profile.user_image.url }}" width=70 height=70><p>
+	<p><img src="{{ profile.user_image|scale2:"60" }}"><p>
 	  <strong>Description:</strong>
 	  <span id="text">{{ profile.description }}</span>
       </div>

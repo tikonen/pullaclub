@@ -109,8 +109,7 @@ def profile(request, action, username):
                 profile = user.get_profile()
                 profile.description = form.cleaned_data['description']
                 uploaded_file = form.cleaned_data['user_image']
-                if uploaded_file:
-                    # should validate that it really is an image
+                if uploaded_file:                    
                     profile.user_image.save(uploaded_file.name, uploaded_file)
 
                 profile.save()
@@ -236,7 +235,6 @@ def apply(request):
 @login_required
 def topic(request, action):
     
-    # TODO: validate message and escape code it!
     if request.user.is_staff and action == 'new':
         try:
             if request.method == 'POST':

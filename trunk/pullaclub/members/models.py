@@ -15,8 +15,7 @@ class UserProfile(models.Model):
 
     user = models.ForeignKey(User, unique=True)
 
-    # should use ImageField here but it requires Python Imaging Library
-    user_image = models.FileField(upload_to=settings.PHOTO_UPLOAD_DIR)
+    user_image = models.ImageField(upload_to=settings.PHOTO_UPLOAD_DIR)
     user_type = models.CharField(max_length=2,choices=USER_TYPE,null=True)
     description = models.CharField(max_length=15, blank=True)
 
@@ -55,7 +54,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User)
     parent = models.ForeignKey('self', null=True, blank=True)
     message = models.CharField(max_length=MAX_LENGTH)
-    image0 = models.FileField(upload_to=settings.COMMENT_IMAGE_UPLOAD_DIR, null=True, blank=True)
+    image0 = models.ImageField(upload_to=settings.COMMENT_IMAGE_UPLOAD_DIR, null=True, blank=True)
     datetime = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -79,7 +78,7 @@ class UserApplication(models.Model):
         return "Application from "+self.name
 
 class ProfileForm(forms.Form):
-    user_image = forms.FileField(required=False)
+    user_image = forms.ImageField(required=False)
     description = forms.CharField(max_length=15)
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30,required=False)
