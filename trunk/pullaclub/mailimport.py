@@ -211,6 +211,7 @@ import email
 from email.header import decode_header
 import re
 import StringIO
+import Image
 
 from django.conf import settings
 from pullaclub.members.models import Comment
@@ -289,9 +290,16 @@ def process_mailbox():
             elif ctype.startswith('image/'):
                 filename = msgpart.get_filename()
                 filename = 'mms-'+filename.split('/')[-1]
+
+                try:
+                    Image.open(StringIO.StringIO(msgpart.get_payload(decode=True)))
+                except IOError,e:
+                    print '{0}@{1} - mail - {2} ({3}) - {4} failed {5}'.format(settings.POP_HOST,settings.POP_USERNAME, sender,subject,filename,str(e))
+                    break
+
                 mfile = StringIOWrapper(msgpart.get_payload(decode=True))
                 newcomment.image0.save(filename,mfile)
-
+                
                 print '{0}@{1} - mail - {2} ({3}) - {4} stored'.format(settings.POP_HOST,settings.POP_USERNAME, sender,subject,filename)
                 
         #mailbox.dele(idx)
