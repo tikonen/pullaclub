@@ -246,7 +246,7 @@ class StringIOWrapper(StringIO.StringIO):
 
 def process_mailbox():
 
-    print '{0}@{1} - start- polling'.format(settings.POP_HOST,settings.POP_USERNAME)
+    print '{0}@{1} - start- polling'.format(settings.POP_USERNAME,settings.POP_HOST)
     mailbox = poplib.POP3(settings.POP_HOST)
     mailbox.user(settings.POP_USERNAME)
     mailbox.pass_(settings.POP_PASSWORD)
@@ -254,11 +254,11 @@ def process_mailbox():
     (message_count, mailbox_size) = mailbox.stat()
 
     if message_count == 0: # nothing to do
-        print '{0}@{1} - end - no messages'.format(settings.POP_HOST,settings.POP_USERNAME)
+        print '{0}@{1} - end - no messages'.format(settings.POP_USERNAME,settings.POP_HOST)
         mailbox.quit()
         return
 
-    print '{0}@{1} - process - {2} new messages'.format(settings.POP_HOST,settings.POP_USERNAME, message_count)
+    print '{0}@{1} - process - {2} new messages'.format(settings.POP_USERNAME,settings.POP_HOST, message_count)
 
     user = User.objects.get(username=settings.MMS_USER)
 
@@ -274,8 +274,9 @@ def process_mailbox():
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
         sender = parsedmsg['From']
         description = ''
+        has_image = False
 
-        print '{0}@{1} - mail - {2} ({3}) - processing'.format(settings.POP_HOST,settings.POP_USERNAME, sender,subject)
+        print '{0}@{1} - mail - {2} ({3}) - processing'.format(settings.POP_USERNAME,settings.POP_HOST, sender,subject)
 
         for msgpart in parsedmsg.walk():
             ctype = msgpart.get_content_type()
@@ -287,27 +288,27 @@ def process_mailbox():
                 # use html text only if plain text not available
                 description = strip_mms_html(msgpart.get_payload(decode=True))
                 
-            elif ctype.startswith('image/'):
+            elif ctype.startswith('image/') and not has_image:
                 filename = msgpart.get_filename()
                 filename = 'mms-'+filename.split('/')[-1]
 
-                try:
-                    Image.open(StringIO.StringIO(msgpart.get_payload(decode=True)))
-                except IOError,e:
-                    print '{0}@{1} - mail - {2} ({3}) - {4} failed {5}'.format(settings.POP_HOST,settings.POP_USERNAME, sender,subject,filename,str(e))
-                    break
-
                 mfile = StringIOWrapper(msgpart.get_payload(decode=True))
-                newcomment.image0.save(filename,mfile)
+                try:
+                    Image.open(mfile)
+                except IOError,e:
+                    print '{0}@{1} - mail - {2} ({3}) - {4} failed {5}'.format(settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename,str(e))
+                else:
+                    newcomment.image0.save(filename,mfile)
+                    has_image = True
                 
-                print '{0}@{1} - mail - {2} ({3}) - {4} stored'.format(settings.POP_HOST,settings.POP_USERNAME, sender,subject,filename)
+                print '{0}@{1} - mail - {2} ({3}) - {4} stored'.format(settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename)
                 
         #mailbox.dele(idx)
         description = sender +" "+subject + ": "+description
         newcomment.message = description
-        newcomment.save()
+        #newcomment.save()
 
-    print '{0}@{1} - end'.format(settings.POP_HOST,settings.POP_USERNAME)    
+    print '{0}@{1} - end'.format(settings.POP_USERNAME,settings.POP_HOST)    
     mailbox.quit()
 
 
@@ -367,10 +368,12 @@ if __name__ == "__main__":
             daemon.restart()
         elif 'run'== sys.argv[1]:
             daemon.run()
+        elif 'runonce'== sys.argv[1]:
+            daemon.mms_email_poll_job()
         else:
             print "Unknown command"
             sys.exit(2)
             sys.exit(0)
     else:
-        print "usage: %s start|stop|restart|run" % sys.argv[0]
+        print "usage: %s start|stop|restart|run|runonce" % sys.argv[0]
         sys.exit(2)
