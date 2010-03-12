@@ -61,7 +61,7 @@ def index(request, offset):
             'page_count': page_count,
             'active_page': active_page,
             'view_list': view_list,
-            'member_list': User.objects.all(),            
+            'member_list': User.objects.exclude(userprofile__user_type='D'),
             'topic_list': Topic.objects.order_by('-datetime')[1:10],
             'application_list': UserApplication.objects.filter(status='P'),
             'error_message': error_message,

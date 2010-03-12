@@ -345,6 +345,11 @@ legend {
 	color: orange;
 }
 
+.ext_name {
+	font-weight: bold;
+	color: maroon;
+}
+
 .error_message {
 	color: red;
 	background: yellow;

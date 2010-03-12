@@ -2,7 +2,7 @@
       <div class="text">
 	<div class="comment">
 	  <a href="/members/profile/view/{{ comment.user.username }}">
-	    <span class="user_name">{{ comment.user.get_full_name }}</span></a>
+	    <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	  <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	  <br>{{ comment.message|urlize }}
 	</div>

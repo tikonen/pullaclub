@@ -90,6 +90,12 @@ TEMPLATE_DIRS = (
     PULLACLUB_TEMPLATE_DIR,
 )
 
+# settings for MMS import
+POP_HOST = 'mail.pullaclub.com'
+POP_USERNAME = 'mms@pullaclub.com'
+POP_PASSWORD = 'pullakausi'
+MMS_USER = 'mms'
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',

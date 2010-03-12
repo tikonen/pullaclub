@@ -160,7 +160,7 @@
 	</div> <!-- avatar -->
 	<div class="update_text">
 	  <div class="text">	  
-	    <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span class="user_name">{{ update.rootcomment.user.get_full_name }}</span></a>
+	    <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago</span>
 	    <br>
 	    {{ update.rootcomment.message|urlize }} 
@@ -177,7 +177,7 @@
 	<div class="text">
 	  <div class="comment">
 	    <a href="/members/profile/view/{{ comment.user.username }}">
-	      <span class="user_name">{{ comment.user.get_full_name }}</span></a>
+	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	    <br>{{ comment.message|urlize }}
 	  </div> <!-- comment -->
@@ -186,7 +186,7 @@
 	<div class="insertion" id="{{ update.rootcomment.id }}"></div>
 	<div class="comment_panel" id="slidepanel{{ update.rootcomment.id }}">
 	  <form>
-	    <textarea maxlength="500" id="commenttext{{ update.rootcomment.id }}" style="width:250px;height:56px" name="message"></textarea><br/>
+	    <textarea maxlength="500" id="commenttext{{ update.rootcomment.id }}" style="width:400px;height:56px" name="message"></textarea><br/>
 	    <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/">
 	    <input type="submit" value=" Comment " class="comment_submit"/>
 	  </form>

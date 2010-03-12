@@ -11,6 +11,12 @@ class UserProfile(models.Model):
     USER_TYPE = (
         ('S','Active'),
         ('A','Alumni'),
+        ('D','System')
+    )
+
+    USER_ORG = (
+        ('AWS','Airwide Solutions'),
+        ('EXT','External'),
     )
 
     user = models.ForeignKey(User, unique=True)
@@ -18,13 +24,24 @@ class UserProfile(models.Model):
     user_image = models.ImageField(upload_to=settings.PHOTO_UPLOAD_DIR)
     user_type = models.CharField(max_length=2,choices=USER_TYPE,null=True)
     description = models.CharField(max_length=15, blank=True)
+    organization = models.CharField(max_length=30,choices=USER_ORG,blank=True)
 
     def __unicode__(self):
-        return "Profile of '"+str(self.user)+"'"
+        return "'"+str(self.user)+"@"+self.organization+"'"
+
+    def user_class(self):
+        if self.organization == 'AWS':
+            return 'user_name'
+        else:
+            return 'ext_name'
 
     def user_type_desc(self):
+        if self.organization == 'EXT':
+            return "External"
         if self.user.is_staff:
             return "Staff"
+        elif self.user_type == 'D':
+            return 'System'
         elif self.user_type == 'A':
             return 'Alumni'
         return 'Active'
