@@ -30,10 +30,13 @@ class UserProfile(models.Model):
         return "'"+str(self.user)+"@"+self.organization+"'"
 
     def user_class(self):
+        if self.user_type == 'D':
+            return 'sys_name'
         if self.organization == 'AWS':
             return 'user_name'
         else:
             return 'ext_name'
+
 
     def user_type_desc(self):
         if self.organization == 'EXT':
@@ -44,7 +47,7 @@ class UserProfile(models.Model):
             return 'System'
         elif self.user_type == 'A':
             return 'Alumni'
-        return 'Active'
+        return 'Member'
 
 class Topic(models.Model):
 

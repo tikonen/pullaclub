@@ -350,6 +350,11 @@ legend {
 	color: maroon;
 }
 
+.sys_name {
+	font-weight: bold;
+	color: lightblue;
+}
+
 .error_message {
 	color: red;
 	background: yellow;
@@ -369,7 +374,11 @@ legend {
 
 [icon ^="comment"] {
     padding-right: 20px;
-    background: transparent url('../gfx/famfamfam/comment.gif') no-repeat center right;
+    background: transparent url('../gfx/famfamfam/comment_new.gif') no-repeat center right;
+}
+[icon ^="delete_comment"] {
+    padding-right: 20px;
+    background: transparent url('../gfx/famfamfam/comment_delete.gif') no-repeat center right;
 }
 
 [icon ^="edit"] {

@@ -202,8 +202,6 @@ from django.db.models.loading import get_apps
 get_apps()
 
 #########################################################
-#########YOU DONT NEED TO CHANGE ANYTHING ABOVE##########
-#########################################################
 
 # application specific code starts here
 import poplib
@@ -306,7 +304,7 @@ def process_mailbox():
         #mailbox.dele(idx)
         description = sender +" "+subject + ": "+description
         newcomment.message = description
-        #newcomment.save()
+        newcomment.save()
 
     print '{0}@{1} - end'.format(settings.POP_USERNAME,settings.POP_HOST)    
     mailbox.quit()

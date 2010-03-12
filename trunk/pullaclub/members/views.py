@@ -175,13 +175,34 @@ def comment(request, action, comment_id):
 
     elif action == 'delete':
         comment = get_object_or_404(Comment,pk=comment_id,user=request.user)
-        comment.message = "This comment has been deleted"
+
+        if len(Comment.objects.filter(parent=comment)) == 0: # root comment
+            comment.delete()
+            response_dict = {
+                'status' :  'remove',
+                }
+        else:
+            comment.message = "This comment has been deleted"
+            comment.image0 = None
+            comment.save()
+            response_dict = {
+                'status' :  'update',
+                'message' : comment.message,
+                }
+
+        return HttpResponse(simplejson.dumps(response_dict), 
+                                mimetype='application/javascript')
+
+    elif action == 'deleteimg':
+        comment = get_object_or_404(Comment,pk=comment_id,user=request.user)
+        comment.image0 = None
         comment.save()
         response_dict = {
                 'status' :  'OK',
         }
         return HttpResponse(simplejson.dumps(response_dict), 
                                 mimetype='application/javascript')
+
 
     elif action == 'iframe':
         if request.method == 'GET':
@@ -190,7 +211,8 @@ def comment(request, action, comment_id):
         # new comment
         message = request.POST['message']
         if not message:
-            raise Http404
+            return render_to_response('members/comment_iframe.html')
+
         message = __truncate_length(message,Comment.MAX_LENGTH)
 
         comment = Comment()

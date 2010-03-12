@@ -54,7 +54,7 @@ textarea {
 }
 [icon ^="image"] {
     /* padding-right: 20px; */
-    background: transparent url('/pullamedia/gfx/famfamfam/image.gif') no-repeat center right;
+    background: transparent url('/pullamedia/gfx/famfamfam/image_new.gif') no-repeat center right;
 }
     </style>
   </head>
@@ -74,17 +74,18 @@ textarea {
       <p></p>
       <div class="update">
 	<div class="profile_avatar">
-	  <img src="{{ rootcomment.user.get_profile.user_image.url }}" width=60 height=60/>
+	  <img src="{{ rootcomment.user.get_profile.user_image|scale2:"60" }}"/>
 	  <span class="text">{{ rootcomment.user.get_profile.description }}</span>
 	</div> <!-- avatar -->
 	<div class="update_text">
 	  <div class="text">	  
-	    <a href="/members/profile/view/{{ rootcomment.user.username }}"><span class="{{ rootcomment.user.get_profile.user_class }}">{{ rootcomment.user.get_full_name }}</span></a>
+	    <a href="/members/profile/view/{{ rootcomment.user.username }}/"><span class="{{ rootcomment.user.get_profile.user_class }}">{{ rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago</span>
 	    <br>
 	    {{ rootcomment.message|urlize }} 
 	    <p></p>
 	    <a icon="comment" href="#" class="comment_button" id="{{ rootcomment.id }}"></a>
+	    <a icon="delete_comment" href="#" type="root" class="comment_delete" id="{{ rootcomment.id }}"></a>
 	  </div>
 	</div> <!-- update_text -->
 

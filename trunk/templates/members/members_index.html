@@ -32,6 +32,34 @@
       return true;
     });
  
+     $(".comment_delete").live('click',function() {
+       var yes = confirm("Delete comment?")
+       if (yes){
+         var id = $(this).attr("id");
+         var type = $(this).attr("type");
+         var a = $("a[id='"+id+"']");
+         
+        $.get("/members/comment/delete/"+id+"/", null, function(data) {
+           var result = jQuery.parseJSON(data);
+          if(result.status == "remove") {
+             if( type == "sub") a.parent().parent().remove();
+            else {
+              var update = a.parent().parent().parent();              
+              update.remove();
+            }
+          }
+          if(result.status == "update") {
+             if(type == "root") {
+               a.parent().parent().next("img").remove();
+             }
+             //a.parent().text(result.message); // bug here
+             //var txt = a.parent().text().replace(new RegExp("\\n\\n.+"),"\\n\\n"+result.message);
+             //a.parent().text(txt); // bug here
+          }
+        }); 
+      }
+     });
+
      $(".comment_button").live('click',function() {
 
      var element = $(this);
@@ -145,7 +173,7 @@
 	<br>
       </p>
       <div class="" style="margin:0" id="slidepanel0">
-	<iframe id="ifrm" name="ifrm" src="/members/comment/iframe/0" scrolling="auto" frameborder="0" height="110px" width="100%"></iframe>
+	<iframe id="ifrm" name="ifrm" src="/members/comment/iframe/0/" scrolling="auto" frameborder="0" height="110px" width="100%"></iframe>
       </div>
 
       <p></p>
@@ -166,6 +194,7 @@
 	    {{ update.rootcomment.message|urlize }} 
 	    <p></p>
 	    <a icon="comment" href="#" class="comment_button" id="{{ update.rootcomment.id }}"></a>
+	    <a icon="delete_comment" href="#" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></a>
 	  </div>
 	</div> <!-- update_text -->
 
@@ -179,7 +208,8 @@
 	    <a href="/members/profile/view/{{ comment.user.username }}">
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
-	    <br>{{ comment.message|urlize }}
+	    <a icon="delete_comment" href="#" type="sub" class="comment_delete" id="{{ comment.id }}"></a>
+	    <br>{{ comment.message|urlize }}	    
 	  </div> <!-- comment -->
 	</div> <!-- text -->
 	{% endfor %}
