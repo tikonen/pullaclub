@@ -258,22 +258,23 @@ class StringIOWrapper(StringIO.StringIO):
 
 def process_mailbox():
 
-    logging.info('%s@%s - start- polling',settings.POP_USERNAME,settings.POP_HOST)
+    logging.info('start polling')
     try:
         mailbox = poplib.POP3(settings.POP_HOST)
         mailbox.user(settings.POP_USERNAME)
         mailbox.pass_(settings.POP_PASSWORD)
     except Error,e:
-        logging.error('%s@%s %s', settings.POP_USERNAME,settings.POP_HOST,str(e))
+        logging.error('mailbox access %s',str(e))
+        return
     
     (message_count, mailbox_size) = mailbox.stat()
 
     if message_count == 0: # nothing to do
-        logging.info('%s@%s - end - no messages', settings.POP_USERNAME,settings.POP_HOST)
+        logging.info('no messages')
         mailbox.quit()
         return
 
-    logging.info('%s@%s - process - %s new messages', settings.POP_USERNAME,settings.POP_HOST, message_count)
+    logging.info('processing %s messages',message_count)
 
     user = User.objects.get(username=settings.MMS_USER)
 
@@ -291,7 +292,7 @@ def process_mailbox():
         description = ''
         has_image = False
 
-        logging.info('%s@%s - mail - %s (%s) - processing', settings.POP_USERNAME,settings.POP_HOST, sender,subject)
+        logging.info('processing message %s (%s)',sender,subject)
 
         for msgpart in parsedmsg.walk():
             ctype = msgpart.get_content_type()
@@ -311,25 +312,27 @@ def process_mailbox():
                 try:
                     Image.open(mfile)
                 except IOError,e:
-                    logging.error('%s@%s - mail - %s (%s) - %s failed %s', settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename,str(e))
+                    logging.error('image %s failed %s',filename,str(e))
                 else:
                     newcomment.image0.save(filename,mfile)
                     has_image = True
                 
-                logging.info('%s@%s - mail - %s (%s) - %s stored', settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename)
+                logging.info('image %s stored', subject,filename)
             
         mailbox.dele(idx)
         description = sender +" "+subject + ", "+description
         newcomment.message = description
         newcomment.save()
 
-    logging.info('%s@%s - end', settings.POP_USERNAME,settings.POP_HOST)    
+    logging.info('end')
     mailbox.quit()
 
 
 class MMSCron(BaseCron):
     def __init__(self,pid):
         BaseCron.__init__(self,pid)
+        logging.info("-------------- INITIALIZE ---------------")
+        logging.info('using mailbox %s@%s', settings.POP_USERNAME,settings.POP_HOST)
         self.add_event("mms_email_poll_job",5,"minute",round=True)
 		
     def mms_email_poll_job(self):
