@@ -206,10 +206,15 @@ get_apps()
 # application specific code starts here
 import poplib
 import email
-from email.header import decode_header
 import re
 import StringIO
 import Image
+
+try:
+    from email.header import decode_header
+except ImportError: # Python 2.4
+    from email.Header import decode_header
+
 
 from django.conf import settings
 from pullaclub.members.models import Comment
@@ -244,7 +249,7 @@ class StringIOWrapper(StringIO.StringIO):
 
 def process_mailbox():
 
-    print '{0}@{1} - start- polling'.format(settings.POP_USERNAME,settings.POP_HOST)
+    print '%s@%s - start- polling' % (settings.POP_USERNAME,settings.POP_HOST)
     mailbox = poplib.POP3(settings.POP_HOST)
     mailbox.user(settings.POP_USERNAME)
     mailbox.pass_(settings.POP_PASSWORD)
@@ -252,11 +257,11 @@ def process_mailbox():
     (message_count, mailbox_size) = mailbox.stat()
 
     if message_count == 0: # nothing to do
-        print '{0}@{1} - end - no messages'.format(settings.POP_USERNAME,settings.POP_HOST)
+        print '%s@%s - end - no messages' % (settings.POP_USERNAME,settings.POP_HOST)
         mailbox.quit()
         return
 
-    print '{0}@{1} - process - {2} new messages'.format(settings.POP_USERNAME,settings.POP_HOST, message_count)
+    print '%s@%s - process - %s new messages' % (settings.POP_USERNAME,settings.POP_HOST, message_count)
 
     user = User.objects.get(username=settings.MMS_USER)
 
@@ -274,7 +279,7 @@ def process_mailbox():
         description = ''
         has_image = False
 
-        print '{0}@{1} - mail - {2} ({3}) - processing'.format(settings.POP_USERNAME,settings.POP_HOST, sender,subject)
+        print '%s@%s - mail - %s (%s) - processing' % (settings.POP_USERNAME,settings.POP_HOST, sender,subject)
 
         for msgpart in parsedmsg.walk():
             ctype = msgpart.get_content_type()
@@ -294,19 +299,19 @@ def process_mailbox():
                 try:
                     Image.open(mfile)
                 except IOError,e:
-                    print '{0}@{1} - mail - {2} ({3}) - {4} failed {5}'.format(settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename,str(e))
+                    print '%s@%s - mail - %s (%s) - %s failed %s' % (settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename,str(e))
                 else:
                     newcomment.image0.save(filename,mfile)
                     has_image = True
                 
-                print '{0}@{1} - mail - {2} ({3}) - {4} stored'.format(settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename)
+                print '%s@%s - mail - %s (%s) - %s stored' % (settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename)
             
-        #mailbox.dele(idx)
+        mailbox.dele(idx)
         description = sender +" "+subject + ", "+description
         newcomment.message = description
         newcomment.save()
 
-    print '{0}@{1} - end'.format(settings.POP_USERNAME,settings.POP_HOST)    
+    print '%s@%s - end' % (settings.POP_USERNAME,settings.POP_HOST)    
     mailbox.quit()
 
 
@@ -356,7 +361,7 @@ python deamon.py run
 
 if __name__ == "__main__":
 
-    daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'django-cron-daemon.pid'))
+    daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'mailimport-cron-daemon.pid'))
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             daemon.start()
