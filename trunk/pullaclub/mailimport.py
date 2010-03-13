@@ -4,11 +4,26 @@ import sys, os, time, atexit
 from signal import SIGTERM 
  
 import logging
+import logging.handlers
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename='mailimport.log',
-                    filemode='a')
+LOG_FILENAME = 'mailimport.log'
+
+# Set up a specific logger with our desired output level
+mlog = logging.getLogger('MAILIMPORT')
+mlog.setLevel(logging.DEBUG)
+
+# Add the log message handler to the logger
+handler = logging.handlers.RotatingFileHandler(
+    LOG_FILENAME, maxBytes=(1024*1024), backupCount=3)
+handler.setFormatter(
+    logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+
+mlog.addHandler(handler)
+
+# logging.basicConfig(level=logging.DEBUG,
+#                     format='%(asctime)s %(levelname)s %(message)s',
+#                     filename='mailimport.log',
+#                     filemode='a')
 
 
 class Daemon:
@@ -106,7 +121,7 @@ class Daemon:
                 if os.path.exists(self.pidfile):
                     os.remove(self.pidfile)
                 else:
-                    logging.error(str(err))
+                    mlog.error(str(err))
                     sys.exit(1)
  
     def restart(self):
@@ -181,7 +196,7 @@ class BaseCron(Daemon):
 	self.events[event]["next_visit"]=next_visit
 
     def run(self):
-        logging.info("-------------- STARTUP ---------------")
+        mlog.info("-------------- STARTUP ---------------")
         while 1:
             ###sorting job###
             list=[(self.events[x]["next_visit"],x) for x in self.events.keys()]
@@ -191,7 +206,7 @@ class BaseCron(Daemon):
             now=datetime.datetime.now()
             timedelta=event_date-now         
             seconds=(timedelta.days*24*60*60)+timedelta.seconds
-            logging.info("next job: '%s' after:%s", event_name, str(timedelta))
+            mlog.info("next job: '%s' after:%s", event_name, str(timedelta))
             if timedelta.days>=0:
                 while seconds:
                         if seconds>1000:
@@ -202,9 +217,9 @@ class BaseCron(Daemon):
                                 seconds=0
                         
                 time.sleep(seconds)
-            logging.info("processing job '%s'",event_name)
+            mlog.info("processing job '%s'",event_name)
             getattr(self,event_name)()
-            logging.info("finished succesfully.")
+            mlog.info("finished succesfully.")
             self.find_next(event_name)
 
 from django.db.models.loading import get_apps
@@ -256,25 +271,29 @@ class StringIOWrapper(StringIO.StringIO):
         self.seek(0,2)
         return self.tell()
 
+def format_description(sender, subject, message):
+    return '%s %s, %s' % (sender, subject, message)
+
 def process_mailbox():
 
-    logging.info('start polling')
+    mlog.info('start polling')
     try:
         mailbox = poplib.POP3(settings.POP_HOST)
         mailbox.user(settings.POP_USERNAME)
         mailbox.pass_(settings.POP_PASSWORD)
     except Error,e:
-        logging.error('mailbox access %s',str(e))
+        mlog.error('mailbox access %s',str(e))
         return
     
     (message_count, mailbox_size) = mailbox.stat()
 
     if message_count == 0: # nothing to do
-        logging.info('no messages')
+        mlog.info('no messages')
+        mlog.info('end')
         mailbox.quit()
         return
 
-    logging.info('processing %s messages',message_count)
+    mlog.info('processing %s messages',message_count)
 
     user = User.objects.get(username=settings.MMS_USER)
 
@@ -292,7 +311,7 @@ def process_mailbox():
         description = ''
         has_image = False
 
-        logging.info('processing message %s (%s)',sender,subject)
+        mlog.info('processing message %s (%s)',sender,subject)
 
         for msgpart in parsedmsg.walk():
             ctype = msgpart.get_content_type()
@@ -312,27 +331,26 @@ def process_mailbox():
                 try:
                     Image.open(mfile)
                 except IOError,e:
-                    logging.error('image %s failed %s',filename,str(e))
+                    mlog.error('image %s failed %s',filename,str(e))
                 else:
                     newcomment.image0.save(filename,mfile)
                     has_image = True
                 
-                logging.info('image %s stored', subject,filename)
+                mlog.info('image %s stored', subject,filename)
             
-        mailbox.dele(idx)
-        description = sender +" "+subject + ", "+description
-        newcomment.message = description
+        mailbox.dele(idx)        
+        newcomment.message = format_description(sender,subject,description)
         newcomment.save()
 
-    logging.info('end')
+    mlog.info('end')
     mailbox.quit()
 
 
 class MMSCron(BaseCron):
     def __init__(self,pid):
         BaseCron.__init__(self,pid)
-        logging.info("-------------- INITIALIZE ---------------")
-        logging.info('using mailbox %s@%s', settings.POP_USERNAME,settings.POP_HOST)
+        mlog.info("-------------- INITIALIZE ---------------")
+        mlog.info('using mailbox %s@%s', settings.POP_USERNAME,settings.POP_HOST)
         self.add_event("mms_email_poll_job",5,"minute",round=True)
 		
     def mms_email_poll_job(self):
