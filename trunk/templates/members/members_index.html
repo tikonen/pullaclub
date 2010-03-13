@@ -241,24 +241,25 @@
     <div id="sidebar">
       <div class="listtitle">Our members</div>
       <p> 
-      {% for user in member_list %}
-      {{ user.get_full_name }}
-      <strong><span style="float:right">{{ user.get_profile.user_type_desc }}</span></strong>
-      <br>
-      {% endfor %}
+	{% for user in member_list %}
+	{{ user.get_full_name }}
+	<strong><span style="float:right">{{ user.get_profile.user_type_desc }}</span></strong>
+	<br>
+	{% endfor %}
       </p>
       <div class="listtitle">Old topics</div>
       <p>
-      {% for topic in topic_list %}
-      <div title="{{ topic.message }}" style="font-size:xx-small;border-bottom:1px dotted grey;">{{ topic.as_truncated }} <span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span></div>
-      {% endfor %}
+	{% for topic in topic_list %}
+	<div title="{{ topic.message }}" style="font-size:xx-small;border-bottom:1px dotted grey;">{{ topic.as_truncated }} <span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span></div>
+	{% endfor %}
       </p>
-      <p></p>
-      <div class="listtitle">Pending applications</div>
       <p>
-      {% for application in application_list %}
-      <div title="{{ application.message }}">{{ application.name|title }} <span style="color:grey;float:right;">{{ application.referral|default:"none" }}</span></div>
-      {% endfor %}
+	<div class="listtitle">Pending applications</div>
+      </p>
+      <p>
+	{% for application in application_list %}
+	<div title="{{ application.message }}">{{ application.name|title }} <span style="color:grey;float:right;">{{ application.referral|default:"none" }}</span></div>
+	{% endfor %}
       </p>      
     </div> <!-- sidebar -->
 </div> <!-- clear -->
