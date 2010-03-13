@@ -13,7 +13,8 @@
 
 	  $("iframe").load(function() {
 	      $("#slidepanel0").hide(100);
-	      var newc = $("#newcomment",$("iframe").contents());  // check if frame has new comment
+	      var newc = $("#newcomment",$("iframe").contents());  
+	      // check if frame has new comment
 	      if(newc.html()) {  // if yes, insert it in main html
 		  $(".insertion[id='0']").prepend(newc.html()).css("display","none").slideToggle(300);
 	      }
@@ -175,7 +176,7 @@
 	<br/>
       </p>
       <div class="" style="padding:0;margin:0;" id="slidepanel0">
-	<iframe id="ifrm" name="ifrm" src="/members/comment/iframe/0/" scrolling="auto" frameborder="0" height="120px" width="100%"></iframe>
+	<iframe id="ifrm" name="ifrm" src="/members/comment/iframe/0/" scrolling="auto" frameborder="0" height="125px" width="100%"></iframe>
       </div>
 
       <p></p>
