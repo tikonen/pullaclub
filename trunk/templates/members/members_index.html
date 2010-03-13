@@ -194,7 +194,9 @@
 	    {{ update.rootcomment.message|urlize }} 
 	    <p></p>
 	    <a icon="comment" href="#" class="comment_button" id="{{ update.rootcomment.id }}"></a>
+	    {% ifequal user update.rootcomment.user %}
 	    <a icon="delete_comment" href="#" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></a>
+	    {% endifequal %}
 	  </div>
 	</div> <!-- update_text -->
 
@@ -208,7 +210,9 @@
 	    <a href="/members/profile/view/{{ comment.user.username }}">
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
+	    {% ifequal user comment.user %}
 	    <a icon="delete_comment" href="#" type="sub" class="comment_delete" id="{{ comment.id }}"></a>
+	    {% endifequal %}
 	    <br>{{ comment.message|urlize }}	    
 	  </div> <!-- comment -->
 	</div> <!-- text -->

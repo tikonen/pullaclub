@@ -300,9 +300,9 @@ def process_mailbox():
                     has_image = True
                 
                 print '{0}@{1} - mail - {2} ({3}) - {4} stored'.format(settings.POP_USERNAME,settings.POP_HOST, sender,subject,filename)
-                
+            
         #mailbox.dele(idx)
-        description = sender +" "+subject + ": "+description
+        description = sender +" "+subject + ", "+description
         newcomment.message = description
         newcomment.save()
 

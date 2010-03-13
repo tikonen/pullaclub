@@ -43,8 +43,8 @@ USE_I18N = True
 MEDIA_ROOT = '/home/tikonen/pullaclub.com/public/'
 
 DEFAULT_IMAGE = 'default.jpg'
-PHOTO_UPLOAD_DIR = 'photos'
-COMMENT_IMAGE_UPLOAD_DIR = 'photos/upload'
+PHOTO_UPLOAD_DIR = 'photos/%y%m%d'
+COMMENT_IMAGE_UPLOAD_DIR = 'photos/upload/%y%m%d'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
