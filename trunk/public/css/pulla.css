@@ -248,11 +248,11 @@ input {
 	border: 2px outset #d7b9c9
 }
 
-fieldset {
+.input_form {
 	border: 1px solid #781351;
 }
 
-fieldset label {
+.input_form label {
 	width: 8em;
 	float: left;
 	text-align: right;
@@ -260,13 +260,13 @@ fieldset label {
 	display: block
 }
 
-fieldset textarea {
-	color: #781351;
-	background: #fee3ad;
-	border: 1px solid #781351
+.input_form textarea {
+    color: #781351;
+    background: #fee3ad;
+    border: 1px solid #781351
 }
 
-legend {
+.input_form legend {
 	background: #ffa20c;
 	border: 1px solid #781351;
 	padding: 2px 6px
@@ -320,7 +320,7 @@ legend {
 }
 
 .comment_panel {
-	margin-left: 105px;
+	margin-left: 95px;
 	display: none;
 }
 

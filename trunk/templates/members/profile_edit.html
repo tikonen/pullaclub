@@ -1,13 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Edit profile of {{ user.get_full_name }}</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
     <link rel="stylesheet" href="/pullamedia/css/pulla.css" type="text/css" />
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
-    <style type="text/css">
-    </style>
+    <style type="text/css"></style>
   </head>
   <body>
     <div id="topnav">
@@ -21,12 +20,12 @@
     </div>
     <div style="padding:5px;">
       <center>
-      <h3>{{ user.get_full_name }}<br> member no: {{ user.id }}</h3>
+      <h3>{{ user.get_full_name }}<br/>member no: {{ user.id }}</h3>
       </center>
-      <hr width="100%" color="lightgrey">
+      <hr width="100%" style="color:lightgrey;"/>
       <div style="width:30em; margin-left:auto; margin-right:auto;margin-bottom:100px;">
 	<form enctype="multipart/form-data" method="post" action="/members/profile/edit/{{ user.username }}/">
-	  <fieldset>
+	  <fieldset class="input_form">
 	    <legend>Edit your profile</legend>
 	    <p>{{ form.first_name.label_tag }} {{ form.first_name }} {{ form.first_name.errors }}</p>
 	    <p>{{ form.last_name.label_tag }} {{ form.last_name }} {{ form.last_name.errors }}</p>

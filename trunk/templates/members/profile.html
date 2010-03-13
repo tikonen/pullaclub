@@ -2,7 +2,7 @@
 <html>
   <head>
     <!-- {% load custom_tags %} -->
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Profile of {{ user.get_full_name }}</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
     <link rel="stylesheet" href="/pullamedia/css/pulla.css" type="text/css" />
@@ -21,15 +21,14 @@
       </ul>
     </div>
     <div style="padding:5px;">
-    <h3>{{ user.get_full_name }}<br> member no: {{ user.id }}</h3>
+    <h3>{{ user.get_full_name }}<br/>member no: {{ user.id }}</h3>
     <div id="text">
       {% if can_edit %}
       <a class="round_button" href="/members/profile/edit/{{ user.username }}"><span>Edit Profile</span></a><br> 
       {% endif %}
       </div>
-      <p>
-      <hr width="100%" color="lightgrey">
-      </p>
+      <p></p>
+      <hr width="100%" style="color:lightgrey;"/>
       <div id="text">
 	<p><strong>User Image</strong></p>
 	<p><img src="{{ profile.user_image|scale2:"60" }}"><p>
