@@ -166,12 +166,13 @@ class BaseCron(Daemon):
     def find_next(self,event):
 	now=datetime.datetime.now()
 	comps={"year":now.year,
-		"month":now.month,
+        "month":now.month,
 		"day":now.day,
 		"hour":now.hour,
 		"minute":now.minute,
-		"second":now.second}
-	component=self.events[event]["component"]
+		"second":now.second
+    }
+    component=self.events[event]["component"]
 	period=self.events[event]["period"]
 	if component=="year":
 		comps[component]+=period
@@ -308,6 +309,11 @@ def process_mailbox():
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
         sender = parsedmsg['From']
+        if parsedmsg['X-Razor'] == 'SPAM': # spam message
+            mlog.info('deleting spam message from %s',sender)
+            mailbox.dele(idx)
+            continue
+            
         description = ''
         has_image = False
 
@@ -352,7 +358,7 @@ class MMSCron(BaseCron):
         mlog.info("-------------- INITIALIZE ---------------")
         mlog.info('using mailbox %s@%s', settings.POP_USERNAME,settings.POP_HOST)
         self.add_event("mms_email_poll_job",5,"minute",round=True)
-		
+
     def mms_email_poll_job(self):
         process_mailbox()
 
