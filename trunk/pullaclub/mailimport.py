@@ -149,7 +149,7 @@ class ComponentError(Exception):
         self.component=component
     def __str__(self):
         return "Invalid component:"+self.component+". Available components: "+",".join(self.components)
-		
+        
 
 class BaseCron(Daemon):
     def __init__(self, pid):
@@ -164,37 +164,38 @@ class BaseCron(Daemon):
         self.find_next(event)
 
     def find_next(self,event):
-	now=datetime.datetime.now()
-	comps={"year":now.year,
-        "month":now.month,
-		"day":now.day,
-		"hour":now.hour,
-		"minute":now.minute,
-		"second":now.second
-    }
-    component=self.events[event]["component"]
-	period=self.events[event]["period"]
-	if component=="year":
-		comps[component]+=period
-	elif component=="month":
-		comps[component]=range(1, 13)[(now.month+period-1)%12]
-		if comps[component]==1:comps["year"]+=1
-	else:
-		karg={component+"s":period}	
-		time_delta=datetime.timedelta(**karg)
-		next=now+time_delta
-		comps={"year":next.year,
-				"month":next.month,
-				"day":next.day,
-				"hour":next.hour,
-				"minute":next.minute,
-				"second":next.second}
-	round=self.events[event]["round"]
-	if round:
+        now=datetime.datetime.now()
+        comps={"year":now.year,
+               "month":now.month,
+               "day":now.day,
+               "hour":now.hour,
+               "minute":now.minute,
+               "second":now.second}
+        
+        component=self.events[event]["component"]
+        period=self.events[event]["period"]
+        if component=="year":
+            comps[component]+=period
+        elif component=="month":
+            comps[component]=range(1, 13)[(now.month+period-1)%12]
+        if comps[component]==1:
+            comps["year"]+=1
+        else:
+            karg={component+"s":period}    
+            time_delta=datetime.timedelta(**karg)
+            next=now+time_delta
+            comps={"year":next.year,
+                   "month":next.month,
+                   "day":next.day,
+                   "hour":next.hour,
+                   "minute":next.minute,
+                   "second":next.second}
+        round=self.events[event]["round"]
+        if round:
             for comp in self.components[self.components.index(component)+1:]:
-                    comps[comp]=1
-	next_visit=datetime.datetime(**comps)
-	self.events[event]["next_visit"]=next_visit
+                comps[comp]=1
+        next_visit=datetime.datetime(**comps)
+        self.events[event]["next_visit"]=next_visit
 
     def run(self):
         mlog.info("-------------- STARTUP ---------------")
@@ -210,14 +211,14 @@ class BaseCron(Daemon):
             mlog.info("next job: '%s' after:%s", event_name, str(timedelta))
             if timedelta.days>=0:
                 while seconds:
-                        if seconds>1000:
-                                time.sleep(1000)
-                                seconds-=1000
-                        else:
-                                time.sleep(seconds)
-                                seconds=0
-                        
+                    if seconds>1000:
+                        time.sleep(1000)
+                        seconds-=1000
+                    else:
+                        time.sleep(seconds)
+                        seconds=0                        
                 time.sleep(seconds)
+                
             mlog.info("processing job '%s'",event_name)
             getattr(self,event_name)()
             mlog.info("finished succesfully.")
@@ -355,8 +356,6 @@ def process_mailbox():
 class MMSCron(BaseCron):
     def __init__(self,pid):
         BaseCron.__init__(self,pid)
-        mlog.info("-------------- INITIALIZE ---------------")
-        mlog.info('using mailbox %s@%s', settings.POP_USERNAME,settings.POP_HOST)
         self.add_event("mms_email_poll_job",5,"minute",round=True)
 
     def mms_email_poll_job(self):
@@ -374,7 +373,7 @@ add_event function adds  a new job to schedule.
 -last one tells if time should be rounded to period component
 otherwise function will be called without taking care of component
 head.
-	
+    
 
 name this script and put this script in your projects folder to the
 same level with your settings.py. a pid file will be automatically
@@ -400,6 +399,7 @@ python deamon.py run
 
 if __name__ == "__main__":
 
+    mlog.info('using mailbox %s@%s', settings.POP_USERNAME,settings.POP_HOST)
     daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'mailimport-cron-daemon.pid'))
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
