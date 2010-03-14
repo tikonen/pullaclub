@@ -16,11 +16,6 @@ from django.contrib.auth import logout
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
 
-def __truncate_length(text,max_length):
-    if len(text) > max_length:
-        return text[:max_length]
-    return text
-
 @login_required
 def index(request, offset):
     
@@ -140,7 +135,7 @@ def comment(request, action, comment_id):
             message = request.POST['message']
             if not message:
                 raise Http404
-            message = __truncate_length(message,Comment.MAX_LENGTH)
+            message = message[:Comment.MAX_LENGTH]
 
             if action == 'edit':
                 if request.user.is_staff:
@@ -213,7 +208,7 @@ def comment(request, action, comment_id):
         if not message:
             return render_to_response('members/comment_iframe.html')
 
-        message = __truncate_length(message,Comment.MAX_LENGTH)
+        message = message[:Comment.MAX_LENGTH]
 
         comment = Comment()
         comment.user = request.user
@@ -265,7 +260,7 @@ def topic(request, action):
                     raise Http404
 
                 topic = Topic()
-                topic.message = __truncate_length(message,Topic.MAX_LENGTH)
+                topic.message = message[:Topic.MAX_LENGTH]
                 topic.user = request.user
                 topic.save()
 
