@@ -51,7 +51,7 @@
       }
       [icon ^="image"] {
 	  /* padding-right: 20px; */
-	  background: transparent url('/pullamedia/gfx/famfamfam/image_new.gif') no-repeat center right;
+	  background: transparent url('/gfx/famfamfam/image_new.gif') no-repeat center right;
       }
     </style>
   </head>
@@ -60,7 +60,7 @@
       <fieldset style="border:none;">
 	<textarea id="commenttext0" maxlength="500" name="message"></textarea><br/>
 	<input type="hidden" value="/members/comment/new/0/"/>      
-	<input type="submit" value=" Comment " class="comment_submit"/>
+	<input type="submit" value="Submit" class="comment_submit"/>
 	<input icon="image" type="button" value="" id="comment_image"/>
 	<input type="file" name="image0"/>
       </fieldset>
@@ -96,7 +96,7 @@
 	    <fieldset style="border:none;">
 	      <textarea maxlength="500" id="commenttext{{ rootcomment.id }}" name="message"></textarea><br/>
 	      <input type="hidden" value="/members/comment/new/{{ rootcomment.id }}/"/>
-	      <input type="submit" value=" Comment " class="comment_submit"/>
+	      <input type="submit" value="Submit" class="comment_submit"/>
 	    </fieldset>
 	  </form>
 	</div> <!-- comment_panel -->

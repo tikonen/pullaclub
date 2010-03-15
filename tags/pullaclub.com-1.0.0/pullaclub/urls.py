@@ -11,11 +11,6 @@ urlpatterns = patterns(
 
     (r'^admin/', include(admin.site.urls)),
 
-    # this should be deleted from production version
-    (r'^pullamedia/(?P<path>.*)$', 'django.views.static.serve',
-     {'document_root': settings.MEDIA_ROOT }),
-
-
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'members/login.html'}),
     (r'^changepassword/$', 'django.contrib.auth.views.password_change', 
      { 'template_name': 'members/password_change_form.html'}),
