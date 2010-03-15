@@ -28,7 +28,7 @@ mlog.addHandler(handler)
 
 class Daemon:
 
-    def __init__(self, pidfile, stdin='/dev/stdin', stdout='/dev/stdout', stderr='/dev/stderr'):
+    def __init__(self, pidfile, stdin, stdout, stderr):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
@@ -152,8 +152,9 @@ class ComponentError(Exception):
         
 
 class BaseCron(Daemon):
-    def __init__(self, pid):
-        Daemon.__init__(self, pid)
+
+    def __init__(self, pidfile, stdin="/dev/stdin", stdout="/dev/stdout",stderr="/dev/stderr"):
+        Daemon.__init__(self, pidfile,stdin,stdout,stderr)
         self.events={}
         self.components=["year","month","day","hour","minute","second"]
 
@@ -199,6 +200,8 @@ class BaseCron(Daemon):
 
     def run(self):
         mlog.info("-------------- STARTUP ---------------")
+        mlog.info('using mailbox %s@%s',settings.POP_USERNAME,settings.POP_HOST)
+
         while 1:
             ###sorting job###
             list=[(self.events[x]["next_visit"],x) for x in self.events.keys()]
@@ -356,9 +359,12 @@ def process_mailbox():
     mailbox.quit()
 
 
+STDERR_FILE = os.path.join(os.getcwd(),'mailimport.err')
+STDOUT_FILE = os.path.join(os.getcwd(),'mailimport.out')
+
 class MMSCron(BaseCron):
-    def __init__(self,pid):
-        BaseCron.__init__(self,pid)
+    def __init__(self,pidfile):
+        BaseCron.__init__(self,pidfile,stdout=STDOUT_FILE,stderr=STDERR_FILE)
         self.add_event("mms_email_poll_job",5,"minute",round=True)
 
     def mms_email_poll_job(self):
@@ -402,7 +408,7 @@ python deamon.py run
 
 if __name__ == "__main__":
 
-    mlog.info('using mailbox %s@%s', settings.POP_USERNAME,settings.POP_HOST)
+    print 'using mailbox %s@%s' % (settings.POP_USERNAME,settings.POP_HOST)
     daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'mailimport-cron-daemon.pid'))
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
