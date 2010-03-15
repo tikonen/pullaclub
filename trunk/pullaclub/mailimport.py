@@ -274,7 +274,10 @@ class StringIOWrapper(StringIO.StringIO):
         return self.tell()
 
 def format_description(sender, subject, message):
-    return '%s %s, %s' % (sender, subject, message)
+    if not message == '':
+        message = ", "+message
+        
+    return '%s %s%s' % (sender, subject, message)
 
 def process_mailbox():
 
@@ -343,7 +346,7 @@ def process_mailbox():
                     newcomment.image0.save(filename,mfile)
                     has_image = True
                 
-                mlog.info('image %s stored', subject,filename)
+                mlog.info('image %s stored', filename)
             
         mailbox.dele(idx)        
         newcomment.message = format_description(sender,subject,description)
