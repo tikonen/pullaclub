@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <!-- {% load custom_tags %} -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Members of PullaClub.com</title>
+    <link rel="SHORTCUT ICON" href="/favicon.gif"/>
+    <link rel="stylesheet" href="/pullamedia/css/pulla.css" type="text/css" />
+    <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+	  $("#slidepanel0").hide(); // hide the root comment box iframe
+
+	  $("iframe").load(function() {
+	      $("#slidepanel0").hide(100);
+	      var newc = $("#newcomment",$("iframe").contents());  
+	      // check if frame has new comment
+	      if(newc.html()) {  // if yes, insert it in main html
+		  $(".insertion[id='0']").prepend(newc.html()).css("display","none").slideToggle(300);
+	      }
+	  });
+	  
+	  $("textarea").live('keyup',function(event) {
+	      var ml=parseInt($(this).attr("maxlength"));
+	      if( $(this).val().length > ml) {
+		  $(this).val($(this).val().substring(0,ml));
+		  event.preventDefault();
+		  $(this).css("background","yellow");
+		  setTimeout(function() {$("textarea").css("background","white"); },200);
+		  return false;
+	      } 
+	      return true;
+	  });
+	  
+	  $(".comment_delete").live('click',function() {
+	      var yes = confirm("Delete comment?")
+	      if (yes){
+		  var id = $(this).attr("id");
+		  var type = $(this).attr("type");
+		  var a = $("a[id='"+id+"']");
+		  
+		  $.get("/members/comment/delete/"+id+"/", null, function(data) {
+		      var result = jQuery.parseJSON(data);
+		      if(result.status == "remove") {
+			  if( type == "sub") 
+			      a.parent().parent().remove();
+			  else {
+			      var update = a.parent().parent().parent();
+			      update.remove();
+			  }
+		      }
+		      if(result.status == "update") {
+			  if(type == "root") {
+			      a.parent().parent().next("img").remove();
+			  }
+			  a.parent().text(result.message); // bug here
+			  //var txt = a.parent().text().replace(new RegExp("\\n\\n.+"),"\\n\\n"+result.message);
+		      }
+		  }); 
+	      }
+	  });
+	  
+	  $(".comment_button").live('click',function() {
+	      
+	      var element = $(this);
+	      var id = element.attr("id");
+	      
+	      $("#slidepanel"+id).slideToggle(100);
+	      if(id == "0") 
+		  setTimeout(function() {
+		      $("textarea",$("iframe").contents()).focus(); 
+		  }, 300);  // OK
+	      else 
+		  setTimeout(function() {
+		      $("#commenttext"+id).focus(); 
+		  },300);		     
+	      return false;
+	  });
+
+	  $("#topic_button").click(function() {
+	      var element = $(this);
+	      var id = element.attr("id");
+
+	      $("#topicpanel").slideToggle(100);
+	      setTimeout(function() {$("#topictext").focus(); },300);
+	      return false;
+	  });
+
+	  $(".comment_submit").live('click',function(event){
+	      event.preventDefault();
+	      var panelid = $(this).parent().parent().parent().attr("id");
+	      var url = $(this).siblings("[type='hidden']").attr("value");
+	      
+	      $.post(url, $(this).parent().parent().serialize(), function(data) {
+		  var result = jQuery.parseJSON(data);
+		  if(result.id == "0") {
+		      $(".insertion[id='"+result.id+"']").prepend(result.render).css("display","none").slideToggle(300);
+		  } else 
+		      $(".insertion[id='"+result.id+"']").append(result.render).css("display","none").slideToggle(300);
+	      });    
+	      $("#"+panelid).slideToggle(100);
+	      $("textarea").val("");
+	      return false;
+	  });
+
+	  $("#topic_submit").click(function(event){
+	      event.preventDefault();
+	      var panelid = $(this).parent().parent().parent().attr("id");
+	      var url = $(this).siblings("[type='hidden']").attr("value");
+	      $.post(url, $(this).parent().parent().serialize(), function(data) {
+		  var result = jQuery.parseJSON(data);
+		  $("#topic").text(result.topic);
+		  $("#topic_time").text(result.topic_time);
+		  $("#topic_user").text(result.topic_user);
+	      });    
+	      $("#"+panelid).slideToggle(300);
+	      $("textarea").val("");
+	      return false;
+	  });
+      });
+    </script>
+    <style type="text/css"></style>
+  </head>
+  <body>
+    <div class="clear">
+    <div id="topnav">
+      <ul>
+	<li><a href="/index.html">Home</a></li>
+	<li><a href="/members">Members</a></li>
+	<li><a href="/members/finance">Finances</a></li>
+    <!-- {% if user.is_staff %} -->
+	<li><a href="/admin">Admin</a></li>
+    <!-- {% endif %} -->
+	<li><a href="/about.html">About us</a></li>
+	<li style="float:right;"><a href="/members/logout">Logout</a></li>
+	<li style="float:right;"><a href="/changepassword">Change password</a></li>
+      </ul>
+    </div>
+    <center>
+      <span id="topic">{{ topic.message|urlize }}</span>
+      <!-- {% if user.is_staff %} -->
+      <a href="#" id="topic_button">Edit</a>
+      <!-- {% endif %} -->
+      <br/>
+      <span id="topic_time" class="time_stamp">{{ topic.datetime|timesince }} ago by <span id="topic_user">{{ topic.user.get_full_name }}</span></span>
+    </center>
+    <div id="topicpanel">
+      <form>
+	<fieldset style="border:none;">
+	  <textarea id="topictext" maxlength="105" name="message"></textarea><br/>
+	  <input type="hidden" value="/members/topic/new/"/>
+	  <input type="submit" value=" Update " id="topic_submit"/>
+	</fieldset>
+      </form>
+    </div>
+
+    <!-- head and body separator -->
+    <hr/>
+
+    <div id="main">
+      <div class="text" style="background:grey">
+	<strong>
+	  <a href="/members/profile/view/{{ user.username }}"><span style="color:white">{{ user.get_full_name }}</span></a>
+	</strong>
+      </div>
+      <p>
+	<a class="round_button" href="#"><span class="comment_button" id="0">Make new comment</span></a>  
+	<a class="round_button" href="."><span>Load new comments</span></a>  
+      
+	<span class="text" style="float:right">
+	  Page
+	  {% for c in page_count|times %}
+	  <a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>{{ forloop.counter }}</a>|
+          {% endfor %}
+	</span>
+	<br/>
+      </p>
+      <div class="" style="padding:0;margin:0;" id="slidepanel0">
+	<iframe id="ifrm" name="ifrm" src="/members/comment/iframe/0/" scrolling="auto" frameborder="0" height="125px" width="100%"></iframe>
+      </div>
+
+      <p></p>
+      <div class="insertion" id="0"></div>
+      {% if view_list %}
+      {% for update in view_list %}
+      <p></p>
+      <div class="update">
+	<div class="profile_avatar">
+	  <img src="{{ update.rootcomment.user.get_profile.user_image|scale2:"60" }}"/>
+	  <span class="text">{{ update.rootcomment.user.get_profile.description }}</span>
+	</div> <!-- avatar -->
+	<div class="update_text">
+	  <div class="text">	  
+	    <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
+	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago</span>
+	    {% ifequal user update.rootcomment.user %}
+	    <a icon="delete_comment" href="#" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></a>
+	    {% endifequal %}
+	    <br/>
+	    {{ update.rootcomment.message|urlize }} 
+	    <p></p>
+	    <a icon="comment" href="#" class="comment_button" id="{{ update.rootcomment.id }}"></a>
+	  </div>
+	</div> <!-- update_text -->
+
+	{% if update.rootcomment.image0 %}
+	<img src="{{ update.rootcomment.image0|scaleh:"300" }}"/>
+	{% endif %}
+
+	{% for comment in update.subcomments %}
+	<div class="text">
+	  <div class="comment">
+	    <a href="/members/profile/view/{{ comment.user.username }}">
+	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
+	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
+	    {% ifequal user comment.user %}
+	    <a icon="delete_comment" href="#" type="sub" class="comment_delete" id="{{ comment.id }}"></a>
+	    {% endifequal %}
+	    <br/>{{ comment.message|urlize }}	    
+	  </div> <!-- comment -->
+	</div> <!-- text -->
+	{% endfor %}
+	<div class="insertion" id="{{ update.rootcomment.id }}"></div>
+	<div class="comment_panel" id="slidepanel{{ update.rootcomment.id }}">
+	  <form>
+	    <fieldset style="border:none;">
+	      <textarea maxlength="500" id="commenttext{{ update.rootcomment.id }}" name="message"></textarea><br/>
+	      <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/"/>
+	      <input type="submit" value=" Comment " class="comment_submit"/>
+	    </fieldset>
+	  </form>
+	</div> <!-- comment_panel -->
+      </div> <!-- update -->
+      {% endfor %}
+      {% endif %}
+      <br/>
+      <p style="float:right">
+	<span class="text" style="float:right">
+	  Page
+	  <!-- {% for c in page_count|times %} -->
+	  <a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>{{ forloop.counter }}</a>|
+	  <!-- {% endfor %} -->
+	</span>
+      </p>
+    </div> <!-- main -->
+    <div id="sidebar">
+      <div class="listtitle">Our members</div>
+      <p> 
+	{% for user in member_list %}
+	{{ user.get_full_name }}
+	<strong><span style="float:right">{{ user.get_profile.user_type_desc }}</span></strong>
+	<br/>
+	{% endfor %}
+      </p>
+      <div class="listtitle">Old topics</div>
+      <p></p>
+      {% for topic in topic_list %}
+      <div title="{{ topic.message }}" style="font-size:xx-small;border-bottom:1px dotted grey;">
+	{{ topic.as_truncated }}
+	<span style="color:grey;float:right">{{ topic.datetime|date:"D M" }}</span>
+      </div>
+      {% endfor %}
+      <p></p>
+      <div class="listtitle">Pending applications</div>
+      <p></p>
+      {% for application in application_list %}
+      <div title="{{ application.message }}">
+	{{ application.name|title }} 
+	<span style="color:grey;float:right;">{{ application.referral|default:"none" }}</span>
+      </div>
+      {% endfor %}
+    </div> <!-- sidebar -->
+  </div> <!-- clear -->
+</body>
+</html>
