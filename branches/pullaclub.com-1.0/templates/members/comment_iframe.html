@@ -78,11 +78,11 @@
 	  <div class="text">	  
 	    <a href="/members/profile/view/{{ rootcomment.user.username }}/"><span class="{{ rootcomment.user.get_profile.user_class }}">{{ rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago</span>
-	    <a icon="delete_comment" href="#" type="root" class="comment_delete" id="{{ rootcomment.id }}"></a>
+	    <a icon="delete_comment" title="Delete your comment" href="#" type="root" class="comment_delete" id="{{ rootcomment.id }}"></a>
 	    <br>
 	    {{ rootcomment.message|urlize }} 
 	    <p></p>
-	    <a icon="comment" href="#" class="comment_button" id="{{ rootcomment.id }}"></a>
+	    <a icon="comment" title="Write new comment" href="#" class="comment_button" id="{{ rootcomment.id }}"></a>
 	  </div>
 	</div> <!-- update_text -->
 
