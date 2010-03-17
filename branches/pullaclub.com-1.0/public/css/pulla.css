@@ -11,6 +11,9 @@ body {
 	width: 80%;
 	font: normal 13px verdana, arial, 'Bitstream Vera Sans', helvetica,
 		sans-serif;
+	
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 	/* overflow: hidden; */
 }
 
@@ -19,6 +22,10 @@ body {
 	float: left;
 	width: 70%;
 	background: white;
+	-moz-border-radius-bottomleft: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-webkit-border-radius-bottomleft: 10px;
+	-webkit-border-radius-bottomright: 10px;
 }
 
 #sidebar {
@@ -35,6 +42,8 @@ body {
 	text-align: center;
 	width: 100%;
 	font-weight: bold;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 
 .main {
@@ -53,15 +62,15 @@ body {
 .text a {
 	text-decoration: none;
 	color: #262626;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 
 .text a:visited {
-	text-decoration: none;
-	color: #262626;
 }
 
 .text a:hover {
-	text-decoration: underline
+	background: #CCC;
 }
 
 .time_stamp {
@@ -71,6 +80,14 @@ body {
 
 .comment_button {
 	font-weight: xx-small
+}
+
+.comment_delete:hover {
+    cursor:pointer;
+}
+
+.comment_new:hover {
+    cursor:pointer;
 }
 
 #comment_image {
@@ -135,7 +152,7 @@ h1 {
 }
 
 #footer {
-	display: block;
+	display: both;
 	border-top: 1px solid lightgrey;
 	margin-top: 5em;
 	margin-bottom: 1em;
@@ -272,39 +289,28 @@ input {
 	padding: 2px 6px
 }
 
-.box_button a {
-	color: #781351;
-	background: #fee3ad;
-	border: 1px solid black;
-	text-decoration: none;
-	padding: 1px 2px;
-	font: normal 10px arial, sans-serif;
-}
-
-.box_button a:active {
-	border-style: dotted;
-	outline: none;
-}
-
 .profile {
     float: left; 
 }
 
 .profile_avatar {
-    width: 80px;
+    width: 8em;
     float: left; 
     text-align: center;
     margin-bottom:20px;
     margin-top: 3px;
+    overflow:hidden;
 }
 
 .update_text {
-    margin-left:80px;
+    margin-left:8em;
 }
 
 .update {
     border-top: 1px solid lightgray;
     border-left: 1px dotted lightgray;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
     float:left;
     clear:both;
     margin-top:10px;
@@ -314,9 +320,12 @@ input {
 .comment {
     border-top: 1px solid lightgray;
     border-left: 1px dotted lightgray;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
     color: #8B8878;
-    margin: 10px 0px 5px 100px;
+    margin: 0px 0px 0px 100px;
     width:80%;
+    padding: 5px;
 }
 
 .comment_panel {

@@ -72,22 +72,26 @@
       <div class="update">
 	<div class="profile_avatar">
 	  <img src="{{ rootcomment.user.get_profile.user_image|scale2:"60" }}"/>
+	  <br/>
 	  <span class="text">{{ rootcomment.user.get_profile.description }}</span>
 	</div> <!-- avatar -->
 	<div class="update_text">
 	  <div class="text">	  
 	    <a href="/members/profile/view/{{ rootcomment.user.username }}/"><span class="{{ rootcomment.user.get_profile.user_class }}">{{ rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago</span>
-	    <a icon="delete_comment" title="Delete your comment" href="#" type="root" class="comment_delete" id="{{ rootcomment.id }}"></a>
-	    <br>
+	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ rootcomment.id }}"></span>
+	    <br/>
 	    {{ rootcomment.message|urlize }} 
 	    <p></p>
-	    <a icon="comment" title="Write new comment" href="#" class="comment_button" id="{{ rootcomment.id }}"></a>
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"></span>
 	  </div>
 	</div> <!-- update_text -->
 
 	{% if rootcomment.image0 %}
-	<img src="{{ rootcomment.image0|scaleh:"300" }}"/>
+	<div class="text" style="text-align:center;clear:both;">
+	  <img src="{{ rootcomment.image0|scaleh:"300" }}"/><br/>
+	  <a href="#" onclick="window.open('{{ update.rootcomment.image0.url }}','{{ update.rootcomment.image0.filename }}','width={{ update.rootcomment.image0.width }},height={{ update.rootcomment.image0.height }},status=0')">Original size</a>
+	</div>
 	{% endif %}
 
 	<div class="insertion" id="{{ rootcomment.id }}"></div>

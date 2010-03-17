@@ -4,7 +4,7 @@
     <a href="/members/profile/view/{{ comment.user.username }}">
     <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
     <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
-    <a icon="delete_comment" title="Delete your comment" href="#" type="sub" class="comment_delete" id="{{ comment.id }}"></a>
+    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"></span>
     <br>{{ comment.message|urlize }}
   </div>
 </div>

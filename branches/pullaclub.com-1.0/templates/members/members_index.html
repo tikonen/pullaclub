@@ -5,7 +5,8 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Members of PullaClub.com</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
-    <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
+    <!-- <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" /> -->
+    <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
     <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
@@ -51,7 +52,7 @@
 		      }
 		      if(result.status == "update") {
 			  if(type == "root") {
-			      a.parent().parent().next("img").remove();
+			      a.parent().parent().next().remove();
 			  }
 			  a.parent().text(result.message); // bug here
 			  //var txt = a.parent().text().replace(new RegExp("\\n\\n.+"),"\\n\\n"+result.message);
@@ -60,7 +61,7 @@
 	      }
 	  });
 	  
-	  $(".comment_button").live('click',function() {
+	  $(".comment_new").live('click',function() {
 	      
 	      var element = $(this);
 	      var id = element.attr("id");
@@ -158,20 +159,23 @@
     <hr/>
 
     <div id="main">
-      <div class="text" style="background:grey">
+      <div class="text" style="background:grey;-moz-border-radius: 5px;-webkit-border-radius: 5px;">
 	<strong>
 	  <a href="/members/profile/view/{{ user.username }}"><span style="color:white">{{ user.get_full_name }}</span></a>
 	</strong>
       </div>
       <p>
-	<a class="round_button" href="#"><span class="comment_button" id="0">Make new comment</span></a>  
+	<a class="round_button" href="#"><span class="comment_new" id="0">Make new comment</span></a>  
 	<a class="round_button" href="."><span>Load new comments</span></a>  
       
 	<span class="text" style="float:right">
-	  Page
-	  {% for c in page_count|times %}
-	  <a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>{{ forloop.counter }}</a>|
-          {% endfor %}
+	  {% if page.has_previous %}
+	  <a href="/members/{{ page.previous_page_number }}">&lt;previous</a>
+	  {% endif %}
+	  {{ page.number }} of {{ page.paginator.num_pages }}
+	  {% if page.has_next %}
+	  <a href="/members/{{ page.next_page_number }}">next&gt;</a>
+	  {% endif %}
 	</span>
 	<br/>
       </p>
@@ -187,6 +191,7 @@
       <div class="update">
 	<div class="profile_avatar">
 	  <img src="{{ update.rootcomment.user.get_profile.user_image|scale2:"60" }}"/>
+	  <br/>
 	  <span class="text">{{ update.rootcomment.user.get_profile.description }}</span>
 	</div> <!-- avatar -->
 	<div class="update_text">
@@ -194,17 +199,21 @@
 	    <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago</span>
 	    {% ifequal user update.rootcomment.user %}
-	    <a icon="delete_comment" title="Delete your comment" href="#" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></a>
+	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></span>
 	    {% endifequal %}
 	    <br/>
 	    {{ update.rootcomment.message|urlize }} 
 	    <p></p>
-	    <a icon="comment" title="Write new comment" href="#" class="comment_button" id="{{ update.rootcomment.id }}"></a>
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"></span>
 	  </div>
 	</div> <!-- update_text -->
 
 	{% if update.rootcomment.image0 %}
-	<img src="{{ update.rootcomment.image0|scaleh:"300" }}"/>
+	<div class="text" style="text-align:center;clear:both;">
+	  <img src="{{ update.rootcomment.image0|scaleh:"300" }}"/>
+	  <br/>
+	  <a href="#" onclick="window.open('{{ update.rootcomment.image0.url }}','{{ update.rootcomment.image0.filename }}','width={{ update.rootcomment.image0.width }},height={{ update.rootcomment.image0.height }},status=0')">Original size</a>
+	</div>
 	{% endif %}
 
 	{% for comment in update.subcomments %}
@@ -214,7 +223,7 @@
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	    {% ifequal user comment.user %}
-	    <a icon="delete_comment" title="Delete your comment" href="#" type="sub" class="comment_delete" id="{{ comment.id }}"></a>
+	    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"></span>
 	    {% endifequal %}
 	    <br/>{{ comment.message|urlize }}	    
 	  </div> <!-- comment -->
@@ -236,10 +245,13 @@
       <br/>
       <p style="float:right">
 	<span class="text" style="float:right">
-	  Page
-	  <!-- {% for c in page_count|times %} -->
-	  <a href="/members/{{ c }}"{% ifequal c active_page %}style="font-weight:bold;"{% endifequal %}>{{ forloop.counter }}</a>|
-	  <!-- {% endfor %} -->
+	  {% if page.has_previous %}
+	  <a href="/members/{{ page.previous_page_number }}">&lt;previous</a>
+	  {% endif %}
+	  {{ page.number }} of {{ page.paginator.num_pages }}
+	  {% if page.has_next %}
+	  <a href="/members/{{ page.next_page_number }}">next&gt;</a>
+	  {% endif %}
 	</span>
       </p>
     </div> <!-- main -->
