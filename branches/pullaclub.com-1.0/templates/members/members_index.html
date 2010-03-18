@@ -37,7 +37,7 @@
 	      if (yes){
 		  var id = $(this).attr("id");
 		  var type = $(this).attr("type");
-		  var a = $("a[id='"+id+"']");
+		  var a = $(this);
 		  
 		  $.get("/members/comment/delete/"+id+"/", null, function(data) {
 		      var result = jQuery.parseJSON(data);
@@ -45,8 +45,7 @@
 			  if( type == "sub") 
 			      a.parent().parent().remove();
 			  else {
-			      var update = a.parent().parent().parent();
-			      update.remove();
+			      var update = a.parent().parent().parent().remove();
 			  }
 		      }
 		      if(result.status == "update") {
