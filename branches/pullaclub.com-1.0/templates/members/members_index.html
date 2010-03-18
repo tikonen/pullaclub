@@ -168,11 +168,13 @@
       
 	<span class="text" style="float:right">
 	  {% if page.has_previous %}
+	  <a href="/members/1/">&lt;&lt;first</a>
 	  <a href="/members/{{ page.previous_page_number }}">&lt;previous</a>
 	  {% endif %}
 	  {{ page.number }} of {{ page.paginator.num_pages }}
 	  {% if page.has_next %}
 	  <a href="/members/{{ page.next_page_number }}">next&gt;</a>
+	  <a href="/members/{{ page.paginator.num_pages }}/">last&gt;&gt;</a>
 	  {% endif %}
 	</span>
 	<br/>
