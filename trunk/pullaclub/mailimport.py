@@ -277,6 +277,7 @@ class StringIOWrapper(StringIO.StringIO):
         return self.tell()
 
 def format_description(sender, subject, message):
+    message = message.strip()
     if not message == '':
         message = ", "+message
         

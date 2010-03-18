@@ -8,44 +8,34 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.conf import settings
 from django.utils import simplejson
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.paginator import Paginator
+from django.views.decorators.http import condition
 
-
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
 
+def latest_entry(request, page):
+    return Comment.objects.latest('datetime').datetime;
+
+
 @login_required
-def index(request, offset):
+@condition(last_modified_func=latest_entry) 
+def index(request, page):
     
     view_list = []
     error_message = None
 
     try:
-        topic = Topic.objects.order_by('-datetime')[0]
+        topic = Topic.objects.latest('datetime')
     except Topic.DoesNotExist:
         topic = None
 
-
-    page_len = 9  # number of root comments in single page
-    offset = int(offset)
-    comment_count = Comment.objects.filter(parent=None).count()
-    if comment_count < page_len:
-        show_count = comment_count
-        page_count = 0
-        offset = 0
-        active_page = 0
-    else:
-        active_page=offset
-        show_count = page_len
-        page_count = int(math.ceil(comment_count / float(page_len)))
-        offset *= show_count
-        if (offset+show_count) > comment_count:
-            show_count = comment_count-offset;
-
-    # page_len root level comments starting from offset
-    for update in Comment.objects.filter(parent=None).order_by('-datetime')[offset:offset+show_count]:
+    pag = Paginator(Comment.objects.filter(parent=None).order_by('-datetime'),9)
+    for update in pag.page(int(page)).object_list: # view root level comments with subcomments
         view_list.append({'rootcomment': update,
                           'subcomments': Comment.objects.filter(parent=update.id).order_by('datetime')})
             
@@ -53,8 +43,7 @@ def index(request, offset):
     c = Context({
             'user': request.user,
             'topic': topic,
-            'page_count': page_count,
-            'active_page': active_page,
+            'page': pag.page(int(page)),
             'view_list': view_list,
             'member_list': User.objects.exclude(userprofile__user_type='D'),
             'topic_list': Topic.objects.order_by('-datetime')[1:10],

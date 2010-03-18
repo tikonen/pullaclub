@@ -51,7 +51,7 @@
       }
       [icon ^="image"] {
 	  /* padding-right: 20px; */
-	  background: transparent url('/pullamedia/gfx/famfamfam/image_new.gif') no-repeat center right;
+	  background: transparent url('/gfx/famfamfam/image_new.gif') no-repeat center right;
       }
     </style>
   </head>
@@ -60,8 +60,8 @@
       <fieldset style="border:none;">
 	<textarea id="commenttext0" maxlength="500" name="message"></textarea><br/>
 	<input type="hidden" value="/members/comment/new/0/"/>      
-	<input type="submit" value=" Comment " class="comment_submit"/>
-	<input icon="image" type="button" value="" id="comment_image"/>
+	<input type="submit" value="Submit" class="comment_submit"/>
+	<input icon="image" title="Upload image with comment" type="button" value="" id="comment_image"/>
 	<input type="file" name="image0"/>
       </fieldset>
     </form>
@@ -72,22 +72,26 @@
       <div class="update">
 	<div class="profile_avatar">
 	  <img src="{{ rootcomment.user.get_profile.user_image|scale2:"60" }}"/>
+	  <br/>
 	  <span class="text">{{ rootcomment.user.get_profile.description }}</span>
 	</div> <!-- avatar -->
 	<div class="update_text">
 	  <div class="text">	  
 	    <a href="/members/profile/view/{{ rootcomment.user.username }}/"><span class="{{ rootcomment.user.get_profile.user_class }}">{{ rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago</span>
-	    <a icon="delete_comment" href="#" type="root" class="comment_delete" id="{{ rootcomment.id }}"></a>
-	    <br>
+	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ rootcomment.id }}"></span>
+	    <br/>
 	    {{ rootcomment.message|urlize }} 
 	    <p></p>
-	    <a icon="comment" href="#" class="comment_button" id="{{ rootcomment.id }}"></a>
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"></span>
 	  </div>
 	</div> <!-- update_text -->
 
 	{% if rootcomment.image0 %}
-	<img src="{{ rootcomment.image0|scaleh:"300" }}"/>
+	<div class="text" style="text-align:center;clear:both;">
+	  <img src="{{ rootcomment.image0|scaleh:"300" }}"/><br/>
+	  <a href="#" onclick="window.open('{{ update.rootcomment.image0.url }}','{{ update.rootcomment.image0.filename }}','width={{ update.rootcomment.image0.width }},height={{ update.rootcomment.image0.height }},status=0')">Original size</a>
+	</div>
 	{% endif %}
 
 	<div class="insertion" id="{{ rootcomment.id }}"></div>
@@ -96,7 +100,7 @@
 	    <fieldset style="border:none;">
 	      <textarea maxlength="500" id="commenttext{{ rootcomment.id }}" name="message"></textarea><br/>
 	      <input type="hidden" value="/members/comment/new/{{ rootcomment.id }}/"/>
-	      <input type="submit" value=" Comment " class="comment_submit"/>
+	      <input type="submit" value="Submit" class="comment_submit"/>
 	    </fieldset>
 	  </form>
 	</div> <!-- comment_panel -->
