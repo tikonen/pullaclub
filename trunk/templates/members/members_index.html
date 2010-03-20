@@ -7,6 +7,8 @@
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
     <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
     <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
+    <style type="text/css">
+    </style>
     <script type="text/javascript">
       $(document).ready(function() {
 	  $("#slidepanel0").hide(); // hide the root comment box iframe
@@ -116,9 +118,17 @@
 	      $("textarea").val("");
 	      return false;
 	  });
+
+	  $("body").append('<div id="ajax_busy"><p><img src="/gfx/busy.gif"></p></div>');
+
+	  // Activity indicator bound to ajax start/stop document events
+	  $(document).ajaxStart(function(){ 
+	      $('#ajax_busy').show(); 
+	  }).ajaxStop(function(){ 
+	      $('#ajax_busy').hide();
+	  });	  
       });
     </script>
-    <style type="text/css"></style>
   </head>
   <body>
     <div class="clear">
@@ -155,7 +165,6 @@
 
     <!-- head and body separator -->
     <hr/>
-
     <div id="main">
       <div class="text" style="background:grey;-moz-border-radius: 5px;-webkit-border-radius: 5px;">
 	<strong>

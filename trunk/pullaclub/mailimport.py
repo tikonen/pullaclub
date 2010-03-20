@@ -376,7 +376,7 @@ def process_mailbox():
                 
                 mlog.info('image %s stored', filename)
             
-        #mailbox.dele(idx)
+        mailbox.dele(idx)
         if resolved:
             newcomment.message = format_description(subject,description)
         else:
@@ -385,7 +385,7 @@ def process_mailbox():
 
     mlog.info('end')
     mailbox.quit()
-    sys.exit(0)
+    #sys.exit(0)
 
 
 STDERR_FILE = os.path.join(os.getcwd(),'mailimport.err')
@@ -394,7 +394,7 @@ STDOUT_FILE = os.path.join(os.getcwd(),'mailimport.out')
 class MMSCron(BaseCron):
     def __init__(self,pidfile):
         BaseCron.__init__(self,pidfile,stdout=STDOUT_FILE,stderr=STDERR_FILE)
-        self.add_event("mms_email_poll_job",5,"second",round=True)
+        self.add_event("mms_email_poll_job",5,"minute",round=True)
 
     def mms_email_poll_job(self):
         process_mailbox()

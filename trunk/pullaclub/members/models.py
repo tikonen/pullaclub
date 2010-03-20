@@ -138,7 +138,7 @@ class ProfileForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30,required=False)
 
-    emails = MultiEmailField(label='E-mails', required=False,
+    emails = MultiEmailField(label='E-mail addresses', required=False,
                              max_length=500,
                              widget=forms.Textarea(attrs={'rows':4, 'cols':50}))
 

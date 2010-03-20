@@ -106,8 +106,9 @@ def profile(request, username):
 
 @login_required
 def comment(request, action, comment_id):
-    
+
     if action == 'new' or action == 'edit':
+
         # new comment
         if request.method == 'POST':
             message = request.POST['message']

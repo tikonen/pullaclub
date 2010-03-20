@@ -28,8 +28,10 @@
 
 
 	  $(".comment_submit").live('click',function(event){
-	      return true;
+	      $("#iframe_busy").show()
+	      return true;	      
 	  });
+	  $("#iframe_busy").hide()
       });
     </script>
     <style type="text/css">
@@ -52,9 +54,19 @@
 	  /* padding-right: 20px; */
 	  background: transparent url('/gfx/famfamfam/image_new.gif') no-repeat center right;
       }
+      #iframe_busy {	 
+	  display: none;
+	  margin: 0px;
+	  padding: 0px;	
+	  left: 410px;
+	  top: 10px;
+	  width: auto;
+	  position: fixed;
+      };
     </style>
   </head>
   <body>
+    <div id="iframe_busy"><p><img src="/gfx/busy.gif"></p></div>
     <form enctype="multipart/form-data" method="post" action="/members/comment/iframe/0/">
       <fieldset style="border:none;">
 	<textarea id="commenttext0" maxlength="500" name="message"></textarea><br/>
