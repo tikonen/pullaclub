@@ -2,8 +2,13 @@ import os
 import Image
 from django import template
 
-# register custom template filter to support integer counter loops
+
 register = template.Library()
+
+@register.filter
+def br(html):
+    return html.replace('\n','<br/>')
+
 @register.filter
 def times(count):
     return range(int(count))
