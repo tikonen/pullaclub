@@ -14,7 +14,7 @@ mlog.setLevel(logging.DEBUG)
 
 # Add the log message handler to the logger
 handler = logging.handlers.RotatingFileHandler(
-    LOG_FILENAME, maxBytes=(1024*1024), backupCount=3)
+    LOG_FILENAME, maxBytes=(100*1024), backupCount=3)
 handler.setFormatter(
     logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
 
@@ -321,7 +321,9 @@ def process_mailbox():
             mlog.info('deleting spam message from %s',sender)
             mailbox.dele(idx)
             continue
-            
+        
+	if not subject:
+	    subject = ''
         description = ''
         has_image = False
 
