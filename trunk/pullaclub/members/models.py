@@ -1,16 +1,20 @@
 import os
+import re
+
 from django.db import models
 from django import forms
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.files import File
 
+email_re = re.compile(r"[-a-z0-9_.]+@(?:[-a-z0-9]+\.)+[a-z]{2,6}",re.IGNORECASE)
 
 class UserProfile(models.Model):
     
     USER_TYPE = (
         ('S','Active'),
         ('A','Alumni'),
+        ('H','Honorary'),
         ('D','System')
     )
 
@@ -26,12 +30,7 @@ class UserProfile(models.Model):
     description = models.CharField(max_length=15, blank=True)
     organization = models.CharField(max_length=30,choices=USER_ORG,blank=True)
     user = models.ForeignKey(User)
-    email1 = models.EmailField(null=True)
-    hide_email1 = models.BooleanField()
-    email2 = models.EmailField(null=True)
-    hide_email2 = models.BooleanField()
-    email3 = models.EmailField(null=True)
-    hide_email3 = models.BooleanField()
+    emails = models.CharField(max_length=500,null=True)
 
     def __unicode__(self):
         return "'"+str(self.user)+"@"+self.organization+"'"
@@ -54,6 +53,8 @@ class UserProfile(models.Model):
             return 'System'
         elif self.user_type == 'A':
             return 'Alumni'
+        elif self.user_type == 'H':
+            return 'Honorary'
         return 'Member'
 
 
@@ -105,17 +106,41 @@ class UserApplication(models.Model):
     def __unicode__(self):
         return "Application from "+self.name
 
+from django.forms.util import ValidationError
+class MultiEmailField(forms.CharField):
+
+    default_error_messages = {
+        'invalid': (u'Enter a valid e-mail address.'),
+    }
+
+    def __init__(self, max_length=None, min_length=None, *args, **kwargs):
+        self.max_length, self.min_length = max_length, min_length
+        super(MultiEmailField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        "Check if value consists only of valid emails."
+        # Use the parent's handling of required fields, etc.
+        super(MultiEmailField, self).clean(value)
+        cleaned = ''
+        for email in re.split(' |\n|,|;',value):
+            email = email.strip()
+            if not email == '':
+                if not email_re.match(email):
+                    raise ValidationError('\''+email + '\' is not a valid e-mail')
+
+        return re.sub(r'[;, \n]+','\n',value).strip()  # separated by newline
+
+
 class ProfileForm(forms.Form):
+
     user_image = forms.ImageField(required=False)
     description = forms.CharField(max_length=15)
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30,required=False)
-    email1 = forms.EmailField(required=False)
-    hide_email1 = forms.BooleanField(required=False)
-    email2 = forms.EmailField(required=False)
-    hide_email2 = forms.BooleanField(required=False)
-    email3 = forms.EmailField(required=False)
-    hide_email3 = forms.BooleanField(required=False)
+
+    emails = MultiEmailField(label='E-mails', required=False,
+                             max_length=500,
+                             widget=forms.Textarea(attrs={'rows':4, 'cols':50}))
 
 
 class ApplyForm(forms.Form):
@@ -137,8 +162,10 @@ def create_default_profile(user):
     except IOError:
         # something should be done here
         pass
-    
+
     defaultpic.close()
+
+    profile.emails = user.email
     profile.save()
     profile.description = settings.DEFAULT_USER_DESCRIPTION
     profile.save()

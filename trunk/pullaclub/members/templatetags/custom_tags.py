@@ -6,11 +6,15 @@ from django import template
 
 register = template.Library()
 
+lire = re.compile('\n\s*(-|\*)(?P<line>.+)')
+culre = re.compile('</li>(?!<li>)\n*')
+oulre = re.compile('\n*(?<!</li>)<li>')
+
 @register.filter
 def br(text):
-    text = re.sub('\n\s*(-|\*)(?P<line>.+)','<li>\g<line></li>',text) 
-    text = re.sub('</li>(?!<li>)\n*','</li></ul>',text)
-    text = re.sub('\n*(?<!</li>)<li>','<ul><li>',text)
+    text = lire.sub('<li>\g<line></li>',text) 
+    text = culre.sub('</li></ul>',text)
+    text = oulre.sub('<ul><li>',text)
     return text.replace('\n','<br/>')
 
 @register.filter

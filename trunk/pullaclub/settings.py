@@ -94,7 +94,7 @@ DEFAULT_USER_DESCRIPTION = 'Pikkupulla'
 
 # settings for MMS import
 POP_HOST = 'mail.pullaclub.com'
-POP_USERNAME = 'mms@pullaclub.com'
+POP_USERNAME = 'mms@beta.pullaclub.com'
 POP_PASSWORD = 'pullakausi'
 MMS_USER = 'mms'
 

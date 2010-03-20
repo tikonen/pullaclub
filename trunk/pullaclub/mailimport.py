@@ -20,12 +20,6 @@ handler.setFormatter(
 
 mlog.addHandler(handler)
 
-# logging.basicConfig(level=logging.DEBUG,
-#                     format='%(asctime)s %(levelname)s %(message)s',
-#                     filename='mailimport.log',
-#                     filemode='a')
-
-
 class Daemon:
 
     def __init__(self, pidfile, stdin, stdout, stderr):
@@ -239,6 +233,8 @@ import re
 import StringIO
 import Image
 
+from pullaclub.members.models import email_re
+
 try:
     from email.header import decode_header
 except ImportError: # Python 2.4
@@ -246,7 +242,7 @@ except ImportError: # Python 2.4
 
 
 from django.conf import settings
-from pullaclub.members.models import Comment
+from pullaclub.members.models import Comment,UserProfile
 from django.contrib.auth.models import User
 
 def remove_html_tags(data):
@@ -267,7 +263,9 @@ def dump_mail(message, idx):
     f.close()
     
 class StringIOWrapper(StringIO.StringIO):
-
+    """
+    Wrapper for saving file data from decoded bytes to ImageField
+    """
     def chunks(self, chunk_size=None):
         self.seek(0)
         yield self.read()
@@ -276,12 +274,34 @@ class StringIOWrapper(StringIO.StringIO):
         self.seek(0,2)
         return self.tell()
 
-def format_description(sender, subject, message):
+def format_description(subject, message):
     message = message.strip()
     if not message == '':
         message = ", "+message
         
-    return '%s %s%s' % (sender, subject, message)
+    return subject + message
+
+def _resolve_comment_owner(sender):
+    resolved = False
+    owner = user = User.objects.get(username=settings.MMS_USER)
+
+    #import pdb
+    #pdb.set_trace()
+
+    g = email_re.search(sender)
+    if not g: # check for broken e-mail        
+        return (owner, user, resolved)
+
+    sender_email = g.group(0)
+
+    profiles = UserProfile.objects.filter(emails__contains=sender_email)
+    # profile = UserProfile.objects.get(**{'email'+str(i): sender_email})
+    if len(profiles) > 0:
+        owner = user = profiles[0].user
+        resolved = True
+
+    return (owner, user, resolved)
+
 
 def process_mailbox():
 
@@ -304,15 +324,12 @@ def process_mailbox():
 
     mlog.info('processing %s messages',message_count)
 
-    user = User.objects.get(username=settings.MMS_USER)
-
     for message in mailbox.list()[1]:
         idx,_ = message.split()
         resp = mailbox.retr(idx)
         
         #dump_mail(resp[1],idx)  # debug
         newcomment = Comment()
-        newcomment.user = user
     
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
@@ -328,6 +345,11 @@ def process_mailbox():
         has_image = False
 
         mlog.info('processing message %s (%s)',sender,subject)
+        
+        (owner, user, resolved) = _resolve_comment_owner(sender)
+        newcomment.user = owner
+
+        mlog.info('owner: %s, sender %s',owner.username,user.username)
 
         for msgpart in parsedmsg.walk():
             ctype = msgpart.get_content_type()
@@ -354,12 +376,16 @@ def process_mailbox():
                 
                 mlog.info('image %s stored', filename)
             
-        mailbox.dele(idx)        
-        newcomment.message = format_description(sender,subject,description)
+        #mailbox.dele(idx)
+        if resolved:
+            newcomment.message = format_description(subject,description)
+        else:
+            newcomment.message = sender + ' ' + format_description(subject,description)
         newcomment.save()
 
     mlog.info('end')
     mailbox.quit()
+    sys.exit(0)
 
 
 STDERR_FILE = os.path.join(os.getcwd(),'mailimport.err')
@@ -368,7 +394,7 @@ STDOUT_FILE = os.path.join(os.getcwd(),'mailimport.out')
 class MMSCron(BaseCron):
     def __init__(self,pidfile):
         BaseCron.__init__(self,pidfile,stdout=STDOUT_FILE,stderr=STDERR_FILE)
-        self.add_event("mms_email_poll_job",5,"minute",round=True)
+        self.add_event("mms_email_poll_job",5,"second",round=True)
 
     def mms_email_poll_job(self):
         process_mailbox()

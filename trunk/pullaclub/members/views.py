@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 
-from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile
+from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile, MultiEmailField
 
 def latest_entry(request, page):
     return Comment.objects.latest('datetime').datetime;
@@ -57,6 +57,7 @@ def profile(request, username):
     
     user = get_object_or_404(User,username=username)
 
+    success = False
     can_edit = False
     # user can only edit this own profile
     if request.user.is_staff or request.user == user:
@@ -70,7 +71,7 @@ def profile(request, username):
         form = ProfileForm(request.POST, request.FILES) # form bound to the POST data
         if form.is_valid(): # All validation rules pass                
             user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
+            user.last_name = form.cleaned_data['last_name']            
             user.save()
                 
             profile = user.get_profile()
@@ -78,24 +79,29 @@ def profile(request, username):
             uploaded_file = form.cleaned_data['user_image']
             if uploaded_file:                    
                 profile.user_image.save(uploaded_file.name, uploaded_file)
-
+            profile.emails = form.cleaned_data['emails']
             profile.save()
-
-            return HttpResponseRedirect(reverse('pullaclub.members.views.index')) # Redirect after POST
+            success = True
+            #return HttpResponseRedirect(reverse('pullaclub.members.views.index')) # Redirect after POST
+        else:
+            success = False
     else:
         profile = user.get_profile()
         data = { 'description' : profile.description,
                  'first_name' : user.first_name,
                  'last_name' : user.last_name,
+                 'emails' : profile.emails,
                  }
         file_data = {}
         form = ProfileForm(data, file_data)
             
-        return render_to_response('members/profile_edit.html', {
-                'user': user,
-                'form': form,
-                'can_edit' : can_edit,
-                })
+    return render_to_response('members/profile_edit.html', {
+            'user': user,
+            'form': form,
+            'success':success,
+            'can_edit' : can_edit,
+            'mms_email': settings.POP_USERNAME,
+            })
 
 
 @login_required

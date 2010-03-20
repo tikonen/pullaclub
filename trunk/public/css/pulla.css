@@ -262,13 +262,6 @@ a.round_button:active span {
 	margin-left: 0.5em;
 }
 
-/*
-input {
-	color: #781351;
-	background: #fee3ad;
-	border: 1px solid #781351
-}
-*/
 .submit input {
 	color: #000;
 	background: #ffa20f;
@@ -285,12 +278,6 @@ input {
 	text-align: right;
 	margin-right: 0.5em;
 	display: block
-}
-
-.input_form textarea {
-    color: #781351;
-    background: #fee3ad;
-    border: 1px solid #781351
 }
 
 .input_form legend {
@@ -375,20 +362,23 @@ input {
 }
 
 .error_message {
-	color: red;
-	background: yellow;
-	border: 2px solid black;
-	padding: 5px;
+    margin: 5px auto 5px auto;
+    padding: 5px;
+    border: 2px solid black;
+    width: 80%;
+    background:yellow;
+    color:red;
+    text-align:center;
 }
 
 .errorlist {
-	color: red;
-	list-style: none;
-	border: 2px solid black;
-	padding: 5px;
-	background-color: yellow;
-	width: 10em;
-	margin-left: 6.5em;
+    color: red;
+    list-style: none;
+    border: 2px solid black;
+    padding: 5px;
+    background-color: yellow;
+    text-align:center;
+    width: 80%;
 }
 
 [icon ^="comment"] {
