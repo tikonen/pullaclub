@@ -1,4 +1,5 @@
 import os
+import re
 import Image
 from django import template
 
@@ -6,8 +7,11 @@ from django import template
 register = template.Library()
 
 @register.filter
-def br(html):
-    return html.replace('\n','<br/>')
+def br(text):
+    text = re.sub('\n\s*(-|\*)(?P<line>.+)','<li>\g<line></li>',text) 
+    text = re.sub('</li>(?!<li>)\n*','</li></ul>',text)
+    text = re.sub('\n*(?<!</li>)<li>','<ul><li>',text)
+    return text.replace('\n','<br/>')
 
 @register.filter
 def times(count):
