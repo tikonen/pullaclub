@@ -1,9 +1,18 @@
 import os
+import re
 import Image
 from django import template
 
-# register custom template filter to support integer counter loops
+
 register = template.Library()
+
+@register.filter
+def br(text):
+    text = re.sub('\n\s*(-|\*)(?P<line>.+)','<li>\g<line></li>',text) 
+    text = re.sub('</li>(?!<li>)\n*','</li></ul>',text)
+    text = re.sub('\n*(?<!</li>)<li>','<ul><li>',text)
+    return text.replace('\n','<br/>')
+
 @register.filter
 def times(count):
     return range(int(count))

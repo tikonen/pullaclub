@@ -49,6 +49,11 @@ class UserProfile(models.Model):
             return 'Alumni'
         return 'Member'
 
+class UserEmail(models.Model):
+    user = models.ForeignKey(User)
+    email = forms.EmailField(label='E-Mail')
+    hide_email = forms.CheckboxInput(label='Only hide')
+
 class Topic(models.Model):
 
     MAX_LENGTH=160
@@ -118,7 +123,7 @@ def create_default_profile(user):
     try:
         # set default user picture
         defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
-        (name, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
+        (_, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
         profile.user_image.save(user.username+suffix,File(defaultpic))
     except IOError:
         # something should be done here

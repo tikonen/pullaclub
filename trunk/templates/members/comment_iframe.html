@@ -1,11 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <!-- {% load custom_tags %} -->
+    {% load custom_tags %}
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
     <title>Comment</title>
-    <!--<link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css"/>-->
-    <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
 	  $("textarea").live('keyup',function(event) {
@@ -81,7 +80,9 @@
 	    <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago</span>
 	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ rootcomment.id }}"></span>
 	    <br/>
-	    {{ rootcomment.message|urlize }} 
+	    {% autoescape off %}
+	    {{ rootcomment.message|escape|urlize|br }}
+	    {% endautoescape %}
 	    <p></p>
 	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"></span>
 	  </div>

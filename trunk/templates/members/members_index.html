@@ -6,7 +6,7 @@
     <title>Members of PullaClub.com</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
     <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
-    <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
 	  $("#slidepanel0").hide(); // hide the root comment box iframe
@@ -171,7 +171,7 @@
 	  <a href="/members/1/">&lt;&lt;first</a>
 	  <a href="/members/{{ page.previous_page_number }}">&lt;previous</a>
 	  {% endif %}
-	  {{ page.number }} of {{ page.paginator.num_pages }}
+	  {{ page.number }} / {{ page.paginator.num_pages }}
 	  {% if page.has_next %}
 	  <a href="/members/{{ page.next_page_number }}">next&gt;</a>
 	  <a href="/members/{{ page.paginator.num_pages }}/">last&gt;&gt;</a>
@@ -202,7 +202,9 @@
 	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></span>
 	    {% endifequal %}
 	    <br/>
-	    {{ update.rootcomment.message|urlize }} 
+	    {% autoescape off %}
+	    {{ update.rootcomment.message|escape|urlize|br }}
+	    {% endautoescape %}
 	    <p></p>
 	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"></span>
 	  </div>
@@ -225,7 +227,10 @@
 	    {% ifequal user comment.user %}
 	    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"></span>
 	    {% endifequal %}
-	    <br/>{{ comment.message|urlize }}	    
+	    <br/>
+	    {% autoescape off %}
+	    {{ comment.message|escape|urlize|br }}
+	    {% endautoescape %}
 	  </div> <!-- comment -->
 	</div> <!-- text -->
 	{% endfor %}
@@ -246,11 +251,13 @@
       <p style="float:right">
 	<span class="text" style="float:right">
 	  {% if page.has_previous %}
+	  <a href="/members/1/">&lt;&lt;first</a>
 	  <a href="/members/{{ page.previous_page_number }}">&lt;previous</a>
 	  {% endif %}
-	  {{ page.number }} of {{ page.paginator.num_pages }}
+	  {{ page.number }} / {{ page.paginator.num_pages }}
 	  {% if page.has_next %}
 	  <a href="/members/{{ page.next_page_number }}">next&gt;</a>
+	  <a href="/members/{{ page.paginator.num_pages }}/">last&gt;&gt;</a>
 	  {% endif %}
 	</span>
       </p>
