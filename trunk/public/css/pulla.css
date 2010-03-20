@@ -73,6 +73,12 @@ body {
 	background: #CCC;
 }
 
+img {
+    background:#CCC;
+    border:1px solid grey;
+    padding: 3px;
+}
+
 .time_stamp {
 	font-weight: xx-small;
 	color: lightgray;

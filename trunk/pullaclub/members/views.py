@@ -53,67 +53,50 @@ def index(request, page):
     return HttpResponse(t.render(c))
 
 @login_required
-def profile(request, action, username):
+def profile(request, username):
     
+    user = get_object_or_404(User,username=username)
+
     can_edit = False
+    # user can only edit this own profile
+    if request.user.is_staff or request.user == user:
+        can_edit = True
 
-    if action == 'view':
-        if request.user.username == username or request.user.is_staff:
-            can_edit = True
-            pass
-
-        user = get_object_or_404(User,username=username)
-        try:
-            profile = user.get_profile()
-        except UserProfile.DoesNotExist:
-            profile = create_default_profile(user)
-
-        return render_to_response('members/profile.html', {
-                'user': user,
-                'profile': profile,
-                'can_edit' : can_edit,
-                })
-
-    elif action == 'edit':
-
-        user = get_object_or_404(User,username=username)
-
+    if request.method == 'POST':
         # user can only edit this own profile
         if not request.user.is_staff and not request.user == user:
             raise Http404
 
-        if request.method == 'POST':
-            form = ProfileForm(request.POST, request.FILES) # form bound to the POST data
-            if form.is_valid(): # All validation rules pass
+        form = ProfileForm(request.POST, request.FILES) # form bound to the POST data
+        if form.is_valid(): # All validation rules pass                
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
                 
-                user.first_name = form.cleaned_data['first_name']
-                user.last_name = form.cleaned_data['last_name']
-                user.save()
-                
-                profile = user.get_profile()
-                profile.description = form.cleaned_data['description']
-                uploaded_file = form.cleaned_data['user_image']
-                if uploaded_file:                    
-                    profile.user_image.save(uploaded_file.name, uploaded_file)
-
-                profile.save()
-
-                return HttpResponseRedirect(reverse('pullaclub.members.views.index')) # Redirect after POST
-        else:
             profile = user.get_profile()
-            data = { 'description' : profile.description,
-                     'first_name' : user.first_name,
-                     'last_name' : user.last_name,
-                      }
-            file_data = {}
-            form = ProfileForm(data, file_data)
+            profile.description = form.cleaned_data['description']
+            uploaded_file = form.cleaned_data['user_image']
+            if uploaded_file:                    
+                profile.user_image.save(uploaded_file.name, uploaded_file)
+
+            profile.save()
+
+            return HttpResponseRedirect(reverse('pullaclub.members.views.index')) # Redirect after POST
+    else:
+        profile = user.get_profile()
+        data = { 'description' : profile.description,
+                 'first_name' : user.first_name,
+                 'last_name' : user.last_name,
+                 }
+        file_data = {}
+        form = ProfileForm(data, file_data)
             
         return render_to_response('members/profile_edit.html', {
                 'user': user,
                 'form': form,
+                'can_edit' : can_edit,
                 })
 
-    raise Http404
 
 @login_required
 def comment(request, action, comment_id):

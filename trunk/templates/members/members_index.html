@@ -159,7 +159,7 @@
     <div id="main">
       <div class="text" style="background:grey;-moz-border-radius: 5px;-webkit-border-radius: 5px;">
 	<strong>
-	  <a href="/members/profile/view/{{ user.username }}"><span style="color:white">{{ user.get_full_name }}</span></a>
+	  <a href="/members/profile/{{ user.username }}"><span title="Edit your profile" style="color:white">{{ user.get_full_name }}</span></a>
 	</strong>
       </div>
       <p>
@@ -196,7 +196,7 @@
 	</div> <!-- avatar -->
 	<div class="update_text">
 	  <div class="text">	  
-	    <a href="/members/profile/view/{{ update.rootcomment.user.username }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
+	    <a href="/members/profile/{{ update.rootcomment.user.username }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago</span>
 	    {% ifequal user update.rootcomment.user %}
 	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></span>
@@ -221,7 +221,7 @@
 	{% for comment in update.subcomments %}
 	<div class="text">
 	  <div class="comment">
-	    <a href="/members/profile/view/{{ comment.user.username }}">
+	    <a href="/members/profile/{{ comment.user.username }}">
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	    {% ifequal user comment.user %}

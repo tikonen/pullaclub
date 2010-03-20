@@ -1,12 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
+    <!-- {% load custom_tags %} -->
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Edit profile of {{ user.get_full_name }}</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
-    <link rel="stylesheet" href="http://www.pullaclub.com/css/pulla.css" type="text/css" />
-    <script type="text/javascript" src="http://pullaclub.com/js/jquery-1.4.1.js"></script>
-    <style type="text/css"></style>
+    <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
+    <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
+    {% if not can_edit %}
+    <script type="text/javascript">
+      $(document).ready(function() {
+	  $("input[id!='cancel']").attr("disabled","true");
+      });
+    </script>
+    {% endif %}
+    <style type="text/css">
+      form {
+	  margin-top:100px;
+	  width:35em; 
+	  margin-left:auto; 
+	  margin-right:auto;
+	  margin-bottom:100px;
+      }
+      form label {
+	  font-weight:bold;
+	  padding-right:10px;
+      }
+    </style>
   </head>
   <body>
     <div id="topnav">
@@ -18,23 +38,21 @@
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
       </ul>
     </div>
-    <div style="padding:5px;">
-      <center>
-      <h3>{{ user.get_full_name }}<br/>member no: {{ user.id }}</h3>
-      </center>
-      <hr width="100%" style="color:lightgrey;"/>
-      <div style="width:30em; margin-left:auto; margin-right:auto;margin-bottom:100px;">
-	<form enctype="multipart/form-data" method="post" action="/members/profile/edit/{{ user.username }}/">
-	  <fieldset class="input_form">
-	    <legend>Edit your profile</legend>
-	    <p>{{ form.first_name.label_tag }} {{ form.first_name }} {{ form.first_name.errors }}</p>
-	    <p>{{ form.last_name.label_tag }} {{ form.last_name }} {{ form.last_name.errors }}</p>
-	    <p> {{ form.user_image.label_tag }} {{ form.user_image }} {{ form.user_image.errors }}</p>
-	    <p>{{ form.description.label_tag }} {{ form.description }} {{ form.description.errors }}</p>
-	    <input type="submit" value="Submit" />
-	  </fieldset>
-	</form>
-      </div>
+    <div class="text">
+      <form enctype="multipart/form-data" method="post" action="/members/profile/{{ user.username }}/">
+	<fieldset class="input_form">
+	  <legend>{% if can_edit %}Edit  profile{% else %}View profile{% endif %}</legend>
+	  <img style="float:right;" src="{{ user.get_profile.user_image|scale2:"60" }}"/>
+	  <p><label>Login</label>{{ user.username }}</p>
+	  <p><label>Member no</label>{{ user.id }}</p>
+	  <p>{{ form.first_name.label_tag }} {{ form.first_name }} {{ form.first_name.errors }}</p>
+	  <p>{{ form.last_name.label_tag }} {{ form.last_name }} {{ form.last_name.errors }}</p>
+	  <p> {{ form.user_image.label_tag }} {{ form.user_image }} {{ form.user_image.errors }}</p>
+	  <p>{{ form.description.label_tag }} {{ form.description }} {{ form.description.errors }}</p>	  
+	  <input {% if not can_edit %}disabled="true"{% endif %} type="submit" value="Submit" />
+	  <input id="cancel" type="button" value="Cancel" onclick="window.location='/members/'"/>
+	</fieldset>
+      </form>
     </div>
   </body>
 </html>

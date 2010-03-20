@@ -25,6 +25,13 @@ class UserProfile(models.Model):
     user_type = models.CharField(max_length=2,choices=USER_TYPE,null=True)
     description = models.CharField(max_length=15, blank=True)
     organization = models.CharField(max_length=30,choices=USER_ORG,blank=True)
+    user = models.ForeignKey(User)
+    email1 = models.EmailField(null=True)
+    hide_email1 = models.BooleanField()
+    email2 = models.EmailField(null=True)
+    hide_email2 = models.BooleanField()
+    email3 = models.EmailField(null=True)
+    hide_email3 = models.BooleanField()
 
     def __unicode__(self):
         return "'"+str(self.user)+"@"+self.organization+"'"
@@ -49,10 +56,6 @@ class UserProfile(models.Model):
             return 'Alumni'
         return 'Member'
 
-class UserEmail(models.Model):
-    user = models.ForeignKey(User)
-    email = forms.EmailField(label='E-Mail')
-    hide_email = forms.CheckboxInput(label='Only hide')
 
 class Topic(models.Model):
 
@@ -107,6 +110,12 @@ class ProfileForm(forms.Form):
     description = forms.CharField(max_length=15)
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30,required=False)
+    email1 = forms.EmailField(required=False)
+    hide_email1 = forms.BooleanField(required=False)
+    email2 = forms.EmailField(required=False)
+    hide_email2 = forms.BooleanField(required=False)
+    email3 = forms.EmailField(required=False)
+    hide_email3 = forms.BooleanField(required=False)
 
 
 class ApplyForm(forms.Form):
@@ -128,9 +137,10 @@ def create_default_profile(user):
     except IOError:
         # something should be done here
         pass
+    
     defaultpic.close()
     profile.save()
-    profile.description = 'Pikkupulla'
+    profile.description = settings.DEFAULT_USER_DESCRIPTION
     profile.save()
     return profile
 
