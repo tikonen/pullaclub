@@ -8,7 +8,7 @@
     <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"></span>
     <br>
       {% autoescape off %}
-      {{ comment.message|escape|urlize|br }}
+      {{ comment.message|escape|urlize|tags }}
       {% endautoescape %}
   </div>
 </div>
