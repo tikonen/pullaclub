@@ -103,7 +103,7 @@
 	{% if rootcomment.image0 %}
 	<div class="text" style="text-align:center;clear:both;">
 	  <img src="{{ rootcomment.image0|scaleh:"300" }}"/><br/>
-	  <a href="#" onclick="window.open('{{ update.rootcomment.image0.url }}','{{ update.rootcomment.image0.filename }}','width={{ update.rootcomment.image0.width }},height={{ update.rootcomment.image0.height }},status=0')">Original size</a>
+	  <a href="#" onclick="window.open('{{ rootcomment.image0.url }}','{{ rootcomment.image0.filename }}','width={{ rootcomment.image0.width }},height={{ rootcomment.image0.height }},status=0')">Original size</a>
 	</div>
 	{% endif %}
 
