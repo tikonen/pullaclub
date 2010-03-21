@@ -30,7 +30,7 @@ class UserProfile(models.Model):
     description = models.CharField(max_length=15, blank=True)
     organization = models.CharField(max_length=30,choices=USER_ORG,blank=True)
     user = models.ForeignKey(User)
-    emails = models.CharField(max_length=500,null=True)
+    emails = models.CharField(max_length=500, null=True, blank=True)
 
     def __unicode__(self):
         return "'"+str(self.user)+"@"+self.organization+"'"
