@@ -137,10 +137,10 @@ h1 {
 }
 
 .caption {
-	padding-right: 5px;
-	font-size: x-small;
-	float: right;
-	color: gray
+    margin: 0px 10px 0px 10px;
+    font-size: x-small;
+    float: right;
+    color: gray
 }
 
 .caption a {
