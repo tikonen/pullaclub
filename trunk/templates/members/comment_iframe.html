@@ -93,7 +93,7 @@
 	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ rootcomment.id }}"></span>
 	    <br/>
 	    {% autoescape off %}
-	    {{ rootcomment.message|escape|urlize|tags }}
+	    {{ rootcomment.message|escape|tags|urlize }}
 	    {% endautoescape %}
 	    <p></p>
 	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"></span>

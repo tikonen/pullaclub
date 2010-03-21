@@ -212,7 +212,7 @@
 	    {% endifequal %}
 	    <br/>
 	    {% autoescape off %}
-	    {{ update.rootcomment.message|escape|urlize|tags }}
+	    {{ update.rootcomment.message|escape|tags|urlize }}
 	    {% endautoescape %}
 	    <p></p>
 	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"></span>
@@ -238,7 +238,7 @@
 	    {% endifequal %}
 	    <br/>
 	    {% autoescape off %}
-	    {{ comment.message|escape|urlize|tags }}
+	    {{ comment.message|escape|tags|urlize }}
 	    {% endautoescape %}
 	  </div> <!-- comment -->
 	</div> <!-- text -->
