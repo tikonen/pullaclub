@@ -63,7 +63,7 @@
 	  {% endif %}
 	  <fieldset class="sub_form">
 	    <legend>User Identity</legend>
-	    <img style="float:right;" src="{{ user.get_profile.user_image|scale2:"60" }}"/>
+	    <img style="float:right;" src="{{ user.get_profile.user_image|downscale:"60" }}"/>
 	    <p><label>Login</label>{{ user.username }}</p>
 	    <p><label>Member no</label>{{ user.id }}</p>
 	  </fieldset>

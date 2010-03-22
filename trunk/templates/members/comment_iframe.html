@@ -82,7 +82,7 @@
       <p></p>
       <div class="update">
 	<div class="profile_avatar">
-	  <img src="{{ rootcomment.user.get_profile.user_image|scale2:"60" }}"/>
+	  <img src="{{ rootcomment.user.get_profile.user_image|downscale:"60" }}"/>
 	  <br/>
 	  <span class="text">{{ rootcomment.user.get_profile.description }}</span>
 	</div> <!-- avatar -->
@@ -102,7 +102,7 @@
 
 	{% if rootcomment.image0 %}
 	<div class="text" style="text-align:center;clear:both;">
-	  <img src="{{ rootcomment.image0|scaleh:"300" }}"/><br/>
+	  <img src="{{ rootcomment.image0|downscale:"300h" }}"/><br/>
 	  <a href="#" onclick="window.open('{{ rootcomment.image0.url }}','{{ rootcomment.image0.filename }}','width={{ rootcomment.image0.width }},height={{ rootcomment.image0.height }},status=0')">Original size</a>
 	</div>
 	{% endif %}
