@@ -382,6 +382,7 @@ def process_mailbox():
         else:
             newcomment.message = sender + ' ' + format_description(subject,description)
         newcomment.save()
+        mlog.info('saved comment %s',newcomment.id)
 
     mlog.info('end')
     mailbox.quit()
