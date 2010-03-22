@@ -1,0 +1,16 @@
+{% if comment %}
+{% load custom_tags %}
+<div class="text">
+  <div class="comment">
+    <a href="/members/profile/{{ comment.user.username }}">
+    <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
+    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
+    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"></span>
+    <br>
+      {% autoescape off %}
+      {{ comment.message|escape|urlize|tags }}
+      {% endautoescape %}
+  </div>
+</div>
+{% endif %}
+
