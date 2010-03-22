@@ -7,8 +7,8 @@ from django import template
 register = template.Library()
 
 lire = re.compile('\n\s*(-|\*)(?P<line>.+)')
-culre = re.compile('</li>(?!<li>)\n*')
-oulre = re.compile('\n*(?<!</li>)<li>')
+culre = re.compile('</li>(?!<li>)\s*')
+oulre = re.compile('\s*(?<!</li>)<li>')
 qre = re.compile('(^|\s+)(?P<quote>"[^"]+")($|\s+)')
 
 @register.filter
