@@ -16,7 +16,7 @@ def tags(text):
     text = lire.sub('<li>\g<line></li>',text) # wrap bulleted lines with <li>
     text = culre.sub('</li></ul>',text) # append closing </ul>
     text = oulre.sub('<ul><li>',text) # prepend opening <ul>
-    text = qre.sub('<i>\g<quote></i>',text) # wrap quotes with <i>
+    text = qre.sub('<i> \g<quote> </i>',text) # wrap quotes with <i>
     return text.replace('\n','<br/>')  # nl to html line breaks
 
 @register.filter
