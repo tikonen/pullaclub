@@ -2,7 +2,7 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-PULLACLUB_DEV = True
+PULLACLUB_DEV = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -94,7 +94,7 @@ DEFAULT_USER_DESCRIPTION = 'Pikkupulla'
 
 # settings for MMS import
 POP_HOST = 'mail.pullaclub.com'
-POP_USERNAME = 'mms@beta.pullaclub.com'
+POP_USERNAME = 'mms@pullaclub.com'
 POP_PASSWORD = 'pullakausi'
 MMS_USER = 'mms'
 
