@@ -292,7 +292,7 @@ def _resolve_comment_owner(sender):
     if not g: # check for broken e-mail        
         return (owner, user, resolved)
 
-    sender_email = g.group(0)
+    sender_email = g.group(0).lower()
 
     profiles = UserProfile.objects.filter(emails__contains=sender_email)
     # profile = UserProfile.objects.get(**{'email'+str(i): sender_email})

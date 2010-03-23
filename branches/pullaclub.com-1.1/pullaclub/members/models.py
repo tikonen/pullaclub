@@ -123,12 +123,12 @@ class MultiEmailField(forms.CharField):
         super(MultiEmailField, self).clean(value)
         cleaned = ''
         for email in re.split(' |\n|,|;',value):
-            email = email.strip()
+            email = email.strip().lower()
             if not email == '':
                 if not email_re.match(email):
                     raise ValidationError('\''+email + '\' is not a valid e-mail')
 
-        return re.sub(r'[;, \n]+','\n',value).strip()  # separated by newline
+        return re.sub(r'[;, \n]+','\n',value).lower().strip()  # separated by newline
 
 
 class ProfileForm(forms.Form):
