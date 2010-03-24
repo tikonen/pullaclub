@@ -285,20 +285,20 @@ def _resolve_comment_owner(sender):
     resolved = False
     owner = user = User.objects.get(username=settings.MMS_USER)
 
-    #import pdb
-    #pdb.set_trace()
-
     g = email_re.search(sender)
     if not g: # check for broken e-mail        
         return (owner, user, resolved)
 
-    sender_email = g.group(0)
+    sender_email = g.group(0).lower()
 
     profiles = UserProfile.objects.filter(emails__contains=sender_email)
     # profile = UserProfile.objects.get(**{'email'+str(i): sender_email})
-    if len(profiles) > 0:
+    if len(profiles) > 0:        
         owner = user = profiles[0].user
         resolved = True
+        if len(profiles) > 1:
+            mlog.warning('more than one user matches "%s"',sender_email)
+            mlog.warning([str(profile.user.username) for profile in ul])
 
     return (owner, user, resolved)
 
@@ -351,15 +351,20 @@ def process_mailbox():
 
         mlog.info('owner: %s, sender %s',owner.username,user.username)
 
+        #import pdb
+        #pdb.set_trace()
+
         for msgpart in parsedmsg.walk():
             ctype = msgpart.get_content_type()
 
             if ctype == 'text/plain':
                 description = msgpart.get_payload(decode=True)
+                mlog.info('text/plain "%s"',description)
 
             elif ctype == 'text/html' and description == '':
                 # use html text only if plain text not available
                 description = strip_mms_html(msgpart.get_payload(decode=True))
+                mlog.info('text/html "%s"',description)
                 
             elif ctype.startswith('image/') and not has_image:
                 filename = msgpart.get_filename()

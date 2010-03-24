@@ -1,9 +1,19 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
+from django.contrib.syndication.views import feed
 
-# Uncomment the next two lines to enable the admin:
+from pullaclub.members.api import login_required_basicauth
+from pullaclub.members.feeds import LatestComments
+
+# Enable admin gui
 from django.contrib import admin
 admin.autodiscover()
+
+# RSS feeds
+feeds = {
+    'latest': LatestComments,
+}
+
 
 urlpatterns = patterns(
     '',
@@ -16,6 +26,8 @@ urlpatterns = patterns(
      { 'template_name': 'members/password_change_form.html'}),
     (r'^changeok/$', 'django.contrib.auth.views.password_change_done',
      { 'template_name': 'members/password_change_done.html'}),
+
+    (r'^feeds/(?P<url>.*)/$', login_required_basicauth(feed,realm="PullaClub Feed"), {'feed_dict': feeds}),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:

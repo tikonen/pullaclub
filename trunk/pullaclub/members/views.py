@@ -2,7 +2,6 @@ import math
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from exceptions import Exception
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.conf import settings
@@ -140,7 +139,8 @@ def comment(request, action, comment_id):
                 'username' : request.user.username,
                 'fullname' : request.user.get_full_name(),
                 'message' : comment.message,
-                'id' :  comment.parent.id,
+                'id' :  comment.id,
+                'status': 'new',
                 'render' : t.render(c),
                 }
                 
