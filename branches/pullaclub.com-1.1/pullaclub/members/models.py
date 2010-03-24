@@ -158,7 +158,7 @@ def create_default_profile(user):
         # set default user picture
         defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
         (_, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
-        profile.user_image.save(user.username+suffix,File(defaultpic))
+        profile.user_image.save(user.id+suffix,File(defaultpic))
     except IOError:
         # something should be done here
         pass

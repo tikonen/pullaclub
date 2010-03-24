@@ -55,7 +55,7 @@
       </ul>
     </div>
     <div class="text">
-      <form enctype="multipart/form-data" method="post" action="/members/profile/{{ user.username }}/">
+      <form enctype="multipart/form-data" method="post" action="/members/profile/{{ user.id }}/">
 	<fieldset class="input_form">
 	  <legend>{% if can_edit %}Edit  profile{% else %}View profile{% endif %}</legend>
 	  {% if success %}
@@ -64,8 +64,9 @@
 	  <fieldset class="sub_form">
 	    <legend>User Identity</legend>
 	    <img style="float:right;" src="{{ user.get_profile.user_image|scale2:"60" }}"/>
-	    <p><label>Login</label>{{ user.username }}</p>
+	    {% if can_edit %}<p><label>Login</label>{{ user.username }}</p>{% endif %}
 	    <p><label>Member no</label>{{ user.id }}</p>
+	    <p><label>User type</label>{{ user.get_profile.user_type_desc }}</p>
 	  </fieldset>
 	  <fieldset class="sub_form">
 	    <legend>User Information</legend>
