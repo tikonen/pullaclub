@@ -57,7 +57,7 @@
     <div class="text">
       <form enctype="multipart/form-data" method="post" action="/members/profile/{{ user.id }}/">
 	<fieldset class="input_form">
-	  <legend>{% if can_edit %}Edit  profile{% else %}View profile{% endif %}</legend>
+	  <legend>Profile of {{ user.get_full_name }}</legend>
 	  {% if success %}
 	  <div class="success_message">You changes have been successfully saved</div>
 	  {% endif %}
