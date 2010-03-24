@@ -275,10 +275,12 @@ class StringIOWrapper(StringIO.StringIO):
         return self.tell()
 
 def format_description(subject, message):
+    subject = subject.strip()
     message = message.strip()
-    if not message == '':
-        message = ", "+message
-        
+
+    if len(subject) > 0 and len(message) > 0:
+        return "%s, %s" % (subject, message)
+    
     return subject + message
 
 def _resolve_comment_owner(sender):
