@@ -1,6 +1,6 @@
 # Django settings for pullaclub project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 PULLACLUB_DEV = False
 
