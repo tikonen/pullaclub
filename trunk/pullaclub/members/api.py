@@ -11,10 +11,11 @@ from pullaclub.members.models import Comment
 
 def view_or_basicauth(view, request, test_func, realm = "", *args, **kwargs):
     """
-    This is a helper function used by both 'logged_in_or_basicauth' and
-    'has_perm_or_basicauth' that does the nitty of determining if they
-    are already logged in or if they have provided proper http-authorization
-    and returning the view if all goes well, otherwise responding with a 401.
+    This is a helper function used by both 'logged_in_or_basicauth'
+    and 'has_perm_or_basicauth' that does the nitty of determining if
+    they are already logged in or if they have provided proper
+    http-authorization and returning the view if all goes well,
+    otherwise responding with a 401.
     """
 
     if test_func(request.user):
@@ -73,7 +74,7 @@ def login_required_basicauth(func=None, realm = ""):
     def view_decorator(func):
         def wrapper(request, *args, **kwargs):
             return view_or_basicauth(func, request,
-                                     is_authenticated,
+                                     lambda u: u is not None and u.is_authenticated(),
                                      realm, *args, **kwargs)
         return wrapper
 
@@ -84,6 +85,8 @@ def login_required_basicauth(func=None, realm = ""):
 
 @login_required_basicauth(realm="PullaClub API")
 def api_comment(request, action, comment_id):
+
+    comment_id = int(comment_id)
 
     if action == 'new':
         # new comment
@@ -99,12 +102,12 @@ def api_comment(request, action, comment_id):
             comment = Comment()
             comment.user = request.user
             comment.message = message
-            if comment_id is not '0':
+            if comment_id is not 0:
                 comment.parent = get_object_or_404(Comment,pk=comment_id)
             comment.save()
             
             response_dict = {
-                'id' :  comment.parent.id,
+                'id' :  comment.id,
                 'status': 'new',
                 }
 
