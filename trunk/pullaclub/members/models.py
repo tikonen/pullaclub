@@ -145,12 +145,12 @@ class MultiEmailField(forms.CharField):
         super(MultiEmailField, self).clean(value)
         cleaned = ''
         for email in re.split(' |\n|,|;',value):
-            email = email.strip()
+            email = email.strip().lower()
             if not email == '':
                 if not email_re.match(email):
                     raise ValidationError('\''+email + '\' is not a valid e-mail')
 
-        return re.sub(r'[;, \n]+','\n',value).strip()  # separated by newline
+        return re.sub(r'[;, \n]+','\n',value).lower().strip()  # separated by newline
 
 
 class ProfileForm(forms.Form):
@@ -180,7 +180,7 @@ def create_default_profile(user):
         # set default user picture
         defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
         (_, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
-        profile.user_image.save(user.username+suffix,File(defaultpic))
+        profile.user_image.save(user.id+suffix,File(defaultpic))
     except IOError:
         # something should be done here
         pass

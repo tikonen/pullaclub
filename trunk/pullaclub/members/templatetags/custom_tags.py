@@ -9,7 +9,7 @@ register = template.Library()
 lire = re.compile('\n\s*(-|\*)(?P<line>.+)')
 culre = re.compile('</li>(?!<li>)\s*')
 oulre = re.compile('\s*(?<!</li>)<li>')
-qre = re.compile('(^|\s+)(?P<quote>"[^"]+")($|\s+)')
+qre = re.compile('[^=](?P<quote>"[^"]+")($|\s+|,)')
 
 @register.filter
 def tags(text):

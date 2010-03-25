@@ -275,10 +275,12 @@ class StringIOWrapper(StringIO.StringIO):
         return self.tell()
 
 def format_description(subject, message):
+    subject = subject.strip()
     message = message.strip()
-    if not message == '':
-        message = ", "+message
-        
+
+    if len(subject) > 0 and len(message) > 0:
+        return "%s, %s" % (subject, message)
+    
     return subject + message
 
 def _resolve_comment_owner(sender):
@@ -341,7 +343,7 @@ def process_mailbox():
             mailbox.dele(idx)
             continue
         
-	if not subject:
+        if subject == None:
 	    subject = ''
         description = ''
         has_image = False
@@ -391,6 +393,7 @@ def process_mailbox():
         else:
             newcomment.message = sender + ' ' + format_description(subject,description)
         newcomment.save()
+        mlog.info('saved comment %s',newcomment.id)
 
     mlog.info('end')
     mailbox.quit()

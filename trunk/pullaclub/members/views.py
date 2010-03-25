@@ -52,9 +52,9 @@ def index(request, page):
     return HttpResponse(t.render(c))
 
 @login_required
-def profile(request, username):
+def profile(request, userid):
     
-    user = get_object_or_404(User,username=username)
+    user = get_object_or_404(User,pk=userid)
 
     success = False
     can_edit = False
@@ -137,7 +137,6 @@ def comment(request, action, comment_id):
             response_dict = {
                 'url' : request.user.get_profile().user_image.url,
                 'description' : request.user.get_profile().description,
-                'username' : request.user.username,
                 'fullname' : request.user.get_full_name(),
                 'message' : comment.message,
                 'id' :  comment.id,
