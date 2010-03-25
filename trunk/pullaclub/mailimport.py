@@ -302,6 +302,8 @@ def _resolve_comment_owner(sender):
 
     return (owner, user, resolved)
 
+def _resolve_by_source(parsedmsg):
+    return Comment.BY_MOBILE
 
 def process_mailbox():
 
@@ -346,6 +348,8 @@ def process_mailbox():
 
         mlog.info('processing message %s (%s)',sender,subject)
         
+        newcomment.bysource = _resolve_by_source(parsedmsg)
+        newcomment.bysource_detail = sender
         (owner, user, resolved) = _resolve_comment_owner(sender)
         newcomment.user = owner
 

@@ -102,6 +102,7 @@ def api_comment(request, action, comment_id):
             comment = Comment()
             comment.user = request.user
             comment.message = message
+            comment.bysource = Comment.BY_API
             if comment_id is not 0:
                 comment.parent = get_object_or_404(Comment,pk=comment_id)
             comment.save()

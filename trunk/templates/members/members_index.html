@@ -166,10 +166,9 @@
     <!-- head and body separator -->
     <hr/>
     <div id="main">
-      <div class="text" style="background:grey;-moz-border-radius: 5px;-webkit-border-radius: 5px;">
-	<strong>
-	  <a href="/members/profile/{{ user.username }}"><span title="Edit your profile" style="color:white">{{ user.get_full_name }}</span></a>
-	</strong>
+      <div class="text" style="color:white;font-weight:bold;background:grey;-moz-border-radius: 5px;-webkit-border-radius: 5px;">
+	Welcome <a href="/members/profile/{{ user.username }}"><span title="Edit your profile" style="color:white;">{{ user.get_full_name }}</span></a>
+	<a href="/feeds/latest"><img style="float:right" class="clean_img" src="/gfx/feed-icon-14x14.png"/></a>
       </div>
       <p>
 	<a class="round_button" href="#"><span class="comment_new" id="0">Write new post</span></a>  
@@ -206,7 +205,7 @@
 	<div class="update_text">
 	  <div class="text">	  
 	    <a href="/members/profile/{{ update.rootcomment.user.username }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
-	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago</span>
+	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago, via {{ update.rootcomment.get_source_desc }}</span>
 	    {% ifequal user update.rootcomment.user %}
 	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></span>
 	    {% endifequal %}
@@ -215,7 +214,7 @@
 	    {{ update.rootcomment.message|escape|urlize|tags }}
 	    {% endautoescape %}
 	    <p></p>
-	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"></span>
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"></span>	    
 	  </div>
 	</div> <!-- update_text -->
 

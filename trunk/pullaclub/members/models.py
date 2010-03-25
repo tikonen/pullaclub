@@ -78,6 +78,20 @@ class Topic(models.Model):
 
 class Comment(models.Model):
 
+    BY_EMAIL = 'E'
+    BY_MOBILE = 'M'
+    BY_WEB = 'W'
+    BY_API = 'A'
+    BY_OTHER = 'O'
+
+    BY_SOURCES = (
+        (BY_EMAIL,'E-Mail'),
+        (BY_MOBILE,'Mobile'),
+        (BY_WEB,'Web'),
+        (BY_API,'API'),
+        (BY_OTHER,'Other'),
+    )
+
     MAX_LENGTH=500
 
     user = models.ForeignKey(User)
@@ -85,9 +99,17 @@ class Comment(models.Model):
     message = models.CharField(max_length=MAX_LENGTH)
     image0 = models.ImageField(upload_to=settings.COMMENT_IMAGE_UPLOAD_DIR, null=True, blank=True)
     datetime = models.DateTimeField(auto_now_add=True)
+    bysource = models.CharField(max_length=1,choices=BY_SOURCES)
+    bysource_detail = models.CharField(max_length=100,null=True,blank=True)
 
     def __unicode__(self):
         return self.user.username + ": "+self.message[:30]
+
+    def get_source_desc(self):
+        for source in self.BY_SOURCES:
+            if source[0] == self.bysource:
+                return source[1]
+        return 'Unknown'
 
 class UserApplication(models.Model):
 

@@ -79,6 +79,12 @@ img {
     padding: 3px;
 }
 
+.clean_img {
+    background:none;
+    border:0px;
+    padding: 0px;
+}
+
 .time_stamp {
 	font-weight: xx-small;
 	color: lightgray;

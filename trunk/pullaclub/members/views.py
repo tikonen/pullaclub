@@ -126,6 +126,7 @@ def comment(request, action, comment_id):
                 comment = Comment()
                 comment.user = request.user
                 comment.message = message
+                comment.bysource = Comment.BY_WEB
                 comment.parent = get_object_or_404(Comment,pk=comment_id)
                 comment.save()
 
@@ -192,6 +193,7 @@ def comment(request, action, comment_id):
         comment = Comment()
         comment.user = request.user
         comment.message = message                
+        comment.bysource = Comment.BY_WEB
         if len(request.FILES) > 0:
             # save uploaded file
             uploaded_file = request.FILES['image0']
