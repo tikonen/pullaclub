@@ -180,7 +180,7 @@ def create_default_profile(user):
         # set default user picture
         defaultpic = open(os.path.join(settings.MEDIA_ROOT,settings.DEFAULT_IMAGE),'r');
         (_, suffix) = os.path.splitext(settings.DEFAULT_IMAGE)
-        profile.user_image.save(user.id+suffix,File(defaultpic))
+        profile.user_image.save(str(user.id)+suffix,File(defaultpic))
     except IOError:
         # something should be done here
         pass
@@ -188,7 +188,6 @@ def create_default_profile(user):
     defaultpic.close()
 
     profile.emails = user.email
-    profile.save()
     profile.description = settings.DEFAULT_USER_DESCRIPTION
     profile.save()
     return profile
