@@ -139,7 +139,7 @@ def comment(request, action, comment_id):
                 'description' : request.user.get_profile().description,
                 'fullname' : request.user.get_full_name(),
                 'message' : comment.message,
-                'id' :  comment.id,
+                'id' :  comment.parent.id,
                 'status': 'new',
                 'render' : t.render(c),
                 }
