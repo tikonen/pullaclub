@@ -94,11 +94,8 @@
 	      
 	      $.post(url, $(this).parent().parent().serialize(), function(data) {
 		  var result = jQuery.parseJSON(data);
-		  if(result.id == "0") {
-		      $(".insertion[id='"+result.id+"']").prepend(result.render).css("display","none").slideToggle(300);
-		  } else 
-		      $(".insertion[id='"+result.id+"']").append(result.render).css("display","none").slideToggle(300);
-	      });    
+		  $(".insertion[id='"+result.id+"']").append(result.render).css("display","none").slideToggle(300);
+	      });
 	      $("#"+panelid).slideToggle(100);
 	      $("textarea").val("");
 	      return false;
