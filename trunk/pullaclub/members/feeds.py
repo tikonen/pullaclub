@@ -17,3 +17,5 @@ class LatestComments(Feed):
 
     def item_link(self,comment):
         return '/members/1#'+str(comment.id)
+
+        

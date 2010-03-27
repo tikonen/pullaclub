@@ -1,1 +1,1 @@
-{{ obj.message }}
+{{ obj.message }} ({% if obj.parent %}@{{ obj.parent.id }}{% else %}#{{ obj.id }}{% endif %})

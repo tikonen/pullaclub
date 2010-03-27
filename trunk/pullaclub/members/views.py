@@ -33,7 +33,7 @@ def index(request, page):
     except Topic.DoesNotExist:
         topic = None
 
-    pag = Paginator(Comment.objects.filter(parent=None).order_by('-datetime'),9)
+    pag = Paginator(Comment.objects.filter(parent=None).order_by('-datetime'),10)
     for update in pag.page(int(page)).object_list: # view root level comments with subcomments
         view_list.append({'rootcomment': update,
                           'subcomments': Comment.objects.filter(parent=update.id).order_by('datetime')})

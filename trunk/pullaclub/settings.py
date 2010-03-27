@@ -1,8 +1,8 @@
 # Django settings for pullaclub project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-PULLACLUB_DEV = True
+PULLACLUB_DEV = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -11,7 +11,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'mysql'
-DATABASE_NAME = 'pullaclub'
+DATABASE_NAME = 'pullaclub_beta'
 DATABASE_USER = 'pullaclub'
 DATABASE_PASSWORD = 'pullaclub'
 DATABASE_HOST = 'mysql.pullaclub.com'
@@ -40,7 +40,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/tikonen/pullaclub.com/public/'
+MEDIA_ROOT = '/home/pullaclub/beta.pullaclub.com/public/'
 
 DEFAULT_IMAGE = 'default.jpg'
 PHOTO_UPLOAD_DIR = 'photos/%y%m%d'
@@ -81,7 +81,7 @@ ROOT_URLCONF = 'pullaclub.urls'
 LOGIN_URL='/login'
 AUTH_PROFILE_MODULE = 'members.UserProfile'
 
-PULLACLUB_TEMPLATE_DIR = '/home/tikonen/pullaclub.com/templates'
+PULLACLUB_TEMPLATE_DIR = '/home/pullaclub/beta.pullaclub.com/templates'
 
 if PULLACLUB_DEV:
     PULLACLUB_TEMPLATE_DIR='/home/teemu/pulla/trunk/templates'
