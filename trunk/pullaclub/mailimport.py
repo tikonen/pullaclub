@@ -258,7 +258,9 @@ def strip_mms_html(html):
     return remove_extra_spaces(remove_html_tags(p.sub('',html,re.I)))
 
 def dump_mail(message, idx):
-    f = open('/tmp/msg-'+idx+'.txt','wb') # should not write to tmp
+    filepath = 'mail-'+idx+'.txt'
+    mlog.info("writing message to '%s'",filepath)
+    f = open(filepath,'wb')
     f.write('\n'.join(message))
     f.close()
     
@@ -307,7 +309,7 @@ def _resolve_comment_owner(sender):
 def _resolve_by_source(parsedmsg):
     return Comment.BY_MOBILE
 
-def process_mailbox():
+def process_mailbox(dumpOnly=False):
 
     mlog.info('start polling')
     try:
@@ -332,7 +334,10 @@ def process_mailbox():
         idx,_ = message.split()
         resp = mailbox.retr(idx)
         
-        #dump_mail(resp[1],idx)  # debug
+        if dumpOnly:
+            dump_mail(resp[1],idx)  # debug
+            continue
+
         newcomment = Comment()
     
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
@@ -357,20 +362,21 @@ def process_mailbox():
 
         mlog.info('owner: %s, sender %s',owner.username,user.username)
 
-        #import pdb
-        #pdb.set_trace()
-
         for msgpart in parsedmsg.walk():
             ctype = msgpart.get_content_type()
 
             if ctype == 'text/plain':
                 description = msgpart.get_payload(decode=True)
-                mlog.info('text/plain "%s"',description)
+                charset = msgpart.get_content_charset()
+                description = unicode(description,charset)
+                mlog.info('text/plain(%s) "%s"',charset,description)
 
             elif ctype == 'text/html' and description == '':
                 # use html text only if plain text not available
                 description = strip_mms_html(msgpart.get_payload(decode=True))
-                mlog.info('text/html "%s"',description)
+                charset = msgpart.get_content_charset()
+                description = unicode(description,charset)
+                mlog.info('text/plain(%s) "%s"',charset,description)
                 
             elif ctype.startswith('image/') and not has_image:
                 filename = msgpart.get_filename()
@@ -461,11 +467,13 @@ if __name__ == "__main__":
         elif 'run'== sys.argv[1]:
             daemon.run()
         elif 'runonce'== sys.argv[1]:
-            daemon.mms_email_poll_job()
+            process_mailbox()
+        elif 'dump'== sys.argv[1]:
+            process_mailbox(dumpOnly=True)
         else:
             print "Unknown command"
             sys.exit(2)
             sys.exit(0)
     else:
-        print "usage: %s start|stop|restart|run|runonce" % sys.argv[0]
+        print "usage: %s start|stop|restart|run|runonce|dump" % sys.argv[0]
         sys.exit(2)
