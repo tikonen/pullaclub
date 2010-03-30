@@ -11,7 +11,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'mysql'
-DATABASE_NAME = 'pullaclub_beta'
+DATABASE_NAME = 'pullaclub'
 DATABASE_USER = 'pullaclub'
 DATABASE_PASSWORD = 'pullaclub'
 DATABASE_HOST = 'mysql.pullaclub.com'
@@ -40,7 +40,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/pullaclub/beta.pullaclub.com/public/'
+MEDIA_ROOT = '/home/pullaclub/pullaclub.com/public/'
 
 DEFAULT_IMAGE = 'default.jpg'
 PHOTO_UPLOAD_DIR = 'photos/%y%m%d'
@@ -81,7 +81,7 @@ ROOT_URLCONF = 'pullaclub.urls'
 LOGIN_URL='/login'
 AUTH_PROFILE_MODULE = 'members.UserProfile'
 
-PULLACLUB_TEMPLATE_DIR = '/home/pullaclub/beta.pullaclub.com/templates'
+PULLACLUB_TEMPLATE_DIR = '/home/pullaclub/pullaclub.com/templates'
 
 if PULLACLUB_DEV:
     PULLACLUB_TEMPLATE_DIR='/home/teemu/pulla/trunk/templates'
@@ -94,7 +94,7 @@ DEFAULT_USER_DESCRIPTION = 'Pikkupulla'
 
 # settings for MMS import
 POP_HOST = 'mail.pullaclub.com'
-POP_USERNAME = 'mms@beta.pullaclub.com'
+POP_USERNAME = 'mms@pullaclub.com'
 POP_PASSWORD = 'pullakausi'
 MMS_USER = 'mms'
 
