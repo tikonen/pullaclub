@@ -320,6 +320,7 @@ def _fix_orientation(img):
         return img   
     # following is switch-case function select by orientation
     #
+    mlog.info('Exif orientation: '+str(orientation))
     return {1 : lambda: img,  # no need to rotate
             3 : lambda: img.rotate(180), # upside down
             6 : lambda: img.rotate(-90), # rotate right
@@ -402,6 +403,7 @@ def process_mailbox(dumpOnly=False):
                 mfile = StringIOWrapper(msgpart.get_payload(decode=True))
                 try:
                     img = Image.open(mfile)
+                    mfile = StringIOWrapper()
                     _fix_orientation(img).save(mfile,img.format)
                 except IOError,e:
                     mlog.error('image %s failed %s',filename,str(e))
