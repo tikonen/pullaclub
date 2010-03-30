@@ -1,8 +1,8 @@
 # Django settings for pullaclub project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-PULLACLUB_DEV = True
+PULLACLUB_DEV = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -19,7 +19,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 
 if PULLACLUB_DEV:
     DATABASE_ENGINE = 'sqlite3'
-    DATABASE_NAME = '/home/teemu/pulla/trunk/sqlite.db'            
+    DATABASE_NAME = '/home/teemu/pulla/branches/1.1/sqlite.db'            
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -40,7 +40,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/tikonen/pullaclub.com/public/'
+MEDIA_ROOT = '/home/pullaclub/pullaclub.com/public/'
 
 DEFAULT_IMAGE = 'default.jpg'
 PHOTO_UPLOAD_DIR = 'photos/%y%m%d'
@@ -52,7 +52,7 @@ COMMENT_IMAGE_UPLOAD_DIR = 'photos/upload/%y%m%d'
 MEDIA_URL = '/'
 
 if PULLACLUB_DEV:
-    MEDIA_ROOT = '/home/teemu/pulla/trunk/public'
+    MEDIA_ROOT = '/home/teemu/pulla/branches/1.1/public'
 
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
@@ -81,10 +81,10 @@ ROOT_URLCONF = 'pullaclub.urls'
 LOGIN_URL='/login'
 AUTH_PROFILE_MODULE = 'members.UserProfile'
 
-PULLACLUB_TEMPLATE_DIR = '/home/tikonen/pullaclub.com/templates'
+PULLACLUB_TEMPLATE_DIR = '/home/pullaclub/pullaclub.com/templates'
 
 if PULLACLUB_DEV:
-    PULLACLUB_TEMPLATE_DIR='/home/teemu/pulla/trunk/templates'
+    PULLACLUB_TEMPLATE_DIR='/home/teemu/pulla/branches/1.1/templates'
 
 TEMPLATE_DIRS = (
     PULLACLUB_TEMPLATE_DIR,
@@ -94,7 +94,7 @@ DEFAULT_USER_DESCRIPTION = 'Pikkupulla'
 
 # settings for MMS import
 POP_HOST = 'mail.pullaclub.com'
-POP_USERNAME = 'mms@beta.pullaclub.com'
+POP_USERNAME = 'mms@pullaclub.com'
 POP_PASSWORD = 'pullakausi'
 MMS_USER = 'mms'
 

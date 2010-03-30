@@ -1,1 +1,5 @@
-{{ obj.message }}
+{% if obj.parent %}
+New comment #{{ obj.id }} from {{ obj.user.get_full_name }} to {{ obj.parent.user.get_full_name }}'s post #{{ obj.parent.id }}
+{% else %}
+New post #{{ obj.id }} from {{ obj.user.get_full_name }}
+{% endif %}

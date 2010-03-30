@@ -194,7 +194,7 @@
       {% if view_list %}
       {% for update in view_list %}
       <p></p>
-      <div class="update">
+      <div class="update" id="{{ update.rootcomment.id }}">
 	<div class="profile_avatar">
 	  <img src="{{ update.rootcomment.user.get_profile.user_image|downscale:"60" }}"/>
 	  <br/>
@@ -225,7 +225,7 @@
 	{% endif %}
 
 	{% for comment in update.subcomments %}
-	<div class="text">
+	<div class="text" id="{{ comment.id }}">
 	  <div class="comment">
 	    <a href="/members/profile/{{ comment.user.id }}">
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
