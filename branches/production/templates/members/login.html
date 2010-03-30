@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
+    <title>Login to PullaClub.com</title>
+    <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
+    <link rel="SHORTCUT ICON" href="/favicon.gif"/>
+    <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript">
+      $(function() { $("input:first").focus(); });
+    </script>
+  </head>
+  <body>
+    <div id="topnav">
+      <ul>
+	<li><a href="/index.html">Home</a></li>
+	<li><a href="/members">Members</a></li>
+	<li><a href="/about.html">About us</a></li>
+      </ul>
+    </div>
+    <center>
+      {% if form.errors %}
+      <span class="error_message">Your username and password didn't match. Please try again.</span>
+      {% else %}
+      <div id="text">
+	This is a members-only area. Please login to gain access.
+      </div>
+      {% endif %}
+    </center>
+    <p></p>      
+    <div id="text">
+      <div style="width:24em; margin-left:auto; margin-right:auto;margin-bottom:100px;">
+	<form action="/login/" method="post">
+	  <fieldset class="input_form">
+	    <legend>PullaClub.com Login</legend>
+	    <p>{{ form.username.label_tag }} {{ form.username }}</p>
+	    <p>{{ form.password.label_tag }} {{ form.password }}</p>
+	    <input type="submit" value="Login"/>
+	    <input type="hidden" name="next" value="{{ next }}" />
+	  </fieldset>
+	</form>
+      </div>
+    </div>
+  </body>
+</html>
