@@ -309,6 +309,24 @@ def _resolve_comment_owner(sender):
 def _resolve_by_source(parsedmsg):
     return Comment.BY_MOBILE
 
+from ExifTags import TAGS
+def _fix_orientation(img):
+    """
+    Fix orientation by rotating image as defined in Exif data.
+    """
+    info = img._getexif()
+    orientation = info.get(274)
+    if not orientation: # no idea of rotation, do nothing
+        return img   
+    # following is switch-case function select by orientation
+    #
+    mlog.info('Exif orientation: '+str(orientation))
+    return {1 : lambda: img,  # no need to rotate
+            3 : lambda: img.rotate(180), # upside down
+            6 : lambda: img.rotate(-90), # rotate right
+            8 : lambda: img.rotate(90), # rotate left
+            }[orientation]()
+
 def process_mailbox(dumpOnly=False):
 
     mlog.info('start polling')
@@ -384,7 +402,9 @@ def process_mailbox(dumpOnly=False):
 
                 mfile = StringIOWrapper(msgpart.get_payload(decode=True))
                 try:
-                    Image.open(mfile)
+                    img = Image.open(mfile)
+                    mfile = StringIOWrapper()
+                    _fix_orientation(img).save(mfile,img.format)
                 except IOError,e:
                     mlog.error('image %s failed %s',filename,str(e))
                 else:
