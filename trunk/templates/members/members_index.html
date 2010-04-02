@@ -67,14 +67,23 @@
 	      var id = element.attr("id");
 	      
 	      $("#slidepanel"+id).slideToggle(100);
-	      if(id == "0") 
+	      if(id == "0") {
+		  /* ensure that iframe fits without scrollbars and 
+		  clear elements */
+		  var frame = $("#ifrm");
+		  var body = $("body",frame.contents());
+
+		  $("#ifrm").css("height",body.height()+20);
+		  $("textarea",body).val(''); 
+		  $("input[name='poll']",body).attr('checked',false);
 		  setTimeout(function() {
 		      $("textarea",$("iframe").contents()).focus(); 
 		  }, 300);  // OK
-	      else 
+	      } else  {
 		  setTimeout(function() {
 		      $("#commenttext"+id).focus(); 
 		  },300);		     
+	      }
 	      return false;
 	  });
 
@@ -169,9 +178,7 @@
 	<a href="/feeds/latest"><img style="float:right" class="clean_img" src="/gfx/feed-icon-14x14.png"/></a>
       </div>
       <p>
-	<a class="round_button" href="#"><span class="comment_new" id="0">Write new post</span></a>  
-	<a class="round_button" href="."><span>Refresh page</span></a>  
-      
+	<a class="round_button" href="#"><span class="comment_new" id="0">Write new post</span></a>        
 	<span class="text" style="float:right">
 	  {% if page.has_previous %}
 	  <a href="/members/1/">&lt;&lt;first</a>
