@@ -6,7 +6,7 @@
     <title>Members of PullaClub.com</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
     <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
-    <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <style type="text/css">
     </style>
     <script type="text/javascript">
@@ -205,14 +205,14 @@
 	    <a href="/members/profile/{{ update.rootcomment.user.id }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago, via {{ update.rootcomment.get_source_desc }}</span>
 	    {% ifequal user update.rootcomment.user %}
-	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></span>
+	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"><a href="#">Delete</a></span>
 	    {% endifequal %}
 	    <br/>
 	    {% autoescape off %}
 	    {{ update.rootcomment.message|escape|urlize|tags }}
 	    {% endautoescape %}
 	    <p></p>
-	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"></span>	    
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"><a href="#">Comment</a></span>
 	  </div>
 	</div> <!-- update_text -->
 
@@ -231,7 +231,7 @@
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	    {% ifequal user comment.user %}
-	    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"></span>
+	    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"><a href="#">Delete</a></span>
 	    {% endifequal %}
 	    <br/>
 	    {% autoescape off %}

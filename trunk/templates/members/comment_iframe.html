@@ -4,7 +4,7 @@
     {% load custom_tags %}
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
     <title>Comment</title>
-    <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
 	  $("textarea").live('keyup',function(event) {
@@ -90,13 +90,13 @@
 	  <div class="text">	  
 	    <a href="/members/profile/{{ rootcomment.user.id }}/"><span class="{{ rootcomment.user.get_profile.user_class }}">{{ rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago, via {{ rootcomment.get_source_desc }}</span>
-	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ rootcomment.id }}"></span>
+	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ rootcomment.id }}"><a href="#">Delete</a></span>
 	    <br/>
 	    {% autoescape off %}
 	    {{ rootcomment.message|escape|urlize|tags }}
 	    {% endautoescape %}
 	    <p></p>
-	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"></span>
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"><a href="#">Comment</a></span>
 	  </div>
 	</div> <!-- update_text -->
 
