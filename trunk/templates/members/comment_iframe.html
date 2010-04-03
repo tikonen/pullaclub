@@ -19,13 +19,17 @@
 	      return true;
 	  });
 	  
+	  $("input[name='poll']").click(function() {
+	      if($(this).is(':checked')) 
+		  $("textarea").val("Write here poll description\n- poll item 1\n- poll item 2\n- etc..");
+	  });
+
 	  $("input[name='image0']").hide();
 
 	  $("#comment_image").click(function() {
 	      $("input[name='image0']").toggle();
 	      return false;
 	  });
-
 
 	  $(".comment_submit").live('click',function(event){
 	      $("#iframe_busy").show()
@@ -48,7 +52,7 @@
 
       textarea {
 	  width: 400px;
-	  height: 56px
+	  height: 100px
       }
       [icon ^="image"] {
 	  /* padding-right: 20px; */
@@ -62,13 +66,26 @@
 	  top: 10px;
 	  width: auto;
 	  position: fixed;
-      };
+      }
+      /*
+      #help_link a {
+	  color: #262626;
+	  font-weight:bold;
+	  -moz-border-radius: 5px;
+	  -webkit-border-radius: 5px;
+      }
+      #help_link a:hover {
+	  background:#ccc;
+      }
+      */
     </style>
   </head>
   <body>
     <div id="iframe_busy"><p><img src="/gfx/busy.gif"></p></div>
+    <!-- <span id="help_link"><a style="float:right" href="#">Help</a><span/> -->
     <form enctype="multipart/form-data" method="post" action="/members/comment/iframe/0/">
       <fieldset style="border:none;">
+	<input type="checkbox" name="poll"/><label>Post as poll</label>
 	<textarea id="commenttext0" maxlength="500" name="message"></textarea><br/>
 	<input type="hidden" value="/members/comment/new/0/"/>      
 	<input type="submit" value="Submit" class="comment_submit"/>
@@ -80,7 +97,7 @@
     <div id="newcomment" style="display:none">
 
       <p></p>
-      <div class="update">
+      <div class="update" id="{{ rootcomment.id }}">
 	<div class="profile_avatar">
 	  <img src="{{ rootcomment.user.get_profile.user_image|downscale:"60" }}"/>
 	  <br/>
@@ -95,6 +112,16 @@
 	    {% autoescape off %}
 	    {{ rootcomment.message|escape|urlize|tags }}
 	    {% endautoescape %}
+	    {% if rootcomment.is_poll %}
+	    <div class="poll">
+	    <ul style="margin-left:-30px;list-style:none">
+	      {% for choice in rootcomment.get_poll_choices %}
+	      <li><input type="radio" name="poll{{ rootcomment.id }}" value="{{ choice.item }}"/>{{ choice.desc|urlize }}</li>	     
+	      {% endfor %}
+	    </ul>
+	    <input type="button" name="vote" value="Vote" />
+	    </div> <!-- poll -->
+	    {% endif %} <!-- is poll -->
 	    <p></p>
 	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"><a href="#">Comment</a></span>
 	  </div>

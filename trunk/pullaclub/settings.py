@@ -1,8 +1,8 @@
 # Django settings for pullaclub project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-PULLACLUB_DEV = False
+PULLACLUB_DEV = True
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),

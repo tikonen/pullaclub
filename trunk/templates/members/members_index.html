@@ -96,6 +96,19 @@
 	      return false;
 	  });
 
+	  $("input[name='vote']").live('click',function() {
+	      var voteid = $(this).parent().parent().parent().parent().attr("id");
+	      choice = $("input[type='radio']:checked",$(this).prev()).attr('value');
+	      if(choice == null) {
+		  alert("Select item to vote");
+		  return false;
+	      }
+	      $.post('/members/vote/'+voteid+'/',{ 'choice':choice },function(data) {
+		  var result = jQuery.parseJSON(data);
+		  $(".poll",$(".update[id='"+result.id+"']")).html(result.render);
+	      });
+	  });
+
 	  $(".comment_submit").live('click',function(event){
 	      event.preventDefault();
 	      var panelid = $(this).parent().parent().parent().attr("id");
@@ -218,6 +231,26 @@
 	    {% autoescape off %}
 	    {{ update.rootcomment.message|escape|urlize|tags }}
 	    {% endautoescape %}
+	    {% if update.rootcomment.is_poll %}
+	    <div class="poll">
+	    {% if update.rootcomment.has_voted %}
+	    <ul style="margin-left:-30px;list-style:none">
+	      {% for choice in update.rootcomment.get_poll_choices %}
+	      <li>{{ choice.desc|urlize }}<br/>
+	      <img class="clean_img" src="/gfx/pollbar_start.png" width="2" height="10"/><img class="clean_img" src="/gfx/pollbar_run.png" width="{{ choice.width }}" height="10"/><img class="clean_img" src="/gfx/pollbar_end.png" width="2" height="10"/> {{ choice.percent }}
+	      </li>
+	      {% endfor %}
+	    </ul>
+	    {% else %}
+	    <ul style="margin-left:-30px;list-style:none">
+	      {% for choice in update.rootcomment.get_poll_choices %}
+	      <li><input type="radio" name="poll{{ update.rootcomment.id }}" value="{{ choice.item }}"/>{{ choice.desc|urlize }}</li>	     
+	      {% endfor %}
+	    </ul>
+	    <input type="button" name="vote" value="Vote" />
+	    {% endif %} <!-- has voted -->
+	    </div> <!-- poll -->
+	    {% endif %} <!-- is poll -->
 	    <p></p>
 	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"><a href="#">Comment</a></span>
 	  </div>

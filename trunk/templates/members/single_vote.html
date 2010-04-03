@@ -1,0 +1,7 @@
+<ul style="margin-left:-30px;list-style:none">
+  {% for choice in comment.get_poll_choices %}
+  <li>{{ choice.desc|urlize }}<br/>
+  <img class="clean_img" src="/gfx/pollbar_start.png" width="2" height="10"/><img class="clean_img" src="/gfx/pollbar_run.png" width="{{ choice.width }}" height="10"/><img class="clean_img" src="/gfx/pollbar_end.png" width="2" height="10"/> {{ choice.percent }}
+  </li>
+  {% endfor %}
+</ul>
