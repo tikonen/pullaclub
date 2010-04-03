@@ -367,7 +367,7 @@ def process_mailbox(dumpOnly=False):
             mailbox.dele(idx)
             continue
         
-        if subject == None:
+        if subject is None:
 	    subject = ''
         description = ''
         has_image = False

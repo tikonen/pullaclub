@@ -241,6 +241,7 @@
 	      </li>
 	      {% endfor %}
 	    </ul>
+	    Votes: {{ update.rootcomment.get_poll_votecount }}
 	    {% else %}
 	    <ul style="margin-left:-30px;list-style:none">
 	      {% for choice in update.rootcomment.get_poll_choices %}
