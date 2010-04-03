@@ -194,7 +194,7 @@ class BaseCron(Daemon):
 
     def run(self):
         mlog.info("-------------- STARTUP ---------------")
-        mlog.info('using mailbox %s@%s',settings.POP_USERNAME,settings.POP_HOST)
+        mlog.info('using mailbox %s',settings.POP_USERNAME)
 
         while 1:
             ###sorting job###
@@ -315,6 +315,8 @@ def _fix_orientation(img):
     Fix orientation by rotating image as defined in Exif data.
     """
     info = img._getexif()
+    if info is None:
+        return img
     orientation = info.get(274)
     if not orientation: # no idea of rotation, do nothing
         return img   
@@ -342,7 +344,6 @@ def process_mailbox(dumpOnly=False):
 
     if message_count == 0: # nothing to do
         mlog.info('no messages')
-        mlog.info('end')
         mailbox.quit()
         return
 
@@ -475,7 +476,7 @@ python deamon.py run
 
 if __name__ == "__main__":
 
-    print 'using mailbox %s@%s' % (settings.POP_USERNAME,settings.POP_HOST)
+    print 'using mailbox %s' % (settings.POP_USERNAME)
     daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'mailimport-cron-daemon.pid'))
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
