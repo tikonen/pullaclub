@@ -6,7 +6,7 @@
     <title>Members of PullaClub.com</title>
     <link rel="SHORTCUT ICON" href="/favicon.gif"/>
     <link rel="stylesheet" href="/css/pulla.css" type="text/css" />
-    <script type="text/javascript" src="/js/jquery-1.4.1.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <style type="text/css">
     </style>
     <script type="text/javascript">
@@ -67,14 +67,23 @@
 	      var id = element.attr("id");
 	      
 	      $("#slidepanel"+id).slideToggle(100);
-	      if(id == "0") 
+	      if(id == "0") {
+		  /* ensure that iframe fits without scrollbars and 
+		  clear elements */
+		  var frame = $("#ifrm");
+		  var body = $("body",frame.contents());
+
+		  $("#ifrm").css("height",body.height()+20);
+		  $("textarea",body).val(''); 
+		  $("input[name='poll']",body).attr('checked',false);
 		  setTimeout(function() {
 		      $("textarea",$("iframe").contents()).focus(); 
 		  }, 300);  // OK
-	      else 
+	      } else  {
 		  setTimeout(function() {
 		      $("#commenttext"+id).focus(); 
 		  },300);		     
+	      }
 	      return false;
 	  });
 
@@ -85,6 +94,19 @@
 	      $("#topicpanel").slideToggle(100);
 	      setTimeout(function() {$("#topictext").focus(); },300);
 	      return false;
+	  });
+
+	  $("input[name='vote']").live('click',function() {
+	      var voteid = $(this).parent().parent().parent().parent().attr("id");
+	      choice = $("input[type='radio']:checked",$(this).prev()).attr('value');
+	      if(choice == null) {
+		  alert("Select item to vote");
+		  return false;
+	      }
+	      $.post('/members/vote/'+voteid+'/',{ 'choice':choice },function(data) {
+		  var result = jQuery.parseJSON(data);
+		  $(".poll",$(".update[id='"+result.id+"']")).html(result.render);
+	      });
 	  });
 
 	  $(".comment_submit").live('click',function(event){
@@ -169,9 +191,7 @@
 	<a href="/feeds/latest"><img style="float:right" class="clean_img" src="/gfx/feed-icon-14x14.png"/></a>
       </div>
       <p>
-	<a class="round_button" href="#"><span class="comment_new" id="0">Write new post</span></a>  
-	<a class="round_button" href="."><span>Refresh page</span></a>  
-      
+	<a class="round_button" href="#"><span class="comment_new" id="0">Write new post</span></a>        
 	<span class="text" style="float:right">
 	  {% if page.has_previous %}
 	  <a href="/members/1/">&lt;&lt;first</a>
@@ -205,14 +225,34 @@
 	    <a href="/members/profile/{{ update.rootcomment.user.id }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago, via {{ update.rootcomment.get_source_desc }}</span>
 	    {% ifequal user update.rootcomment.user %}
-	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"></span>
+	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"><a href="#">Delete</a></span>
 	    {% endifequal %}
 	    <br/>
 	    {% autoescape off %}
 	    {{ update.rootcomment.message|escape|urlize|tags }}
 	    {% endautoescape %}
+	    {% if update.rootcomment.is_poll %}
+	    <div class="poll">
+	    {% if update.rootcomment.has_voted %}
+	    <ul style="margin-left:-30px;list-style:none">
+	      {% for choice in update.rootcomment.get_poll_choices %}
+	      <li>{{ choice.desc|urlize }}<br/>
+	      <img class="clean_img" src="/gfx/pollbar_start.png" width="2" height="10"/><img class="clean_img" src="/gfx/pollbar_run.png" width="{{ choice.width }}" height="10"/><img class="clean_img" src="/gfx/pollbar_end.png" width="2" height="10"/> {{ choice.percent }}
+	      </li>
+	      {% endfor %}
+	    </ul>
+	    {% else %}
+	    <ul style="margin-left:-30px;list-style:none">
+	      {% for choice in update.rootcomment.get_poll_choices %}
+	      <li><input type="radio" name="poll{{ update.rootcomment.id }}" value="{{ choice.item }}"/>{{ choice.desc|urlize }}</li>	     
+	      {% endfor %}
+	    </ul>
+	    <input type="button" name="vote" value="Vote" />
+	    {% endif %} <!-- has voted -->
+	    </div> <!-- poll -->
+	    {% endif %} <!-- is poll -->
 	    <p></p>
-	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"></span>	    
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"><a href="#">Comment</a></span>
 	  </div>
 	</div> <!-- update_text -->
 
@@ -231,7 +271,7 @@
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	    {% ifequal user comment.user %}
-	    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"></span>
+	    <span icon="delete_comment" title="Delete your comment" type="sub" class="comment_delete" id="{{ comment.id }}"><a href="#">Delete</a></span>
 	    {% endifequal %}
 	    <br/>
 	    {% autoescape off %}

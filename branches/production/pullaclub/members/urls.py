@@ -8,6 +8,7 @@ urlpatterns = patterns(
     (r'^finance/$', 'finance'),
     (r'^profile/(?P<userid>\d+)/$', 'profile'),
     (r'^comment/(?P<action>\w+)/(?P<comment_id>\w+)/$', 'comment'),
+    (r'^vote/(?P<comment_id>\w+)/$', 'vote'),
     (r'^topic/(?P<action>\w+)/$', 'topic'),
     (r'^logout/$', 'logoutuser'),
 )

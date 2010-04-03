@@ -6,6 +6,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.files import File
+from django.utils import simplejson
 
 email_re = re.compile(r"[-a-z0-9_.]+@(?:[-a-z0-9]+\.)+[a-z]{2,6}",re.IGNORECASE)
 
@@ -98,12 +99,33 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True)
     message = models.CharField(max_length=MAX_LENGTH)
     image0 = models.ImageField(upload_to=settings.COMMENT_IMAGE_UPLOAD_DIR, null=True, blank=True)
+    poll = models.CharField(blank=True,null=True,max_length=2*MAX_LENGTH)
     datetime = models.DateTimeField(auto_now_add=True)
     bysource = models.CharField(max_length=1,choices=BY_SOURCES)
     bysource_detail = models.CharField(max_length=100,null=True,blank=True)
 
     def __unicode__(self):
         return self.user.username + ": "+self.message[:30]
+
+    def is_poll(self):
+        if self.poll is not None and len(self.poll) > 0:
+            return True
+
+    def get_poll_choices(self):
+        """
+        Returns list of dictionaries {item, desc, count, width, percent}
+        """
+        polld = simplejson.loads(self.poll)
+        # compute relative height and percent
+        totalc = reduce(lambda x,item: x + item['count'], polld, float(0))
+        for item in polld:
+            if totalc > 0:
+                percent = item['count']/totalc*100
+            else:
+                percent = 0
+            item['width'] = int(percent)
+            item['percent'] = '%0.1f%%' % percent
+        return polld
 
     def get_source_desc(self):
         for source in self.BY_SOURCES:

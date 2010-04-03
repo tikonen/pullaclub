@@ -1,4 +1,4 @@
-import math
+import re
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -35,6 +35,10 @@ def index(request, page):
 
     pag = Paginator(Comment.objects.filter(parent=None).order_by('-datetime'),10)
     for update in pag.page(int(page)).object_list: # view root level comments with subcomments
+        if update.is_poll(): # update the voting status
+            vkey = 'voted'+str(update.id)
+            # rely in cookie on user specific vote status check
+            update.has_voted = vkey in request.session and request.session[vkey] == 'true'
         view_list.append({'rootcomment': update,
                           'subcomments': Comment.objects.filter(parent=update.id).order_by('datetime')})
             
@@ -64,7 +68,7 @@ def profile(request, userid):
 
     if request.method == 'POST':
         # user can only edit this own profile
-        if not request.user.is_staff and not request.user == user:
+        if not can_edit:
             raise Http404
 
         form = ProfileForm(request.POST, request.FILES) # form bound to the POST data
@@ -102,6 +106,54 @@ def profile(request, userid):
             'mms_email': settings.POP_USERNAME,
             })
 
+
+from pullaclub.members.templatetags.custom_tags import lire
+def _parse_poll_choices(message):
+    # parse listable items from message and build dictionary of poll
+    # items
+    #
+    polld = [{'desc': x[1].strip().capitalize(), 'count':0 } for x in lire.findall(message)]
+    if len(polld) > 0:
+        idx = 1
+        for item in polld:
+            item['item'] = idx
+            idx += 1
+        message = lire.sub('',message) # remove poll items from message text
+
+    return(message,polld)
+    
+@login_required
+def vote(request,comment_id):
+
+    comment = get_object_or_404(Comment,pk=comment_id)
+
+    #import pdb
+    #pdb.set_trace()
+
+    polld = simplejson.loads(comment.poll)
+    request.session['voted'+comment_id] = 'true' # cookie based tracking
+    choice = request.POST['choice']
+
+    # TODO update vote results in synchronized block
+    for item in polld:
+        if item['item'] == int(choice):
+            item['count'] += 1
+            comment.poll = simplejson.dumps(polld)
+            comment.save()
+            break
+
+    t = loader.get_template('members/single_vote.html')
+    c = Context({
+            'comment': comment,
+            })
+    response_dict = {
+        'id' :  comment_id,
+        'status': 'new',
+        'render' : t.render(c),
+        }
+                
+    return HttpResponse(simplejson.dumps(response_dict), 
+                        mimetype='application/javascript')
 
 @login_required
 def comment(request, action, comment_id):
@@ -187,11 +239,19 @@ def comment(request, action, comment_id):
         if not message:
             return render_to_response('members/comment_iframe.html')
 
+        comment = Comment()
         message = message[:Comment.MAX_LENGTH]
 
-        comment = Comment()
+        if request.POST['poll'] == 'on':  # this is poll
+            #import pdb
+            #pdb.set_trace()
+            # convert message list items to poll json structure if possible
+            (message, polld) = _parse_poll_choices(message)
+            if len(polld) > 0:
+                comment.poll = simplejson.dumps(polld)
+
         comment.user = request.user
-        comment.message = message                
+        comment.message = message
         comment.bysource = Comment.BY_WEB
         if len(request.FILES) > 0:
             # save uploaded file

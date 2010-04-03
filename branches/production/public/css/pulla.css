@@ -98,6 +98,14 @@ img {
     cursor:pointer;
 }
 
+.comment_delete a {
+    color:grey;
+}
+
+.comment_new a {
+    color:grey;
+}
+
 .comment_new:hover {
     cursor:pointer;
 }
@@ -325,7 +333,7 @@ a.round_button:active span {
     border-left: 1px dotted lightgray;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
-    color: #8B8878;
+    color: #333333;
     margin: 0px 0px 0px 100px;
     width:80%;
     padding: 5px;
@@ -403,16 +411,16 @@ a.round_button:active span {
 }
 
 [icon ^="comment"] {
-    padding-right: 20px;
-    background: transparent url('../gfx/famfamfam/comment_new.gif') no-repeat center right;
+    padding-left: 20px;
+    background: transparent url('../gfx/famfamfam/comment_new.gif') no-repeat center left;
 }
 [icon ^="delete_comment"] {
-    padding-right: 20px;
-    background: transparent url('../gfx/famfamfam/comment_delete.gif') no-repeat center right;
+    padding-left: 20px;
+    background: transparent url('../gfx/famfamfam/comment_delete.gif') no-repeat center left;
 }
 
 [icon ^="edit"] {
-    /* padding-right: 20px; */
-    background: transparent url('../gfx/famfamfam/page_edit.gif') no-repeat center right;
+    padding-left: 20px;
+    background: transparent url('../gfx/famfamfam/page_edit.gif') no-repeat center left;
 }
 
