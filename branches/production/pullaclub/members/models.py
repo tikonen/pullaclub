@@ -94,6 +94,7 @@ class Comment(models.Model):
     )
 
     MAX_LENGTH=500
+    vote_count = None
 
     user = models.ForeignKey(User)
     parent = models.ForeignKey('self', null=True, blank=True)
@@ -111,9 +112,19 @@ class Comment(models.Model):
         if self.poll is not None and len(self.poll) > 0:
             return True
 
+    def get_poll_votecount(self):
+        """
+        Returns total number of votes. Value is cached and refreshed
+        only on call to get_poll_choices().
+        """
+        if self.vote_count is None:
+            self.get_poll_choices()
+        return self.vote_count;
+        
     def get_poll_choices(self):
         """
-        Returns list of dictionaries {item, desc, count, width, percent}
+        Returns list of dictionaries {item, desc, count, width,
+        percent}
         """
         polld = simplejson.loads(self.poll)
         # compute relative height and percent
@@ -125,6 +136,7 @@ class Comment(models.Model):
                 percent = 0
             item['width'] = int(percent)
             item['percent'] = '%0.1f%%' % percent
+        self.vote_count = int(totalc)
         return polld
 
     def get_source_desc(self):
