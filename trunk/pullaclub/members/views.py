@@ -130,17 +130,22 @@ def vote(request,comment_id):
     #import pdb
     #pdb.set_trace()
 
-    polld = simplejson.loads(comment.poll)
-    request.session['voted'+comment_id] = 'true' # cookie based tracking
-    choice = request.POST['choice']
+    try:
+        # update vote results with locked table so we do not lose votes
+        # because of concurrent updates.
+        Comment.objects.lock()     
 
-    # TODO update vote results in synchronized block
-    for item in polld:
-        if item['item'] == int(choice):
-            item['count'] += 1
-            comment.poll = simplejson.dumps(polld)
-            comment.save()
-            break
+        polld = simplejson.loads(comment.poll)
+        request.session['voted'+comment_id] = 'true' # cookie based tracking
+        choice = request.POST['choice']
+        for item in polld:
+            if item['item'] == int(choice):
+                item['count'] += 1
+                comment.poll = simplejson.dumps(polld)
+                comment.save()
+                break
+    finally:
+        Comment.objects.unlock()
 
     t = loader.get_template('members/single_vote.html')
     c = Context({
