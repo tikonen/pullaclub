@@ -56,6 +56,7 @@ def index(request, page):
     return HttpResponse(t.render(c))
 
 @login_required
+@condition(last_modified_func=latest_entry) 
 def latest(request, latestid):
     latestid = int(latestid)
 
