@@ -6,6 +6,7 @@ urlpatterns = patterns(
     (r'^(?P<page>\d+)/$', 'index' ),
     (r'^apply/$', 'apply'),
     (r'^finance/$', 'finance'),
+    (r'^latest/(?P<latestid>\d+)/$', 'latest'),
     (r'^profile/(?P<userid>\d+)/$', 'profile'),
     (r'^comment/(?P<action>\w+)/(?P<comment_id>\w+)/$', 'comment'),
     (r'^vote/(?P<comment_id>\w+)/$', 'vote'),

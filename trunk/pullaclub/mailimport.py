@@ -315,7 +315,7 @@ def _fix_orientation(img):
         return img
     try:
         orientation = info.get(274)
-        # following is switch-case emulation using dictionary Note
+        # following is switch-case emulation using dictionary. Note
         # that this does not support 'default' so we need to catch
         # keyerror. More elegant way is available in Python 2.5 where
         # dictionary classes can have default value.
@@ -363,7 +363,7 @@ def process_mailbox(dumpOnly=False):
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
         sender = parsedmsg['From']
-        if parsedmsg['X-Razor'] == 'SPAM': # spam message
+        if parsedmsg['X-Razor'] == 'SPAM': # spam message in dreamhost
             mlog.info('deleting spam message from %s',sender)
             mailbox.dele(idx)
             continue

@@ -56,6 +56,43 @@ def index(request, page):
     return HttpResponse(t.render(c))
 
 @login_required
+def latest(request, latestid):
+    latestid = int(latestid)
+
+    view_list = []
+    response_dict = {}
+    newupdates = []
+    # find root level comments that are newer than requested
+    # id. Render html that can be appended on the page.
+    #
+    for update in Comment.objects.filter(parent=None).filter(id__gt=latestid).order_by('-datetime'):
+        newupdates.append(update.id)
+        view_list.append({'rootcomment': update,
+                          'subcomments': Comment.objects.filter(parent=update.id).order_by('datetime')})
+
+    if len(view_list) > 0:
+        t = loader.get_template('members/comments.html')
+        c = Context({
+                'user': request.user,
+                'view_list': view_list,
+                })
+        response_dict['root'] = t.render(c)
+
+    # find subcomments that are newer than request id. render html for each
+    for comment in Comment.objects.exclude(parent=None).exclude(parent__in=newupdates).filter(id__gt=latestid).order_by('datetime'):    
+
+        t = loader.get_template('members/sub_comment.html')
+        c = Context({
+                'user' : request.user,
+                'comment': comment,
+                })
+        response_dict[comment.parent.id] = t.render(c)
+
+    return HttpResponse(simplejson.dumps(response_dict), 
+                        mimetype='application/javascript')
+
+
+@login_required
 def profile(request, userid):
     
     user = get_object_or_404(User,pk=userid)
@@ -187,8 +224,9 @@ def comment(request, action, comment_id):
                 comment.parent = get_object_or_404(Comment,pk=comment_id)
                 comment.save()
 
-            t = loader.get_template('members/single_comment.html')
+            t = loader.get_template('members/sub_comment.html')
             c = Context({
+                    'user' : request.user,
                     'comment': comment,
                     })
             response_dict = {
@@ -244,28 +282,29 @@ def comment(request, action, comment_id):
         if not message:
             return render_to_response('members/comment_iframe.html')
 
-        comment = Comment()
+        update = Comment()
         message = message[:Comment.MAX_LENGTH]
 
-        if request.POST['poll'] == 'on':  # this is poll
+        if 'poll' in request.POST and request.POST['poll'] == 'on':  # this is poll
             #import pdb
             #pdb.set_trace()
             # convert message list items to poll json structure if possible
             (message, polld) = _parse_poll_choices(message)
             if len(polld) > 0:
-                comment.poll = simplejson.dumps(polld)
+                update.poll = simplejson.dumps(polld)
 
-        comment.user = request.user
-        comment.message = message
-        comment.bysource = Comment.BY_WEB
+        update.user = request.user
+        update.message = message
+        update.bysource = Comment.BY_WEB
         if len(request.FILES) > 0:
             # save uploaded file
             uploaded_file = request.FILES['image0']
-            comment.image0.save(uploaded_file.name, uploaded_file)
-        comment.save()
+            update.image0.save(uploaded_file.name, uploaded_file)
+        update.save()
 
         return render_to_response('members/comment_iframe.html', {
-                'rootcomment': comment,
+                'user': request.user,
+                'view_list': [ { 'rootcomment': update } ],
                 })
 
     raise Http404

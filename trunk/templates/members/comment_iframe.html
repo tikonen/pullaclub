@@ -1,7 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    {% load custom_tags %}
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
     <title>Comment</title>
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
@@ -71,17 +70,6 @@
 	  width: auto;
 	  position: fixed;
       }
-      /*
-      #help_link a {
-	  color: #262626;
-	  font-weight:bold;
-	  -moz-border-radius: 5px;
-	  -webkit-border-radius: 5px;
-      }
-      #help_link a:hover {
-	  background:#ccc;
-      }
-      */
     </style>
   </head>
   <body>
@@ -97,58 +85,11 @@
 	<input type="file" name="image0"/>
       </fieldset>
     </form>
-{% if rootcomment %}
+{% if view_list %}
     <div id="newcomment" style="display:none">
 
-      <p></p>
-      <div class="update" id="{{ rootcomment.id }}">
-	<div class="profile_avatar">
-	  <img src="{{ rootcomment.user.get_profile.user_image|downscale:"60" }}"/>
-	  <br/>
-	  <span class="text">{{ rootcomment.user.get_profile.description }}</span>
-	</div> <!-- avatar -->
-	<div class="update_text">
-	  <div class="text">	  
-	    <a href="/members/profile/{{ rootcomment.user.id }}/"><span class="{{ rootcomment.user.get_profile.user_class }}">{{ rootcomment.user.get_full_name }}</span></a>
-	    <span class="time_stamp">{{ rootcomment.datetime|timesince }} ago, via {{ rootcomment.get_source_desc }}</span>
-	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ rootcomment.id }}"><a href="#">Delete</a></span>
-	    <br/>
-	    {% autoescape off %}
-	    {{ rootcomment.message|escape|urlize|tags }}
-	    {% endautoescape %}
-	    {% if rootcomment.is_poll %}
-	    <div class="poll">
-	    <ul style="margin-left:-30px;list-style:none">
-	      {% for choice in rootcomment.get_poll_choices %}
-	      <li><input type="radio" name="poll{{ rootcomment.id }}" value="{{ choice.item }}"/>{{ choice.desc|urlize }}</li>	     
-	      {% endfor %}
-	    </ul>
-	    <input type="button" name="vote" value="Vote" />
-	    </div> <!-- poll -->
-	    {% endif %} <!-- is poll -->
-	    <p></p>
-	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ rootcomment.id }}"><a href="#">Comment</a></span>
-	  </div>
-	</div> <!-- update_text -->
+      {% include 'members/comments.html' %}
 
-	{% if rootcomment.image0 %}
-	<div class="text" style="text-align:center;clear:both;">
-	  <img src="{{ rootcomment.image0|downscale:"300h" }}"/><br/>
-	  <a href="#" onclick="window.open('{{ rootcomment.image0.url }}','{{ rootcomment.image0.filename }}','width={{ rootcomment.image0.width }},height={{ rootcomment.image0.height }},status=0')">Original size</a>
-	</div>
-	{% endif %}
-
-	<div class="insertion" id="{{ rootcomment.id }}"></div>
-	<div class="comment_panel" id="slidepanel{{ rootcomment.id }}">
-	  <form>
-	    <fieldset style="border:none;">
-	      <textarea maxlength="500" id="commenttext{{ rootcomment.id }}" name="message"></textarea><br/>
-	      <input type="hidden" value="/members/comment/new/{{ rootcomment.id }}/"/>
-	      <input type="submit" value="Submit" class="comment_submit"/>
-	    </fieldset>
-	  </form>
-	</div> <!-- comment_panel -->
-      </div> <!-- update -->
     </div>
     {% endif %}
   </body>
