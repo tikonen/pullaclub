@@ -245,17 +245,13 @@ from django.conf import settings
 from pullaclub.members.models import Comment,UserProfile
 from django.contrib.auth.models import User
 
-def remove_html_tags(data):
-    p = re.compile(r'<.*?>')
-    return p.sub('', data)
-
-def remove_extra_spaces(data):
-    p = re.compile(r'\s+')
-    return p.sub(' ', data)
-
-def strip_mms_html(html):
-    p = re.compile(r'<title>.*</title>')
-    return remove_extra_spaces(remove_html_tags(p.sub('',html,re.I)))
+import htmllib
+import formatter
+def html_to_text(html):
+    out = StringIO.StringIO()
+    parser = htmllib.HTMLParser(formatter.AbstractFormatter(formatter.DumbWriter(out)))
+    parser.feed(html)
+    return out.getvalue()
 
 def dump_mail(message, idx):
     filepath = 'mail-'+idx+'.txt'
@@ -317,17 +313,22 @@ def _fix_orientation(img):
     info = img._getexif()
     if info is None:
         return img
-    orientation = info.get(274)
-    if not orientation: # no idea of rotation, do nothing
-        return img   
-    # following is switch-case function select by orientation
-    #
-    mlog.info('Exif orientation: '+str(orientation))
-    return {1 : lambda: img,  # no need to rotate
-            3 : lambda: img.rotate(180), # upside down
-            6 : lambda: img.rotate(-90), # rotate right
-            8 : lambda: img.rotate(90), # rotate left
-            }[orientation]()
+    try:
+        orientation = info.get(274)
+        # following is switch-case emulation using dictionary Note
+        # that this does not support 'default' so we need to catch
+        # keyerror. More elegant way is available in Python 2.5 where
+        # dictionary classes can have default value.
+        #
+        mlog.info('Exif orientation: '+str(orientation))
+        return {1 : lambda: img,  # no need to rotate
+                3 : lambda: img.rotate(180), # upside down
+                6 : lambda: img.rotate(-90), # rotate right
+                8 : lambda: img.rotate(90), # rotate left
+                }[orientation]()
+    except KeyError:
+        # unsupported rotation, do nothing
+        return img
 
 def process_mailbox(dumpOnly=False):
 
@@ -392,7 +393,7 @@ def process_mailbox(dumpOnly=False):
 
             elif ctype == 'text/html' and description == '':
                 # use html text only if plain text not available
-                description = strip_mms_html(msgpart.get_payload(decode=True))
+                description = html_to_text(msgpart.get_payload(decode=True))
                 charset = msgpart.get_content_charset()
                 description = unicode(description,charset)
                 mlog.info('text/plain(%s) "%s"',charset,description)
