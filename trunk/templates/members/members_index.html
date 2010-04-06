@@ -25,7 +25,7 @@
 	      latestid = 0;
 	      $('.update,.comment').each(function(index) {
 		  // iterate all comments and find latest comment id
-		  tmpid = $(this).attr('id');
+		  tmpid = parseInt($(this).attr('id'));
 		  if( tmpid > latestid ) 
 		      latestid = tmpid;		  
 	      });
@@ -48,7 +48,7 @@
 		      }
 		  });
 	      });
-	  }, 5*60*1000);
+	  }, 30*1000);
 
 	  $("textarea").live('keyup',function(event) {
 	      var ml=parseInt($(this).attr("maxlength"));
