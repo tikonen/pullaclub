@@ -10,6 +10,75 @@ from django.utils import simplejson
 
 email_re = re.compile(r"[-a-z0-9_.]+@(?:[-a-z0-9]+\.)+[a-z]{2,6}",re.IGNORECASE)
 
+def ensurelocksupport(func):
+    if settings.DATABASE_ENGINE <> 'sqlite3':
+        return func
+    else:
+        # sqlite does not support locking, but it does not allow
+        # concurrent access either so we are clean.
+        return lambda x: None
+
+class LockingManager(models.Manager):
+    """ Add lock/unlock functionality to manager.
+    
+    Example::
+    
+        class Job(models.Model):
+        
+            manager = LockingManager()
+    
+            counter = models.IntegerField(null=True, default=0)
+    
+            @staticmethod
+            def do_atomic_update(job_id)
+                ''' Updates job integer, keeping it below 5 '''
+                try:
+                    # Ensure only one HTTP request can do this update at once.
+                    Job.objects.lock()
+                    
+                    job = Job.object.get(id=job_id)
+                    # If we don't lock the tables two simultanous
+                    # requests might both increase the counter
+                    # going over 5
+                    if job.counter < 5:
+                        job.counter += 1                                        
+                        job.save()
+                
+                finally:
+                    Job.objects.unlock()
+     
+    
+    """    
+    from django.db import connection
+
+    @ensurelocksupport
+    def lock(self):
+        """ Lock table. 
+        
+        Locks the object model table so that atomic update is possible.
+        Simulatenous database access request pend until the lock is unlock()'ed.
+        
+        Note: If you need to lock multiple tables, you need to do lock them
+        all in one SQL clause and this function is not enough. To avoid
+        dead lock, all tables must be locked in the same order.
+        
+        See http://dev.mysql.com/doc/refman/5.0/en/lock-tables.html
+        """
+        cursor = self.connection.cursor()
+        table = self.model._meta.db_table
+        cursor.execute("LOCK TABLES %s WRITE" % table)
+        row = cursor.fetchone()
+        return row
+        
+    @ensurelocksupport
+    def unlock(self):
+        """ Unlock the table. """
+        cursor = self.connection.cursor()
+        table = self.model._meta.db_table
+        cursor.execute("UNLOCK TABLES")
+        row = cursor.fetchone()
+        return row       
+
 class UserProfile(models.Model):
     
     USER_TYPE = (
@@ -78,6 +147,8 @@ class Topic(models.Model):
 
 
 class Comment(models.Model):
+
+    objects = LockingManager()
 
     BY_EMAIL = 'E'
     BY_MOBILE = 'M'

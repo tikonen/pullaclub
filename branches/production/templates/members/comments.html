@@ -1,0 +1,74 @@
+      {% load custom_tags %}
+      {% if view_list %}
+      {% for update in view_list %}
+      <p></p>
+      <div class="update" id="{{ update.rootcomment.id }}">
+	<div class="profile_avatar">
+	  <img src="{{ update.rootcomment.user.get_profile.user_image|downscale:"60" }}"/>
+	  <br/>
+	  <span class="text">{{ update.rootcomment.user.get_profile.description }}</span>
+	</div> <!-- avatar -->
+	<div class="update_text">
+	  <div class="text">	  
+	    <a href="/members/profile/{{ update.rootcomment.user.id }}/"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
+	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago, via {{ update.rootcomment.get_source_desc }}</span>
+	    {% ifequal user update.rootcomment.user %}
+	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"><a href="#">Delete</a></span>
+	    {% endifequal %}
+	    <br/>
+	    {% autoescape off %}
+	    {{ update.rootcomment.message|escape|urlize|tags }}
+	    {% endautoescape %}
+	    {% if update.rootcomment.is_poll %}
+	    <div class="poll">
+	    {% if update.rootcomment.has_voted %}
+	    <ul style="margin-left:-30px;list-style:none">
+	      {% for choice in update.rootcomment.get_poll_choices %}
+	      <li>{{ choice.desc|urlize }}<br/>
+	      <img class="clean_img" src="/gfx/pollbar_start.png" width="2" height="10"/><img class="clean_img" src="/gfx/pollbar_run.png" width="{{ choice.width }}" height="10"/><img class="clean_img" src="/gfx/pollbar_end.png" width="2" height="10"/> {{ choice.percent }}
+	      </li>
+	      {% endfor %}
+	    </ul>
+	    Votes: {{ update.rootcomment.get_poll_votecount }}
+	    {% else %}
+	    <ul style="margin-left:-30px;list-style:none">
+	      {% for choice in update.rootcomment.get_poll_choices %}
+	      <li><input type="radio" name="poll{{ update.rootcomment.id }}" value="{{ choice.item }}"/>{{ choice.desc|urlize }}</li>	     
+	      {% endfor %}
+	    </ul>
+	    <input type="button" title="Vote selected option" name="vote" value="Vote" />
+	    <input type="button" title="Show voting results" name="show_vote" value="Show results" />
+	    {% endif %} <!-- has voted -->
+	    </div> <!-- poll -->
+	    {% endif %} <!-- is poll -->
+	    <p></p>
+	    <span icon="comment" title="Write new comment" class="comment_new" id="{{ update.rootcomment.id }}"><a href="#">Comment</a></span>
+	  </div>
+	</div> <!-- update_text -->
+
+	{% if update.rootcomment.image0 %}
+	<div class="text" style="text-align:center;clear:both;">
+	  <img src="{{ update.rootcomment.image0|downscale:"300h" }}"/>
+	  <br/>
+	  <a href="#" onclick="window.open('{{ update.rootcomment.image0.url }}','{{ update.rootcomment.image0.filename }}','width={{ update.rootcomment.image0.width }},height={{ update.rootcomment.image0.height }},status=0')">Original size</a>
+	</div>
+	{% endif %}
+
+	{% for comment in update.subcomments %}
+
+	{% include 'members/sub_comment.html' %}
+
+	{% endfor %}
+	<div class="insertion" id="{{ update.rootcomment.id }}"></div>
+	<div class="comment_panel" id="slidepanel{{ update.rootcomment.id }}">
+	  <form>
+	    <fieldset style="border:none;">
+	      <textarea maxlength="500" id="commenttext{{ update.rootcomment.id }}" name="message"></textarea><br/>
+	      <input type="hidden" value="/members/comment/new/{{ update.rootcomment.id }}/"/>
+	      <input type="submit" value="Submit" class="comment_submit"/>
+	    </fieldset>
+	  </form>
+	</div> <!-- comment_panel -->
+      </div> <!-- update -->
+      {% endfor %}
+      {% endif %} <!-- view_list -->

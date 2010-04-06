@@ -9,6 +9,7 @@ from django.utils import simplejson
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.paginator import Paginator
 from django.views.decorators.http import condition
+#from django.views.decorators.cache import cache_control, cache_page
 
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -17,12 +18,14 @@ from django.contrib.auth.decorators import login_required
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile, MultiEmailField
 
-def latest_entry(request, page):
+def _vote_cookie(vote_id):
+    return 'voted'+str(vote_id)
+
+def latest_comment(request, **kwargs):
     return Comment.objects.latest('datetime').datetime;
 
-
 @login_required
-@condition(last_modified_func=latest_entry) 
+@condition(last_modified_func=latest_comment) 
 def index(request, page):
     
     view_list = []
@@ -36,7 +39,7 @@ def index(request, page):
     pag = Paginator(Comment.objects.filter(parent=None).order_by('-datetime'),10)
     for update in pag.page(int(page)).object_list: # view root level comments with subcomments
         if update.is_poll(): # update the voting status
-            vkey = 'voted'+str(update.id)
+            vkey = _vote_cookie(update.id)
             # rely in cookie on user specific vote status check
             update.has_voted = vkey in request.session and request.session[vkey] == 'true'
         view_list.append({'rootcomment': update,
@@ -54,6 +57,43 @@ def index(request, page):
             'error_message': error_message,
             })
     return HttpResponse(t.render(c))
+
+@login_required
+@condition(last_modified_func=latest_comment) 
+def latest(request, latestid):
+    latestid = int(latestid)
+
+    view_list = []
+    response_dict = {}
+    newupdates = []
+    # find root level comments that are newer than requested
+    # id. Render html that can be appended on the page.
+    #
+    for update in Comment.objects.filter(parent=None).filter(id__gt=latestid).order_by('-datetime'):
+        newupdates.append(update.id)
+        view_list.append({'rootcomment': update,
+                          'subcomments': Comment.objects.filter(parent=update.id).order_by('datetime')})
+
+    if len(view_list) > 0:
+        t = loader.get_template('members/comments.html')
+        c = Context({
+                'user': request.user,
+                'view_list': view_list,
+                })
+        response_dict['root'] = t.render(c)
+
+    # find subcomments that are newer than request id. render html for each
+    for comment in Comment.objects.exclude(parent=None).exclude(parent__in=newupdates).filter(id__gt=latestid).order_by('datetime'):    
+        t = loader.get_template('members/sub_comment.html')
+        c = Context({
+                'user' : request.user,
+                'comment': comment,
+                })
+        response_dict[comment.parent.id] = t.render(c)
+
+    return HttpResponse(simplejson.dumps(response_dict), 
+                        mimetype='application/javascript')
+
 
 @login_required
 def profile(request, userid):
@@ -129,18 +169,26 @@ def vote(request,comment_id):
 
     #import pdb
     #pdb.set_trace()
+    request.session[_vote_cookie(comment_id)] = 'true'
 
-    polld = simplejson.loads(comment.poll)
-    request.session['voted'+comment_id] = 'true' # cookie based tracking
-    choice = request.POST['choice']
+    if request.method == 'POST' and 'choice' in request.POST: # new vote        
+        # cookie based vote tracking
+        try:
+            # update vote results with locked table so we do not lose votes
+            # because of concurrent updates.
+            Comment.objects.lock()     
+            polld = simplejson.loads(comment.poll)
+            choice = request.POST['choice']
+            for item in polld:
+                if item['item'] == int(choice):
+                    item['count'] += 1
+                    comment.poll = simplejson.dumps(polld)
+                    comment.save()
+                    break
+        finally:
+            Comment.objects.unlock()
 
-    # TODO update vote results in synchronized block
-    for item in polld:
-        if item['item'] == int(choice):
-            item['count'] += 1
-            comment.poll = simplejson.dumps(polld)
-            comment.save()
-            break
+    # if request is GET, just show current voting status
 
     t = loader.get_template('members/single_vote.html')
     c = Context({
@@ -182,8 +230,9 @@ def comment(request, action, comment_id):
                 comment.parent = get_object_or_404(Comment,pk=comment_id)
                 comment.save()
 
-            t = loader.get_template('members/single_comment.html')
+            t = loader.get_template('members/sub_comment.html')
             c = Context({
+                    'user' : request.user,
                     'comment': comment,
                     })
             response_dict = {
@@ -229,41 +278,43 @@ def comment(request, action, comment_id):
         return HttpResponse(simplejson.dumps(response_dict), 
                                 mimetype='application/javascript')
 
-
-    elif action == 'iframe':
-        if request.method == 'GET':
-            return render_to_response('members/comment_iframe.html')
-
-        # new comment
-        message = request.POST['message']
-        if not message:
-            return render_to_response('members/comment_iframe.html')
-
-        comment = Comment()
-        message = message[:Comment.MAX_LENGTH]
-
-        if request.POST['poll'] == 'on':  # this is poll
-            #import pdb
-            #pdb.set_trace()
-            # convert message list items to poll json structure if possible
-            (message, polld) = _parse_poll_choices(message)
-            if len(polld) > 0:
-                comment.poll = simplejson.dumps(polld)
-
-        comment.user = request.user
-        comment.message = message
-        comment.bysource = Comment.BY_WEB
-        if len(request.FILES) > 0:
-            # save uploaded file
-            uploaded_file = request.FILES['image0']
-            comment.image0.save(uploaded_file.name, uploaded_file)
-        comment.save()
-
-        return render_to_response('members/comment_iframe.html', {
-                'rootcomment': comment,
-                })
-
     raise Http404
+
+@login_required
+def iframe(request):
+
+    if request.method == 'GET':
+        return render_to_response('members/comment_iframe.html')
+
+    message = request.POST['message']     # new comment
+    if not message:
+        return render_to_response('members/comment_iframe.html')
+
+    update = Comment()
+    message = message[:Comment.MAX_LENGTH]
+
+    if 'poll' in request.POST and request.POST['poll'] == 'on':  # this is poll
+        #import pdb
+        #pdb.set_trace()
+        # convert message list items to poll json structure if possible
+        (message, polld) = _parse_poll_choices(message)
+        if len(polld) > 0:
+            update.poll = simplejson.dumps(polld)
+
+    update.user = request.user
+    update.message = message
+    update.bysource = Comment.BY_WEB
+    if len(request.FILES) > 0:
+        # save uploaded file
+        uploaded_file = request.FILES['image0']
+        update.image0.save(uploaded_file.name, uploaded_file)
+
+    update.save()
+        
+    return render_to_response('members/comment_iframe.html', {
+            'user': request.user,
+            'view_list': [ { 'rootcomment': update } ],
+            })
 
 
 def apply(request):

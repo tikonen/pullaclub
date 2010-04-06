@@ -334,13 +334,13 @@ a.round_button:active span {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     color: #333333;
-    margin: 0px 0px 0px 100px;
+    margin: 0px 0px 5px 100px;
     width:80%;
     padding: 5px;
 }
 
 .comment_panel {
-	margin-left: 95px;
+	margin-left: 90px;
 	display: none;
 }
 
