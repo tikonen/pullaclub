@@ -281,7 +281,6 @@ def comment(request, action, comment_id):
     raise Http404
 
 @login_required
-@condition(last_modified_func=latest_comment) 
 def iframe(request):
 
     if request.method == 'GET':

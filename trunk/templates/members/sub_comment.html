@@ -1,6 +1,6 @@
 {% load custom_tags %}
 	<div class="comment text" id="{{ comment.id }}">
-	    <a href="/members/profile/{{ comment.user.id }}">
+	    <a href="/members/profile/{{ comment.user.id }}/">
 	      <span class="{{ comment.user.get_profile.user_class }}">{{ comment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ comment.datetime|timesince }} ago</span>
 	    {% ifequal user comment.user %}

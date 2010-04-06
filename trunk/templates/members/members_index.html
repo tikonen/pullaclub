@@ -199,7 +199,7 @@
 	<li><a href="/about.html">About us</a></li>
 	<li style="float:right;"><a href="/members/logout">Logout</a></li>
 	<li style="float:right;"><a href="/changepassword">Change password</a></li>
-        <li style="float:right;"><a href="/members/profile/{{ user.id }}">Profile</a></li>
+        <li style="float:right;"><a href="/members/profile/{{ user.id }}/">Profile</a></li>
       </ul>
     </div>
     <center>
@@ -224,7 +224,7 @@
     <hr/>
     <div id="main">
       <div class="text" style="color:white;font-weight:bold;background:grey;-moz-border-radius: 5px;-webkit-border-radius: 5px;">
-	Welcome <a href="/members/profile/{{ user.id }}"><span title="Edit your profile" style="color:white;">{{ user.get_full_name }}</span></a>
+	Welcome <a href="/members/profile/{{ user.id }}/"><span title="Edit your profile" style="color:white;">{{ user.get_full_name }}</span></a>
 	<a href="/feeds/latest"><img style="float:right" class="clean_img" src="/gfx/feed-icon-14x14.png"/></a>
       </div>
       <p>

@@ -10,7 +10,7 @@
 	</div> <!-- avatar -->
 	<div class="update_text">
 	  <div class="text">	  
-	    <a href="/members/profile/{{ update.rootcomment.user.id }}"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
+	    <a href="/members/profile/{{ update.rootcomment.user.id }}/"><span class="{{ update.rootcomment.user.get_profile.user_class }}">{{ update.rootcomment.user.get_full_name }}</span></a>
 	    <span class="time_stamp">{{ update.rootcomment.datetime|timesince }} ago, via {{ update.rootcomment.get_source_desc }}</span>
 	    {% ifequal user update.rootcomment.user %}
 	    <span icon="delete_comment" title="Delete your comment" type="root" class="comment_delete" id="{{ update.rootcomment.id }}"><a href="#">Delete</a></span>
