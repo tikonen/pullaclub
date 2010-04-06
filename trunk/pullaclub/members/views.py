@@ -17,9 +17,11 @@ from django.contrib.auth.decorators import login_required
 
 from pullaclub.members.models import ApplyForm, UserApplication, UserProfile, Comment, ProfileForm, Topic, create_default_profile, MultiEmailField
 
+def _vote_cookie(vote_id):
+    return 'voted'+str(vote_id)
+
 def latest_entry(request, page):
     return Comment.objects.latest('datetime').datetime;
-
 
 @login_required
 @condition(last_modified_func=latest_entry) 
@@ -36,7 +38,7 @@ def index(request, page):
     pag = Paginator(Comment.objects.filter(parent=None).order_by('-datetime'),10)
     for update in pag.page(int(page)).object_list: # view root level comments with subcomments
         if update.is_poll(): # update the voting status
-            vkey = 'voted'+str(update.id)
+            vkey = _vote_cookie(update.id)
             # rely in cookie on user specific vote status check
             update.has_voted = vkey in request.session and request.session[vkey] == 'true'
         view_list.append({'rootcomment': update,
@@ -167,23 +169,26 @@ def vote(request,comment_id):
 
     #import pdb
     #pdb.set_trace()
+    request.session[_vote_cookie(comment_id)] = 'true'
 
-    try:
-        # update vote results with locked table so we do not lose votes
-        # because of concurrent updates.
-        Comment.objects.lock()     
+    if request.method == 'POST' and 'choice' in request.POST: # new vote        
+        # cookie based vote tracking
+        try:
+            # update vote results with locked table so we do not lose votes
+            # because of concurrent updates.
+            Comment.objects.lock()     
+            polld = simplejson.loads(comment.poll)
+            choice = request.POST['choice']
+            for item in polld:
+                if item['item'] == int(choice):
+                    item['count'] += 1
+                    comment.poll = simplejson.dumps(polld)
+                    comment.save()
+                    break
+        finally:
+            Comment.objects.unlock()
 
-        polld = simplejson.loads(comment.poll)
-        request.session['voted'+comment_id] = 'true' # cookie based tracking
-        choice = request.POST['choice']
-        for item in polld:
-            if item['item'] == int(choice):
-                item['count'] += 1
-                comment.poll = simplejson.dumps(polld)
-                comment.save()
-                break
-    finally:
-        Comment.objects.unlock()
+    # if request is GET, just show current voting status
 
     t = loader.get_template('members/single_vote.html')
     c = Context({

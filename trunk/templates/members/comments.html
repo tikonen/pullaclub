@@ -36,7 +36,8 @@
 	      <li><input type="radio" name="poll{{ update.rootcomment.id }}" value="{{ choice.item }}"/>{{ choice.desc|urlize }}</li>	     
 	      {% endfor %}
 	    </ul>
-	    <input type="button" name="vote" value="Vote" />
+	    <input type="button" title="Vote selected option" name="vote" value="Vote" />
+	    <input type="button" title="Show voting results" name="show_vote" value="Show results" />
 	    {% endif %} <!-- has voted -->
 	    </div> <!-- poll -->
 	    {% endif %} <!-- is poll -->

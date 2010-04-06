@@ -125,11 +125,19 @@
 	      return false;
 	  });
 
+	  $("input[name='show_vote']").live('click',function() {
+	      var voteid = $(this).parent().parent().parent().parent().attr("id");
+	      $.get('/members/vote/'+voteid+'/', null,function(data) {
+		  var result = jQuery.parseJSON(data);
+		  $(".poll",$(".update[id='"+result.id+"']")).html(result.render);
+	      });
+	  });
+
 	  $("input[name='vote']").live('click',function() {
 	      var voteid = $(this).parent().parent().parent().parent().attr("id");
 	      choice = $("input[type='radio']:checked",$(this).prev()).attr('value');
 	      if(choice == null) {
-		  alert("Select item to vote");
+		  alert("Select option to vote");
 		  return false;
 	      }
 	      $.post('/members/vote/'+voteid+'/',{ 'choice':choice },function(data) {
