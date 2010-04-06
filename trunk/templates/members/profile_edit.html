@@ -77,11 +77,10 @@
 	  </fieldset>
 	  {% if can_edit %}
 	  <fieldset class="sub_form">
-	    <legend>E-mail Masking and Translation</legend>
+	    <legend>E-mail Hiding</legend>
 	    <p>
 	      List here E-mail addresses where from you're sending
-	      messages to {{ mms_email|urlize }}. Address listed here are
-	      hidden from posts and they appear to be posted by you instead of the system user.
+	      messages to {{ mms_email|urlize }} to hide them from posts.
 	    </p> 
 	    <p><b>E-mail addresses</b> {{ form.emails }} {{ form.emails.errors }}</p>
 	  </fieldset>
