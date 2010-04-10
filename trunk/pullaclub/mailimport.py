@@ -359,17 +359,23 @@ def process_mailbox(dumpOnly=False):
             continue
 
         newcomment = Comment()
-    
+
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
+
+        if enc is None:
+            enc = 'ascii'
+        if subject is None:
+            subject = ''
+        else:
+            subject = unicode(subject,enc)
+
         sender = parsedmsg['From']
         if parsedmsg['X-Razor'] == 'SPAM': # spam message in dreamhost
             mlog.info('deleting spam message from %s',sender)
             mailbox.dele(idx)
             continue
         
-        if subject is None:
-	    subject = ''
         description = ''
         has_image = False
 
@@ -403,6 +409,7 @@ def process_mailbox(dumpOnly=False):
                 filename = 'mms-'+filename.split('/')[-1]
 
                 mfile = StringIOWrapper(msgpart.get_payload(decode=True))
+                #open(os.path.join('/vboxshare',filename),'wb').write(mfile.getvalue())
                 try:
                     img = Image.open(mfile)
                     mfile = StringIOWrapper()
