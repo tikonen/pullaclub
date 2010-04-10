@@ -313,6 +313,17 @@ def _fix_orientation(img):
     info = img._getexif()
     if info is None:
         return img
+    
+    # check model specific exceptions here
+    try:
+        manufacturer = info.get(271)
+        if manufacturer is not None:
+            if manufacturer.lower() == 'samsung':
+                # samsung phones do not use orientation properly
+                return img
+    except KeyError:
+        pass
+    
     try:
         orientation = info.get(274)
         # following is switch-case emulation using dictionary. Note
