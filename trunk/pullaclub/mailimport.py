@@ -320,6 +320,7 @@ def _fix_orientation(img):
         if manufacturer is not None:
             if manufacturer.lower() == 'samsung':
                 # samsung phones do not use orientation properly
+                mlog.info("skipping orientation for %s %s", manufacturer,info.get(272,"unknown"))
                 return img
     except KeyError:
         pass
