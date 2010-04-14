@@ -349,7 +349,7 @@ def process_mailbox(dumpOnly=False):
         mailbox = poplib.POP3(settings.POP_HOST)
         mailbox.user(settings.POP_USERNAME)
         mailbox.pass_(settings.POP_PASSWORD)
-    except Error,e:
+    except Exception,e:
         mlog.error('mailbox access %s',str(e))
         return
     
