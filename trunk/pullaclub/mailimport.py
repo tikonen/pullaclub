@@ -406,14 +406,16 @@ def process_mailbox(dumpOnly=False):
             if ctype == 'text/plain':
                 description = msgpart.get_payload(decode=True)
                 charset = msgpart.get_content_charset()
-                description = unicode(description,charset)
+                if charset is not None:
+                    description = unicode(description,charset)
                 mlog.info('text/plain(%s) "%s"',charset,description)
 
             elif ctype == 'text/html' and description == '':
                 # use html text only if plain text not available
                 description = html_to_text(msgpart.get_payload(decode=True))
                 charset = msgpart.get_content_charset()
-                description = unicode(description,charset)
+                if charset is not None:
+                    description = unicode(description,charset)
                 mlog.info('text/plain(%s) "%s"',charset,description)
                 
             elif ctype.startswith('image/') and not has_image:
