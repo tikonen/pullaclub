@@ -298,7 +298,7 @@ def _resolve_comment_owner(sender):
         resolved = True
         if len(profiles) > 1:
             mlog.warning('more than one user matches "%s"',sender_email)
-            mlog.warning([str(profile.user.username) for profile in ul])
+            mlog.warning([str(profile.user.username) for profile in profiles])
 
     return (owner, user, resolved)
 
@@ -313,6 +313,18 @@ def _fix_orientation(img):
     info = img._getexif()
     if info is None:
         return img
+    
+    # check model specific exceptions here
+    try:
+        manufacturer = info.get(271)
+        if manufacturer is not None:
+            if manufacturer.lower() == 'samsung':
+                # samsung phones do not use orientation properly
+                mlog.info("skipping orientation for %s %s", manufacturer,info.get(272,"unknown"))
+                return img
+    except KeyError:
+        pass
+    
     try:
         orientation = info.get(274)
         # following is switch-case emulation using dictionary. Note
@@ -359,17 +371,23 @@ def process_mailbox(dumpOnly=False):
             continue
 
         newcomment = Comment()
-    
+
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
+
+        if enc is None:
+            enc = 'ascii'
+        if subject is None:
+            subject = ''
+        else:
+            subject = unicode(subject,enc)
+
         sender = parsedmsg['From']
         if parsedmsg['X-Razor'] == 'SPAM': # spam message in dreamhost
             mlog.info('deleting spam message from %s',sender)
             mailbox.dele(idx)
             continue
         
-        if subject is None:
-	    subject = ''
         description = ''
         has_image = False
 
@@ -388,14 +406,16 @@ def process_mailbox(dumpOnly=False):
             if ctype == 'text/plain':
                 description = msgpart.get_payload(decode=True)
                 charset = msgpart.get_content_charset()
-                description = unicode(description,charset)
+                if charset is not None:
+                    description = unicode(description,charset)
                 mlog.info('text/plain(%s) "%s"',charset,description)
 
             elif ctype == 'text/html' and description == '':
                 # use html text only if plain text not available
                 description = html_to_text(msgpart.get_payload(decode=True))
                 charset = msgpart.get_content_charset()
-                description = unicode(description,charset)
+                if charset is not None:
+                    description = unicode(description,charset)
                 mlog.info('text/plain(%s) "%s"',charset,description)
                 
             elif ctype.startswith('image/') and not has_image:
@@ -403,6 +423,7 @@ def process_mailbox(dumpOnly=False):
                 filename = 'mms-'+filename.split('/')[-1]
 
                 mfile = StringIOWrapper(msgpart.get_payload(decode=True))
+                #open(os.path.join('/vboxshare',filename),'wb').write(mfile.getvalue())
                 try:
                     img = Image.open(mfile)
                     mfile = StringIOWrapper()
