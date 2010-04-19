@@ -298,7 +298,7 @@ def _resolve_comment_owner(sender):
         resolved = True
         if len(profiles) > 1:
             mlog.warning('more than one user matches "%s"',sender_email)
-            mlog.warning([str(profile.user.username) for profile in ul])
+            mlog.warning([str(profile.user.username) for profile in profiles])
 
     return (owner, user, resolved)
 
