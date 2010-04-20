@@ -173,8 +173,8 @@ class BaseCron(Daemon):
             comps[component]+=period
         elif component=="month":
             comps[component]=range(1, 13)[(now.month+period-1)%12]
-        if comps[component]==1:
-            comps["year"]+=1
+            if comps[component]==1:
+                comps["year"]+=1
         else:
             karg={component+"s":period}    
             time_delta=datetime.timedelta(**karg)
