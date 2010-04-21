@@ -217,8 +217,12 @@ class BaseCron(Daemon):
                 time.sleep(seconds)
                 
             mlog.info("processing job '%s'",event_name)
-            getattr(self,event_name)()
-            mlog.info("finished succesfully.")
+            try:
+                getattr(self,event_name)()
+            except Exception,e:
+                mlog.warning("job failed %s",str(e))
+            else:
+                mlog.info("job finished succesfully.")
             self.find_next(event_name)
 
 from django.db.models.loading import get_apps
