@@ -439,6 +439,8 @@ def process_mailbox(dumpOnly=False):
                     has_image = True
                 
                 mlog.info('image %s stored', filename)
+            else:
+                mlog.info('skipping content part %s',ctype)
             
         mailbox.dele(idx)
         if resolved:
@@ -503,6 +505,7 @@ python deamon.py run
 if __name__ == "__main__":
 
     print 'using mailbox %s' % (settings.POP_USERNAME)
+    print >> sys.stderr,'---- %s ----' % str(datetime.datetime.now())
     daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'mailimport-cron-daemon.pid'))
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
