@@ -115,16 +115,16 @@ class UserProfile(models.Model):
 
 
     def user_type_desc(self):
-        if self.organization == 'EXT':
-            return "External"
+        if self.user_type == 'A':
+            return 'Alumni'
         if self.user.is_staff:
             return "Staff"
         elif self.user_type == 'D':
             return 'System'
-        elif self.user_type == 'A':
-            return 'Alumni'
         elif self.user_type == 'H':
             return 'Honorary'
+        if self.organization == 'EXT':
+            return "External"
         return 'Member'
 
 

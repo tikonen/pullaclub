@@ -173,8 +173,8 @@ class BaseCron(Daemon):
             comps[component]+=period
         elif component=="month":
             comps[component]=range(1, 13)[(now.month+period-1)%12]
-        if comps[component]==1:
-            comps["year"]+=1
+            if comps[component]==1:
+                comps["year"]+=1
         else:
             karg={component+"s":period}    
             time_delta=datetime.timedelta(**karg)
@@ -217,8 +217,12 @@ class BaseCron(Daemon):
                 time.sleep(seconds)
                 
             mlog.info("processing job '%s'",event_name)
-            getattr(self,event_name)()
-            mlog.info("finished succesfully.")
+            try:
+                getattr(self,event_name)()
+            except Exception,e:
+                mlog.warning("job failed %s",str(e))
+            else:
+                mlog.info("job finished succesfully.")
             self.find_next(event_name)
 
 from django.db.models.loading import get_apps
@@ -435,6 +439,8 @@ def process_mailbox(dumpOnly=False):
                     has_image = True
                 
                 mlog.info('image %s stored', filename)
+            else:
+                mlog.info('skipping content part %s',ctype)
             
         mailbox.dele(idx)
         if resolved:
@@ -499,6 +505,7 @@ python deamon.py run
 if __name__ == "__main__":
 
     print 'using mailbox %s' % (settings.POP_USERNAME)
+    print >> sys.stderr,'---- %s ----' % str(datetime.datetime.now())
     daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'mailimport-cron-daemon.pid'))
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
