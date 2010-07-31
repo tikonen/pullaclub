@@ -6,7 +6,7 @@ from signal import SIGTERM
 import logging
 import logging.handlers
 
-LOG_FILENAME = 'mailimport.log'
+LOG_FILENAME = '/home/pullaclub/pullaclub.com/pullaclub/mailimport.log'
 
 # Set up a specific logger with our desired output level
 mlog = logging.getLogger('MAILIMPORT')
@@ -379,12 +379,11 @@ def process_mailbox(dumpOnly=False):
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
 
-        if enc is None:
-            enc = 'ascii'
-        if subject is None:
+        if subject is None or len(subject) == 0:
             subject = ''
         else:
-            subject = unicode(subject,enc)
+            if enc is not None:
+                subject = unicode(subject,enc)
 
         sender = parsedmsg['From']
         if parsedmsg['X-Razor'] == 'SPAM': # spam message in dreamhost
@@ -504,8 +503,8 @@ python deamon.py run
 
 if __name__ == "__main__":
 
-    print 'using mailbox %s' % (settings.POP_USERNAME)
-    print >> sys.stderr,'---- %s ----' % str(datetime.datetime.now())
+    #print 'using mailbox %s' % (settings.POP_USERNAME)
+    #print >> sys.stderr,'---- %s ----' % str(datetime.datetime.now())
     daemon = MMSCron(os.path.join(os.path.split(DIR)[0],'mailimport-cron-daemon.pid'))
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
