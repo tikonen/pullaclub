@@ -379,11 +379,13 @@ def process_mailbox(dumpOnly=False):
         parsedmsg = email.message_from_string('\n'.join(resp[1]))
         (subject, enc) = decode_header(parsedmsg['Subject'])[0]
 
-        if subject is None or len(subject) == 0:
+        if not subject:
             subject = ''
         else:
-            if enc is not None:
+            if enc:
                 subject = unicode(subject,enc)
+        if not subject:
+            subject = ''
 
         sender = parsedmsg['From']
         if parsedmsg['X-Razor'] == 'SPAM': # spam message in dreamhost
